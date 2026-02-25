@@ -7,8 +7,9 @@ import {
   Box, Typography, Paper, Button, Card, CardContent, CardActionArea, Grid, Chip,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Checkbox, FormControlLabel, FormGroup, Tooltip, Stepper, Step, StepLabel,
+  Dialog, DialogTitle, DialogContent, TextField, IconButton,
 } from '@mui/material';
-import { NavigateNext, NavigateBefore, SwapHoriz, CheckCircle } from '@mui/icons-material';
+import { NavigateNext, NavigateBefore, SwapHoriz, CheckCircle, Search, Close } from '@mui/icons-material';
 import WorkflowStepper from '../components/WorkflowStepper';
 import { useNavigate } from 'react-router-dom';
 
@@ -35,22 +36,37 @@ interface CompRow {
 }
 
 const mockProducts: Product[] = [
-  { id: 'p1', name: 'DUCT ASSY-SD A/VENT, LH', material: 'PP+TD20', quotationCount: 3 },
-  { id: 'p2', name: 'BRACKET-FENDER MTG, RH', material: 'SPHC-P', quotationCount: 2 },
-  { id: 'p3', name: 'COVER-RELAY BOX, UPR', material: 'PP+GF30', quotationCount: 4 },
+  { id: '99919-AAA00', name: 'DUCT ASSY-SD A/VENT, LH', material: 'PP+TD20', quotationCount: 3 },
+  { id: '86541-BBB00', name: 'BRACKET-FENDER MTG, RH', material: 'SPHC-P', quotationCount: 2 },
+  { id: '91911-CCC00', name: 'COVER-RELAY BOX, UPR', material: 'PP+GF30', quotationCount: 4 },
+  { id: '83301-DDD00', name: 'HEAD LINING', material: 'PP FELT', quotationCount: 3 },
+  { id: '82310-EEE00', name: 'DOOR TRIM LH', material: 'PP+TD20', quotationCount: 2 },
+  { id: '86511-FFF00', name: 'BUMPER ASSY FR', material: 'PP+EPDM', quotationCount: 5 },
+  { id: '84611-GGG00', name: 'CONSOLE BOX', material: 'ABS', quotationCount: 3 },
+  { id: '88100-HHH00', name: 'SEAT COVER FR', material: 'PVC LEATHER', quotationCount: 2 },
+  { id: '87220-III00', name: 'GARNISH-ROOF, CTR', material: 'ABS+PC', quotationCount: 4 },
+  { id: '84710-JJJ00', name: 'PANEL-INSTRUMENT', material: 'PP+TD20', quotationCount: 3 },
+  { id: '86350-KKK00', name: 'GRILLE-RADIATOR', material: 'ABS+GF15', quotationCount: 2 },
+  { id: '87210-LLL00', name: 'SPOILER-REAR', material: 'PP+GF20', quotationCount: 3 },
+  { id: '82130-MMM00', name: 'WEATHERSTRIP-DOOR', material: 'EPDM', quotationCount: 2 },
+  { id: '87710-NNN00', name: 'MOLDING-SIDE', material: 'PVC', quotationCount: 3 },
+  { id: '92410-OOO00', name: 'LAMP ASSY-RR COMB', material: 'PC+ABS', quotationCount: 4 },
+  { id: '86130-PPP00', name: 'FENDER ASSY FR, LH', material: 'STEEL', quotationCount: 2 },
+  { id: '71101-QQQ00', name: 'HOOD ASSY', material: 'ALUMINIUM', quotationCount: 3 },
+  { id: '83110-RRR00', name: 'ROOF PANEL', material: 'STEEL', quotationCount: 2 },
 ];
 
 const mockQuotations: Record<string, Quotation[]> = {
-  p1: [
+  '99919-AAA00': [
     { id: 'q1', vendor: '한국ITW', date: '2021.07', label: '한국ITW 2021.07' },
     { id: 'q2', vendor: '한국ITW', date: '2020.12', label: '한국ITW 2020.12' },
     { id: 'q3', vendor: 'B업체', date: '2021.03', label: 'B업체 2021.03' },
   ],
-  p2: [
+  '86541-BBB00': [
     { id: 'q4', vendor: 'C업체', date: '2021.05', label: 'C업체 2021.05' },
     { id: 'q5', vendor: 'D업체', date: '2021.01', label: 'D업체 2021.01' },
   ],
-  p3: [
+  '91911-CCC00': [
     { id: 'q6', vendor: 'E업체', date: '2021.06', label: 'E업체 2021.06' },
     { id: 'q7', vendor: 'F업체', date: '2021.04', label: 'F업체 2021.04' },
     { id: 'q8', vendor: 'G업체', date: '2020.11', label: 'G업체 2020.11' },
@@ -91,6 +107,8 @@ const QuotationComparison: React.FC = () => {
   const navigate = useNavigate();
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
   const [selectedQuotations, setSelectedQuotations] = useState<string[]>([]);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const quotations = selectedProduct ? mockQuotations[selectedProduct] || [] : [];
   const selectionStep = !selectedProduct ? 0 : selectedQuotations.length < 2 ? 1 : 2;
@@ -124,25 +142,61 @@ const QuotationComparison: React.FC = () => {
         </Stepper>
       </Paper>
 
-      {/* Step 1: 아이템(제품) 선택 */}
+      {/* Step 1: 아이템(제품) 선택 — 검색 팝업 */}
       {!selectedProduct && (
         <Box sx={{ mb: 3 }}>
           <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 2 }}>1️⃣ 비교할 아이템을 선택하세요</Typography>
-          <Grid container spacing={2}>
-            {mockProducts.map(p => (
-              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={p.id}>
-                <Card sx={{ borderRadius: 2, border: '1px solid #e0e0e0', '&:hover': { borderColor: '#003875', boxShadow: 3 }, transition: 'all 0.2s' }}>
-                  <CardActionArea onClick={() => { setSelectedProduct(p.id); setSelectedQuotations([]); }} sx={{ p: 2.5 }}>
-                    <Typography variant="subtitle2" fontWeight={700} color="#003875" sx={{ mb: 0.5 }}>{p.name}</Typography>
-                    <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
-                      <Chip label={p.material} size="small" variant="outlined" />
-                      <Chip label={`견적서 ${p.quotationCount}건`} size="small" color="primary" variant="outlined" />
-                    </Box>
-                  </CardActionArea>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+          <Button variant="contained" size="large" startIcon={<Search />}
+            sx={{ bgcolor: '#003875', px: 4, py: 1.5, fontSize: 16 }}
+            onClick={() => { setSearchOpen(true); setSearchQuery(''); }}>
+            아이템 검색
+          </Button>
+
+          <Dialog open={searchOpen} onClose={() => setSearchOpen(false)} maxWidth="md" fullWidth>
+            <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', bgcolor: '#003875', color: '#fff' }}>
+              아이템 검색
+              <IconButton onClick={() => setSearchOpen(false)} sx={{ color: '#fff' }}><Close /></IconButton>
+            </DialogTitle>
+            <DialogContent sx={{ pt: '16px !important' }}>
+              <TextField fullWidth placeholder="아이템 코드 또는 품명으로 검색" variant="outlined" size="small"
+                value={searchQuery} onChange={e => setSearchQuery(e.target.value)} autoFocus
+                sx={{ mb: 2 }} InputProps={{ startAdornment: <Search sx={{ mr: 1, color: 'text.disabled' }} /> }} />
+              <TableContainer sx={{ maxHeight: 400 }}>
+                <Table size="small" stickyHeader>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ fontWeight: 700 }}>아이템코드</TableCell>
+                      <TableCell sx={{ fontWeight: 700 }}>품명</TableCell>
+                      <TableCell sx={{ fontWeight: 700 }}>재질</TableCell>
+                      <TableCell align="center" sx={{ fontWeight: 700 }}>견적서 수</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {mockProducts
+                      .filter(p => {
+                        const q = searchQuery.toLowerCase();
+                        return !q || p.id.toLowerCase().includes(q) || p.name.toLowerCase().includes(q);
+                      })
+                      .map(p => (
+                        <TableRow key={p.id} hover sx={{ cursor: 'pointer' }}
+                          onClick={() => { setSelectedProduct(p.id); setSelectedQuotations([]); setSearchOpen(false); }}>
+                          <TableCell sx={{ fontFamily: 'monospace', fontWeight: 600 }}>{p.id}</TableCell>
+                          <TableCell>{p.name}</TableCell>
+                          <TableCell><Chip label={p.material} size="small" variant="outlined" /></TableCell>
+                          <TableCell align="center"><Chip label={`${p.quotationCount}건`} size="small" color="primary" variant="outlined" /></TableCell>
+                        </TableRow>
+                      ))}
+                    {mockProducts.filter(p => {
+                      const q = searchQuery.toLowerCase();
+                      return !q || p.id.toLowerCase().includes(q) || p.name.toLowerCase().includes(q);
+                    }).length === 0 && (
+                      <TableRow><TableCell colSpan={4} align="center" sx={{ py: 4, color: 'text.disabled' }}>검색 결과가 없습니다</TableCell></TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </DialogContent>
+          </Dialog>
         </Box>
       )}
 
