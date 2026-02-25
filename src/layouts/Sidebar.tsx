@@ -5,15 +5,16 @@ import {
 } from '@mui/material';
 import {
   Dashboard, Description, FactCheck, CompareArrows, Assessment, Insights,
-  ModelTraining, History, Settings, ChevronLeft, ChevronRight,
+  ModelTraining, History, Settings, ChevronLeft, ChevronRight, AutoGraph,
 } from '@mui/icons-material';
 
 const mainFlowItems = [
-  { label: '① 파싱', icon: <Description />, path: '/parsing' },
-  { label: '② 검증', icon: <FactCheck />, path: '/verification' },
-  { label: '③ 분석', icon: <Assessment />, path: '/analysis' },
-  { label: '④ 비교', icon: <CompareArrows />, path: '/comparison' },
-  { label: '⑤ 리포트', icon: <Insights />, path: '/report' },
+  { label: '파싱(업로드)', icon: <Description />, path: '/parsing' },
+  { label: '검증', icon: <FactCheck />, path: '/verification' },
+  { label: '분석', icon: <Assessment />, path: '/analysis' },
+  { label: '견적서 비교', icon: <CompareArrows />, path: '/comparison' },
+  { label: '검증 리포트', icon: <Insights />, path: '/report' },
+  { label: '인사이트 스튜디오', icon: <AutoGraph />, path: '/insight' },
 ];
 
 const subMenuItems = [

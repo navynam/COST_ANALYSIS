@@ -7216,3 +7216,552 @@ src/pages/Verification.tsx
 
 webpack compiled with 1 warning
 No issues found.
+Compiling...
+Compiled with warnings.
+
+[eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:41:   'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:42:   'Tooltip' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 11:51:  'CheckCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:41:   'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:42:   'Tooltip' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 11:51:  'CheckCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+webpack compiled with 1 warning
+No issues found.
+Compiling...
+Failed to compile.
+
+[eslint] 
+src/App.tsx
+  Line 34:8:  'BrowserRouter' is not defined  react/jsx-no-undef
+
+Search for the keywords to learn more about each error.
+WARNING in [eslint] 
+src/App.tsx
+  Line 2:10:  'HashRouter' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:41:   'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:42:   'Tooltip' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 11:51:  'CheckCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+ERROR in [eslint] 
+src/App.tsx
+  Line 34:8:  'BrowserRouter' is not defined  react/jsx-no-undef
+
+Search for the keywords to learn more about each error.
+
+webpack compiled with 1 error and 1 warning
+ERROR in src/App.tsx:34:8
+TS2304: Cannot find name 'BrowserRouter'.
+    32 |       <CssBaseline />
+    33 |       <AuthProvider>
+  > 34 |       <BrowserRouter>
+       |        ^^^^^^^^^^^^^
+    35 |         <Routes>
+    36 |           <Route path="/login" element={<Login />} />
+    37 |           <Route element={<MainLayout />}>
+
+ERROR in src/App.tsx:56:9
+TS2304: Cannot find name 'BrowserRouter'.
+    54 |           </Route>
+    55 |         </Routes>
+  > 56 |       </BrowserRouter>
+       |         ^^^^^^^^^^^^^
+    57 |       </AuthProvider>
+    58 |     </ThemeProvider>
+    59 |   );
+
+Compiling...
+Failed to compile.
+
+[eslint] 
+src/App.tsx
+Syntax error: Expected corresponding JSX closing tag for 'HashRouter' (56:8)
+WARNING in [eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:41:   'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:42:   'Tooltip' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 11:51:  'CheckCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+ERROR in ./src/App.tsx
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: /Users/navynam/WORK/cost-analysis-system/frontend/src/App.tsx: Expected corresponding JSX closing tag for <HashRouter>. (56:6)
+
+  54 |           </Route>
+  55 |         </Routes>
+> 56 |       </BrowserRouter>
+     |       ^
+  57 |       </AuthProvider>
+  58 |     </ThemeProvider>
+  59 |   );
+    at constructor (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:365:19)
+    at TypeScriptParserMixin.raise (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:6599:19)
+    at TypeScriptParserMixin.jsxParseElementAt (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:4727:16)
+    at TypeScriptParserMixin.jsxParseElementAt (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:4698:32)
+    at TypeScriptParserMixin.jsxParseElementAt (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:4698:32)
+    at TypeScriptParserMixin.jsxParseElement (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:4749:17)
+    at TypeScriptParserMixin.parseExprAtom (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:4759:19)
+    at TypeScriptParserMixin.parseExprSubscripts (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:11081:23)
+    at TypeScriptParserMixin.parseUpdate (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:11066:21)
+    at TypeScriptParserMixin.parseMaybeUnary (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:11046:23)
+    at TypeScriptParserMixin.parseMaybeUnary (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:9837:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:10899:61)
+    at TypeScriptParserMixin.parseExprOps (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:10904:23)
+    at TypeScriptParserMixin.parseMaybeConditional (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:10881:23)
+    at TypeScriptParserMixin.parseMaybeAssign (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:10831:21)
+    at /Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:9775:39
+    at TypeScriptParserMixin.tryParse (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:6907:20)
+    at TypeScriptParserMixin.parseMaybeAssign (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:9775:18)
+    at /Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:10800:39
+    at TypeScriptParserMixin.allowInAnd (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:12426:12)
+    at TypeScriptParserMixin.parseMaybeAssignAllowIn (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:10800:17)
+    at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:12493:17)
+    at TypeScriptParserMixin.parseParenAndDistinguishExpression (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:11675:28)
+    at TypeScriptParserMixin.parseExprAtom (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:11331:23)
+    at TypeScriptParserMixin.parseExprAtom (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:4764:20)
+    at TypeScriptParserMixin.parseExprSubscripts (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:11081:23)
+    at TypeScriptParserMixin.parseUpdate (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:11066:21)
+    at TypeScriptParserMixin.parseMaybeUnary (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:11046:23)
+    at TypeScriptParserMixin.parseMaybeUnary (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:9837:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:10899:61)
+    at TypeScriptParserMixin.parseExprOps (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:10904:23)
+    at TypeScriptParserMixin.parseMaybeConditional (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:10881:23)
+    at TypeScriptParserMixin.parseMaybeAssign (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:10831:21)
+    at TypeScriptParserMixin.parseMaybeAssign (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:9786:20)
+    at TypeScriptParserMixin.parseExpressionBase (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:10784:23)
+    at /Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:10780:39
+    at TypeScriptParserMixin.allowInAnd (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:12421:16)
+    at TypeScriptParserMixin.parseExpression (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:10780:17)
+    at TypeScriptParserMixin.parseReturnStatement (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:13142:28)
+    at TypeScriptParserMixin.parseStatementContent (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:12798:21)
+    at TypeScriptParserMixin.parseStatementContent (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:9508:18)
+    at TypeScriptParserMixin.parseStatementLike (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:12767:17)
+    at TypeScriptParserMixin.parseStatementListItem (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:12747:17)
+    at TypeScriptParserMixin.parseBlockOrModuleBlockBody (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:13316:61)
+    at TypeScriptParserMixin.parseBlockBody (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:13309:10)
+    at TypeScriptParserMixin.parseBlock (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:13297:10)
+    at TypeScriptParserMixin.parseFunctionBody (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:12100:24)
+    at TypeScriptParserMixin.parseFunctionBodyAndFinish (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:12086:10)
+    at TypeScriptParserMixin.parseFunctionBodyAndFinish (/Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:9172:18)
+    at /Users/navynam/WORK/cost-analysis-system/frontend/node_modules/@babel/parser/lib/index.js:13445:12
+
+ERROR in [eslint] 
+src/App.tsx
+  Line 56:8:  Parsing error: Expected corresponding JSX closing tag for 'HashRouter'
+
+webpack compiled with 2 errors and 1 warning
+ERROR in src/App.tsx:56:9
+TS17002: Expected corresponding JSX closing tag for 'HashRouter'.
+    54 |           </Route>
+    55 |         </Routes>
+  > 56 |       </BrowserRouter>
+       |         ^^^^^^^^^^^^^
+    57 |       </AuthProvider>
+    58 |     </ThemeProvider>
+    59 |   );
+
+ERROR in src/App.tsx:56:9
+TS2304: Cannot find name 'BrowserRouter'.
+    54 |           </Route>
+    55 |         </Routes>
+  > 56 |       </BrowserRouter>
+       |         ^^^^^^^^^^^^^
+    57 |       </AuthProvider>
+    58 |     </ThemeProvider>
+    59 |   );
+
+Compiling...
+Compiled with warnings.
+
+[eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:41:   'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:42:   'Tooltip' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 11:51:  'CheckCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:41:   'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:42:   'Tooltip' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 11:51:  'CheckCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+webpack compiled with 1 warning
+No issues found.
+Compiling...
+Compiled with warnings.
+
+[eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:41:   'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:42:   'Tooltip' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 11:51:  'CheckCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:41:   'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:42:   'Tooltip' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 11:51:  'CheckCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+webpack compiled with 1 warning
+No issues found.
+Compiling...
+Compiled with warnings.
+
+[eslint] 
+src/App.tsx
+  Line 16:8:  'Insight' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:41:   'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:42:   'Tooltip' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 11:51:  'CheckCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/App.tsx
+  Line 16:8:  'Insight' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:41:   'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:42:   'Tooltip' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 11:51:  'CheckCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+webpack compiled with 1 warning
+No issues found.
+Compiling...
+Compiled with warnings.
+
+[eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:41:   'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:42:   'Tooltip' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 11:51:  'CheckCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:41:   'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:42:   'Tooltip' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 11:51:  'CheckCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+webpack compiled with 1 warning
+No issues found.

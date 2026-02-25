@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import MainLayout from './layouts/MainLayout';
 import { AuthProvider } from './contexts/AuthContext';
@@ -13,6 +13,7 @@ import QuotationComparison from './pages/QuotationComparison';
 // 보조 페이지
 import Dashboard from './pages/Dashboard';
 import Report from './pages/Report';
+import Insight from './pages/Insight';
 import ModelManagement from './pages/ModelManagement';
 import History from './pages/History';
 import Settings from './pages/Settings';
@@ -31,7 +32,7 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route element={<MainLayout />}>
@@ -44,6 +45,7 @@ export default function App() {
             {/* 보조 페이지 */}
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/report" element={<Report />} />
+            <Route path="/insight" element={<Insight />} />
             <Route path="/models" element={<ModelManagement />} />
             <Route path="/history" element={<History />} />
             <Route path="/settings" element={<Settings />} />
@@ -53,7 +55,7 @@ export default function App() {
             <Route path="*" element={<Navigate to="/parsing" replace />} />
           </Route>
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
       </AuthProvider>
     </ThemeProvider>
   );
