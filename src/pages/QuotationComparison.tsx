@@ -1,163 +1,266 @@
 /**
- * @fileoverview ④ 견적 비교 페이지 - UI 고도화
- * @description 제품 선택, 3자 비교 히트맵 테이블, 재질 변경 하이라이트, 바 차트
+ * @fileoverview ④ 견적서 비교 페이지
+ * @description 3단계 선택 플로우: 아이템 → 견적서 복수선택 → 나란히 비교
  */
 import React, { useState } from 'react';
 import {
-  Box, Typography, Paper, Button, Card, CardContent, Grid, Chip,
+  Box, Typography, Paper, Button, Card, CardContent, CardActionArea, Grid, Chip,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  FormControl, InputLabel, Select, MenuItem, Tooltip, Divider, LinearProgress,
+  Checkbox, FormControlLabel, FormGroup, Tooltip, Stepper, Step, StepLabel,
 } from '@mui/material';
-import { NavigateNext, NavigateBefore, SwapHoriz } from '@mui/icons-material';
+import { NavigateNext, NavigateBefore, SwapHoriz, CheckCircle } from '@mui/icons-material';
 import WorkflowStepper from '../components/WorkflowStepper';
 import { useNavigate } from 'react-router-dom';
 
 /* ── Mock 데이터 ── */
-const products = [
-  { id: 1, name: 'DUCT ASSY-SD A/VENT, LH' },
-  { id: 2, name: 'BRACKET-FENDER MTG, RH' },
-  { id: 3, name: 'COVER-RELAY BOX, UPR' },
-];
+interface Product {
+  id: string;
+  name: string;
+  material: string;
+  quotationCount: number;
+}
+
+interface Quotation {
+  id: string;
+  vendor: string;
+  date: string;
+  label: string;
+}
 
 interface CompRow {
   item: string;
-  bidder: number;
-  oem: number;
-  mobis: number;
-  material?: { bidder: string; oem: string; mobis: string; changed: boolean };
+  isSubtotal?: boolean;
+  values: Record<string, number>; // quotation id → amount
+  material?: Record<string, string>; // quotation id → material name
 }
 
-const mockComparison: CompRow[] = [
-  { item: '원재료', bidder: 967, oem: 1020, mobis: 990 },
-  { item: 'Masterbatch', bidder: 90, oem: 85, mobis: 95 },
-  { item: '재료비 소계', bidder: 1057, oem: 1105, mobis: 1085 },
-  { item: '노무비', bidder: 850, oem: 780, mobis: 820 },
-  { item: '경비', bidder: 620, oem: 590, mobis: 650 },
-  { item: '가공비 소계', bidder: 1470, oem: 1370, mobis: 1470 },
-  { item: '제조원가', bidder: 2527, oem: 2475, mobis: 2555 },
-  { item: '일반관리비', bidder: 253, oem: 248, mobis: 256 },
-  { item: '이윤', bidder: 380, oem: 350, mobis: 370 },
-  { item: '총원가', bidder: 3160, oem: 3073, mobis: 3181 },
+const mockProducts: Product[] = [
+  { id: 'p1', name: 'DUCT ASSY-SD A/VENT, LH', material: 'PP+TD20', quotationCount: 3 },
+  { id: 'p2', name: 'BRACKET-FENDER MTG, RH', material: 'SPHC-P', quotationCount: 2 },
+  { id: 'p3', name: 'COVER-RELAY BOX, UPR', material: 'PP+GF30', quotationCount: 4 },
 ];
 
-const mockMaterials: { part: string; bidder: string; oem: string; mobis: string; changed: boolean }[] = [
-  { part: '본체', bidder: 'PP+TD20', oem: 'PP+TD20', mobis: 'PP+TD20', changed: false },
-  { part: '브라켓', bidder: 'SPHC-P', oem: 'SPHC-P', mobis: 'SPCC', changed: true },
-  { part: '클립', bidder: 'POM', oem: 'POM', mobis: 'PA66', changed: true },
+const mockQuotations: Record<string, Quotation[]> = {
+  p1: [
+    { id: 'q1', vendor: '한국ITW', date: '2021.07', label: '한국ITW 2021.07' },
+    { id: 'q2', vendor: '한국ITW', date: '2020.12', label: '한국ITW 2020.12' },
+    { id: 'q3', vendor: 'B업체', date: '2021.03', label: 'B업체 2021.03' },
+  ],
+  p2: [
+    { id: 'q4', vendor: 'C업체', date: '2021.05', label: 'C업체 2021.05' },
+    { id: 'q5', vendor: 'D업체', date: '2021.01', label: 'D업체 2021.01' },
+  ],
+  p3: [
+    { id: 'q6', vendor: 'E업체', date: '2021.06', label: 'E업체 2021.06' },
+    { id: 'q7', vendor: 'F업체', date: '2021.04', label: 'F업체 2021.04' },
+    { id: 'q8', vendor: 'G업체', date: '2020.11', label: 'G업체 2020.11' },
+    { id: 'q9', vendor: 'H업체', date: '2021.02', label: 'H업체 2021.02' },
+  ],
+};
+
+const mockCompData: CompRow[] = [
+  { item: '원재료', values: { q1: 967, q2: 940, q3: 1020 } },
+  { item: 'Masterbatch', values: { q1: 90, q2: 88, q3: 95 } },
+  { item: '재료비 소계', isSubtotal: true, values: { q1: 1057, q2: 1028, q3: 1115 } },
+  { item: '노무비', values: { q1: 850, q2: 820, q3: 780 } },
+  { item: '경비', values: { q1: 620, q2: 590, q3: 650 } },
+  { item: '가공비 소계', isSubtotal: true, values: { q1: 1470, q2: 1410, q3: 1430 } },
+  { item: '제조원가', isSubtotal: true, values: { q1: 2527, q2: 2438, q3: 2545 } },
+  { item: '일반관리비', values: { q1: 253, q2: 244, q3: 255 } },
+  { item: '이윤', values: { q1: 380, q2: 360, q3: 370 } },
+  { item: '총원가', isSubtotal: true, values: { q1: 3160, q2: 3042, q3: 3170 } },
 ];
+
+const mockMaterialChanges: { part: string; values: Record<string, string>; changed: boolean }[] = [
+  { part: '본체', values: { q1: 'PP+TD20', q2: 'PP+TD20', q3: 'PP+TD20' }, changed: false },
+  { part: '브라켓', values: { q1: 'SPHC-P', q2: 'SPHC-P', q3: 'SPCC' }, changed: true },
+  { part: '클립', values: { q1: 'POM', q2: 'POM', q3: 'PA66' }, changed: true },
+];
+
+const fmt = (n: number) => n.toLocaleString('ko-KR');
 
 const getHeatColor = (val: number, min: number, max: number) => {
   if (max === min) return 'transparent';
   const ratio = (val - min) / (max - min);
-  if (ratio < 0.33) return 'rgba(33,150,243,0.12)'; // blue=cheap
-  if (ratio > 0.66) return 'rgba(244,67,54,0.12)'; // red=expensive
+  if (ratio < 0.33) return 'rgba(33,150,243,0.12)';
+  if (ratio > 0.66) return 'rgba(244,67,54,0.12)';
   return 'transparent';
 };
 
-const fmt = (n: number) => n.toLocaleString('ko-KR');
-
 const QuotationComparison: React.FC = () => {
   const navigate = useNavigate();
-  const [productId, setProductId] = useState<number | ''>('');
+  const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
+  const [selectedQuotations, setSelectedQuotations] = useState<string[]>([]);
 
-  const selected = productId !== '';
+  const quotations = selectedProduct ? mockQuotations[selectedProduct] || [] : [];
+  const selectionStep = !selectedProduct ? 0 : selectedQuotations.length < 2 ? 1 : 2;
 
-  // Bar chart data (simple CSS-based)
-  const totals = selected ? {
-    bidder: mockComparison.find(r => r.item === '총원가')!.bidder,
-    oem: mockComparison.find(r => r.item === '총원가')!.oem,
-    mobis: mockComparison.find(r => r.item === '총원가')!.mobis,
-  } : null;
-  const maxTotal = totals ? Math.max(totals.bidder, totals.oem, totals.mobis) : 1;
+  const toggleQuotation = (qId: string) => {
+    setSelectedQuotations(prev =>
+      prev.includes(qId) ? prev.filter(id => id !== qId) : [...prev, qId]
+    );
+  };
+
+  const resetSelection = () => {
+    setSelectedProduct(null);
+    setSelectedQuotations([]);
+  };
 
   return (
     <Box sx={{ maxWidth: 1400, mx: 'auto' }}>
       <WorkflowStepper activeStep={3} />
 
-      <Typography variant="h5" fontWeight={700} color="#003875" sx={{ mb: 0.5 }}>견적 비교</Typography>
+      <Typography variant="h5" fontWeight={700} color="#003875" sx={{ mb: 0.5 }}>견적서 비교</Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        제품을 선택하여 입찰(A) / OEM(b) / MOBIS(B) 3자의 견적을 비교합니다.
+        아이템 선택 → 견적서 복수 선택 → 나란히 비교
       </Typography>
 
-      {/* ── 제품 선택 ── */}
-      <Paper sx={{ p: 2, mb: 3, borderRadius: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
-        <FormControl sx={{ minWidth: 350 }}>
-          <InputLabel>제품 선택</InputLabel>
-          <Select value={productId} label="제품 선택" onChange={e => setProductId(e.target.value as number)}>
-            {products.map(p => <MenuItem key={p.id} value={p.id}>{p.name}</MenuItem>)}
-          </Select>
-        </FormControl>
-        {selected && <Chip label="3자 비교 데이터 로드됨" color="success" size="small" />}
+      {/* 미니 스텝 표시 */}
+      <Paper sx={{ p: 2, mb: 3, borderRadius: 2 }}>
+        <Stepper activeStep={selectionStep} alternativeLabel>
+          <Step><StepLabel>아이템 선택</StepLabel></Step>
+          <Step><StepLabel>견적서 선택 (2개 이상)</StepLabel></Step>
+          <Step><StepLabel>비교 결과</StepLabel></Step>
+        </Stepper>
       </Paper>
 
-      {selected && (
-        <>
-          {/* ── 총원가 비교 바 차트 ── */}
-          <Paper sx={{ p: 3, mb: 3, borderRadius: 2 }}>
-            <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 2, color: '#003875' }}>
-              📊 총원가 비교
-            </Typography>
-            {[
-              { label: '입찰 (A)', value: totals!.bidder, color: '#003875' },
-              { label: 'OEM (b)', value: totals!.oem, color: '#1976d2' },
-              { label: 'MOBIS (B)', value: totals!.mobis, color: '#42a5f5' },
-            ].map(bar => (
-              <Box key={bar.label} sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1.5 }}>
-                <Typography variant="body2" fontWeight={600} sx={{ width: 80 }}>{bar.label}</Typography>
-                <Box sx={{ flex: 1, position: 'relative' }}>
-                  <Box sx={{
-                    height: 28, borderRadius: 1.5, bgcolor: bar.color,
-                    width: `${(bar.value / maxTotal) * 100}%`,
-                    transition: 'width 0.5s ease',
-                    display: 'flex', alignItems: 'center', justifyContent: 'flex-end', pr: 1.5,
-                  }}>
-                    <Typography variant="caption" fontWeight={700} color="#fff">
-                      ₩{fmt(bar.value)}
-                    </Typography>
-                  </Box>
-                </Box>
-                {bar.value === Math.min(totals!.bidder, totals!.oem, totals!.mobis) && (
-                  <Chip label="최저" size="small" color="success" sx={{ fontWeight: 700 }} />
-                )}
-              </Box>
+      {/* Step 1: 아이템(제품) 선택 */}
+      {!selectedProduct && (
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 2 }}>1️⃣ 비교할 아이템을 선택하세요</Typography>
+          <Grid container spacing={2}>
+            {mockProducts.map(p => (
+              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={p.id}>
+                <Card sx={{ borderRadius: 2, border: '1px solid #e0e0e0', '&:hover': { borderColor: '#003875', boxShadow: 3 }, transition: 'all 0.2s' }}>
+                  <CardActionArea onClick={() => { setSelectedProduct(p.id); setSelectedQuotations([]); }} sx={{ p: 2.5 }}>
+                    <Typography variant="subtitle2" fontWeight={700} color="#003875" sx={{ mb: 0.5 }}>{p.name}</Typography>
+                    <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+                      <Chip label={p.material} size="small" variant="outlined" />
+                      <Chip label={`견적서 ${p.quotationCount}건`} size="small" color="primary" variant="outlined" />
+                    </Box>
+                  </CardActionArea>
+                </Card>
+              </Grid>
             ))}
+          </Grid>
+        </Box>
+      )}
+
+      {/* Step 2: 견적서 복수 선택 */}
+      {selectedProduct && selectionStep < 2 && (
+        <Box sx={{ mb: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+            <Typography variant="subtitle1" fontWeight={700}>
+              2️⃣ 비교할 견적서를 선택하세요 (2개 이상)
+            </Typography>
+            <Button size="small" variant="text" onClick={resetSelection}>← 아이템 다시 선택</Button>
+          </Box>
+          <Paper sx={{ p: 2, borderRadius: 2 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+              선택된 아이템: <strong>{mockProducts.find(p => p.id === selectedProduct)?.name}</strong>
+            </Typography>
+            <FormGroup>
+              {quotations.map(q => (
+                <FormControlLabel key={q.id}
+                  control={<Checkbox checked={selectedQuotations.includes(q.id)} onChange={() => toggleQuotation(q.id)} />}
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="body2" fontWeight={600}>{q.vendor}</Typography>
+                      <Chip label={q.date} size="small" variant="outlined" sx={{ fontSize: 11 }} />
+                    </Box>
+                  }
+                />
+              ))}
+            </FormGroup>
+            {selectedQuotations.length >= 2 && (
+              <Button variant="contained" sx={{ mt: 2, bgcolor: '#003875' }}
+                onClick={() => {/* selectionStep auto-advances */}}>
+                비교 시작 ({selectedQuotations.length}건)
+              </Button>
+            )}
+          </Paper>
+        </Box>
+      )}
+
+      {/* Step 3: 비교 결과 */}
+      {selectionStep >= 2 && (
+        <>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+            <Typography variant="subtitle1" fontWeight={700}>3️⃣ 비교 결과</Typography>
+            <Button size="small" variant="text" onClick={resetSelection}>← 다시 선택</Button>
+            <Chip label={`${selectedQuotations.length}건 비교 중`} size="small" color="primary" />
+          </Box>
+
+          {/* 총원가 비교 바 */}
+          <Paper sx={{ p: 3, mb: 3, borderRadius: 2 }}>
+            <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 2, color: '#003875' }}>📊 총원가 비교</Typography>
+            {(() => {
+              const totalRow = mockCompData.find(r => r.item === '총원가')!;
+              const vals = selectedQuotations.map(qid => totalRow.values[qid] || 0);
+              const maxVal = Math.max(...vals);
+              const minVal = Math.min(...vals);
+              return selectedQuotations.map((qid, i) => {
+                const q = quotations.find(qq => qq.id === qid)!;
+                const v = totalRow.values[qid] || 0;
+                return (
+                  <Box key={qid} sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1.5 }}>
+                    <Typography variant="body2" fontWeight={600} sx={{ width: 130, flexShrink: 0 }}>{q.label}</Typography>
+                    <Box sx={{ flex: 1 }}>
+                      <Box sx={{
+                        height: 28, borderRadius: 1.5,
+                        bgcolor: v === minVal ? '#1976d2' : '#90caf9',
+                        width: `${(v / maxVal) * 100}%`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'flex-end', pr: 1.5,
+                        transition: 'width 0.5s',
+                      }}>
+                        <Typography variant="caption" fontWeight={700} color="#fff">₩{fmt(v)}</Typography>
+                      </Box>
+                    </Box>
+                    {v === minVal && <Chip label="최저" size="small" color="success" sx={{ fontWeight: 700 }} />}
+                  </Box>
+                );
+              });
+            })()}
           </Paper>
 
-          {/* ── 3자 비교 히트맵 테이블 ── */}
+          {/* 히트맵 비교 테이블 */}
           <TableContainer component={Paper} sx={{ mb: 3, borderRadius: 2 }}>
             <Table size="small">
               <TableHead>
                 <TableRow sx={{ bgcolor: '#f5f7fa' }}>
                   <TableCell sx={{ fontWeight: 700 }}>항목</TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 700, color: '#003875' }}>입찰 (A)</TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 700, color: '#1976d2' }}>OEM (b)</TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 700, color: '#42a5f5' }}>MOBIS (B)</TableCell>
+                  {selectedQuotations.map(qid => {
+                    const q = quotations.find(qq => qq.id === qid)!;
+                    return <TableCell key={qid} align="right" sx={{ fontWeight: 700, color: '#003875' }}>{q.label}</TableCell>;
+                  })}
                   <TableCell align="right" sx={{ fontWeight: 700 }}>차이율</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {mockComparison.map((row, i) => {
-                  const vals = [row.bidder, row.oem, row.mobis];
+                {mockCompData.map((row, i) => {
+                  const vals = selectedQuotations.map(qid => row.values[qid] || 0);
                   const minV = Math.min(...vals);
                   const maxV = Math.max(...vals);
                   const diffPct = minV > 0 ? ((maxV - minV) / minV * 100).toFixed(1) : '0';
-                  const isSubtotal = row.item.includes('소계') || row.item === '제조원가' || row.item === '총원가';
                   return (
                     <TableRow key={i} sx={{
                       bgcolor: row.item === '총원가' ? '#e8eef5' : undefined,
                       '&:hover': { bgcolor: '#f0f4ff' },
                     }}>
-                      <TableCell sx={{ fontWeight: isSubtotal ? 700 : 400, pl: isSubtotal ? 2 : 3 }}>
+                      <TableCell sx={{ fontWeight: row.isSubtotal ? 700 : 400, pl: row.isSubtotal ? 2 : 3 }}>
                         {row.item}
                       </TableCell>
-                      {[row.bidder, row.oem, row.mobis].map((v, vi) => (
-                        <TableCell key={vi} align="right" sx={{
-                          fontFamily: 'monospace', fontWeight: isSubtotal ? 700 : 400,
-                          bgcolor: getHeatColor(v, minV, maxV),
-                        }}>
-                          ₩{fmt(v)}
-                        </TableCell>
-                      ))}
+                      {selectedQuotations.map(qid => {
+                        const v = row.values[qid] || 0;
+                        return (
+                          <TableCell key={qid} align="right" sx={{
+                            fontFamily: 'monospace', fontWeight: row.isSubtotal ? 700 : 400,
+                            bgcolor: getHeatColor(v, minV, maxV),
+                          }}>
+                            ₩{fmt(v)}
+                          </TableCell>
+                        );
+                      })}
                       <TableCell align="right">
                         <Chip label={`${diffPct}%`} size="small"
                           color={Number(diffPct) > 10 ? 'error' : Number(diffPct) > 5 ? 'warning' : 'default'}
@@ -170,7 +273,7 @@ const QuotationComparison: React.FC = () => {
             </Table>
           </TableContainer>
 
-          {/* ── 재질 변경 하이라이트 ── */}
+          {/* 재질 변경 하이라이트 */}
           <Paper sx={{ p: 3, mb: 3, borderRadius: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
               <SwapHoriz color="warning" />
@@ -181,21 +284,25 @@ const QuotationComparison: React.FC = () => {
                 <TableHead>
                   <TableRow sx={{ bgcolor: '#f5f7fa' }}>
                     <TableCell sx={{ fontWeight: 700 }}>부품</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>입찰</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>OEM</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>MOBIS</TableCell>
+                    {selectedQuotations.map(qid => {
+                      const q = quotations.find(qq => qq.id === qid)!;
+                      return <TableCell key={qid} sx={{ fontWeight: 700 }}>{q.label}</TableCell>;
+                    })}
                     <TableCell sx={{ fontWeight: 700 }}>변경 여부</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {mockMaterials.map((m, i) => (
+                  {mockMaterialChanges.map((m, i) => (
                     <TableRow key={i} sx={{ bgcolor: m.changed ? '#fff3e0' : undefined }}>
                       <TableCell sx={{ fontWeight: 600 }}>{m.part}</TableCell>
-                      <TableCell>{m.bidder}</TableCell>
-                      <TableCell>{m.oem}</TableCell>
-                      <TableCell sx={{ fontWeight: m.changed ? 700 : 400, color: m.changed ? '#e65100' : undefined }}>
-                        {m.mobis}
-                      </TableCell>
+                      {selectedQuotations.map(qid => (
+                        <TableCell key={qid} sx={{
+                          fontWeight: m.changed ? 700 : 400,
+                          color: m.changed && m.values[qid] !== m.values[selectedQuotations[0]] ? '#e65100' : undefined,
+                        }}>
+                          {m.values[qid] || '-'}
+                        </TableCell>
+                      ))}
                       <TableCell>
                         {m.changed ? (
                           <Chip label="재질 변경" size="small" color="warning" sx={{ fontWeight: 700 }} />
@@ -212,25 +319,22 @@ const QuotationComparison: React.FC = () => {
         </>
       )}
 
-      {!selected && (
-        <Paper sx={{ p: 6, textAlign: 'center', borderRadius: 2 }}>
-          <Typography variant="h6" color="text.secondary" sx={{ mb: 1 }}>
-            제품을 선택해주세요
-          </Typography>
-          <Typography variant="body2" color="text.disabled">
-            제품 선택 후 입찰/OEM/MOBIS 3자 견적 비교 결과가 표시됩니다.
-          </Typography>
+      {/* 빈 상태 */}
+      {!selectedProduct && (
+        <Paper sx={{ p: 6, textAlign: 'center', borderRadius: 2, mt: 3 }}>
+          <Typography variant="h6" color="text.secondary" sx={{ mb: 1 }}>위에서 아이템을 선택해주세요</Typography>
+          <Typography variant="body2" color="text.disabled">아이템 → 견적서 선택 후 비교 결과가 표시됩니다.</Typography>
         </Paper>
       )}
 
-      {/* ── 네비게이션 ── */}
+      {/* 네비게이션 */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
-        <Button variant="outlined" startIcon={<NavigateBefore />} onClick={() => navigate('/verification')}>
-          검증으로
+        <Button variant="outlined" startIcon={<NavigateBefore />} onClick={() => navigate('/analysis')}>
+          분석으로
         </Button>
         <Button variant="contained" endIcon={<NavigateNext />}
           onClick={() => navigate('/report')}
-          disabled={!selected}
+          disabled={selectionStep < 2}
           sx={{ bgcolor: '#003875', px: 4 }}>
           리포트로 이동
         </Button>

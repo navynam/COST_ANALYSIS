@@ -4,10 +4,10 @@ import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import MainLayout from './layouts/MainLayout';
 import { AuthProvider } from './contexts/AuthContext';
 
-// 메인 플로우 4단계
+// 메인 플로우 5단계
 import Parsing from './pages/Parsing';
 import ParsedDataReview from './pages/ParsedDataReview';
-import Verification from './pages/Verification';
+import Analysis from './pages/Analysis';
 import QuotationComparison from './pages/QuotationComparison';
 
 // 보조 페이지
@@ -37,8 +37,8 @@ export default function App() {
           <Route element={<MainLayout />}>
             {/* 메인 플로우 */}
             <Route path="/parsing" element={<Parsing />} />
-            <Route path="/review" element={<ParsedDataReview />} />
-            <Route path="/verification" element={<Verification />} />
+            <Route path="/verification" element={<ParsedDataReview />} />
+            <Route path="/analysis" element={<Analysis />} />
             <Route path="/comparison" element={<QuotationComparison />} />
 
             {/* 보조 페이지 */}

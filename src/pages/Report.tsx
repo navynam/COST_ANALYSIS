@@ -211,7 +211,7 @@ const Report: React.FC = () => {
       {/* ── 네비게이션 ── */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
         <Button variant="outlined" startIcon={<NavigateBefore />} onClick={() => navigate('/comparison')}>
-          견적 비교로
+          비교로
         </Button>
         <Typography variant="body2" color="text.secondary" sx={{ lineHeight: '36px' }}>
           ✅ 분석 플로우 완료

@@ -7,10 +7,10 @@ import { Box, Stepper, Step, StepLabel, StepConnector, stepConnectorClasses, sty
 import { CloudUpload, FactCheck, Rule, CompareArrows, Assessment } from '@mui/icons-material';
 
 const steps = [
-  { label: '파싱 (업로드)', icon: <CloudUpload /> },
-  { label: '데이터 검토', icon: <FactCheck /> },
-  { label: '검증', icon: <Rule /> },
-  { label: '견적 비교', icon: <CompareArrows /> },
+  { label: '파싱', icon: <CloudUpload /> },
+  { label: '검증', icon: <FactCheck /> },
+  { label: '분석', icon: <Rule /> },
+  { label: '비교', icon: <CompareArrows /> },
   { label: '리포트', icon: <Assessment /> },
 ];
 

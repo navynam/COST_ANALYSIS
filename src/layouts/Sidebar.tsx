@@ -9,10 +9,10 @@ import {
 } from '@mui/icons-material';
 
 const mainFlowItems = [
-  { label: '① 파싱 (업로드)', icon: <Description />, path: '/parsing' },
-  { label: '② 데이터 검토', icon: <FactCheck />, path: '/review' },
-  { label: '③ 검증', icon: <Assessment />, path: '/verification' },
-  { label: '④ 견적서 비교', icon: <CompareArrows />, path: '/comparison' },
+  { label: '① 파싱', icon: <Description />, path: '/parsing' },
+  { label: '② 검증', icon: <FactCheck />, path: '/verification' },
+  { label: '③ 분석', icon: <Assessment />, path: '/analysis' },
+  { label: '④ 비교', icon: <CompareArrows />, path: '/comparison' },
   { label: '⑤ 리포트', icon: <Insights />, path: '/report' },
 ];
 

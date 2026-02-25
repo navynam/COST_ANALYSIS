@@ -280,10 +280,10 @@ const Parsing: React.FC = () => {
               <Button
                 variant="contained"
                 endIcon={<NavigateNext />}
-                onClick={() => navigate('/review')}
+                onClick={() => navigate('/verification')}
                 sx={{ bgcolor: '#003875', px: 4 }}
               >
-                데이터 검토로 이동
+                검증으로 이동
               </Button>
             </Box>
           </Paper>
