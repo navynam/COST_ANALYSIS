@@ -1,292 +1,372 @@
 /**
- * @fileoverview ② 파싱 데이터 검토 페이지
- * @description 파싱된 데이터가 정확한지 확인 + 수동 보정. 매핑 정확도 사전 확인.
+ * @fileoverview ② 데이터 검토 페이지 - UI 고도화
+ * @description 좌우 Split, 원본↔구조화, 매핑 상태 칩, 3자비교 탭, 검토 완료 버튼
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-  Box, Typography, Button, Card, CardContent, Grid, Chip,
+  Box, Typography, Paper, Button, Chip, Tab, Tabs, Grid,
+  Accordion, AccordionSummary, AccordionDetails,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Paper, TextField, IconButton, Alert, CircularProgress, LinearProgress,
-  Select, MenuItem, FormControl, InputLabel, Tooltip,
+  Alert, Divider, Card, CardContent, Tooltip,
 } from '@mui/material';
-import { Check, Edit, PlayArrow, Save, Cancel } from '@mui/icons-material';
-import { mappingAPI } from '../services/mapping';
-import { parsingAPI } from '../services/parsing';
-import type { MappingItem, MappingSummary } from '../types/mapping';
+import {
+  ExpandMore, CheckCircle, Warning, Error as ErrorIcon, NavigateNext,
+  NavigateBefore,
+} from '@mui/icons-material';
+import WorkflowStepper from '../components/WorkflowStepper';
+import { useNavigate } from 'react-router-dom';
 
-const statusColor = (status: string) => {
+/* ── Mock: 원본 셀 데이터 ── */
+const mockRawData = [
+  { row: 3, col: 'A', value: 'DUCT ASSY-SD A/VENT, LH', type: '부품명' },
+  { row: 3, col: 'B', value: 'PP+TD20', type: '재질' },
+  { row: 3, col: 'C', value: '0.45', type: '중량(kg)' },
+  { row: 4, col: 'A', value: '재료비', type: '섹션 헤더' },
+  { row: 5, col: 'A', value: 'PP+TD20 원재료', type: '항목명' },
+  { row: 5, col: 'B', value: '2,150', type: '단가' },
+  { row: 5, col: 'C', value: '0.45', type: '수량(kg)' },
+  { row: 5, col: 'D', value: '967', type: '금액' },
+  { row: 6, col: 'A', value: 'Masterbatch', type: '항목명' },
+  { row: 6, col: 'B', value: '4,500', type: '단가' },
+  { row: 6, col: 'C', value: '0.02', type: '수량(kg)' },
+  { row: 6, col: 'D', value: '90', type: '금액' },
+  { row: 7, col: 'A', value: '재료비 소계', type: '소계' },
+  { row: 7, col: 'D', value: '1,057', type: '금액' },
+  { row: 8, col: 'A', value: '가공비', type: '섹션 헤더' },
+  { row: 9, col: 'A', value: '노무비', type: '항목명' },
+  { row: 9, col: 'D', value: '850', type: '금액' },
+  { row: 10, col: 'A', value: '경비', type: '항목명' },
+  { row: 10, col: 'D', value: '620', type: '금액' },
+  { row: 11, col: 'A', value: '가공비 소계', type: '소계' },
+  { row: 11, col: 'D', value: '1,470', type: '금액' },
+];
+
+/* ── Mock: 구조화 데이터 ── */
+interface StructuredItem {
+  name: string;
+  unitPrice?: number;
+  quantity?: number;
+  amount: number;
+  status: 'ok' | 'warn' | 'error';
+  note?: string;
+}
+
+interface Section {
+  name: string;
+  items: StructuredItem[];
+  subtotal: number;
+}
+
+const mockStructured: Section[] = [
+  {
+    name: '재료비',
+    subtotal: 1057,
+    items: [
+      { name: 'PP+TD20 원재료', unitPrice: 2150, quantity: 0.45, amount: 967, status: 'ok' },
+      { name: 'Masterbatch', unitPrice: 4500, quantity: 0.02, amount: 90, status: 'ok' },
+    ],
+  },
+  {
+    name: '가공비',
+    subtotal: 1470,
+    items: [
+      { name: '노무비', amount: 850, status: 'ok' },
+      { name: '경비', amount: 620, status: 'warn', note: '전분기 대비 18% 상승' },
+    ],
+  },
+  {
+    name: '제조원가',
+    subtotal: 2527,
+    items: [
+      { name: '재료비+가공비', amount: 2527, status: 'ok' },
+    ],
+  },
+  {
+    name: '금형비',
+    subtotal: 15000000,
+    items: [
+      { name: '금형 제작비', amount: 12000000, status: 'ok' },
+      { name: '금형 수정비', amount: 3000000, status: 'error', note: '단가 미기재' },
+    ],
+  },
+];
+
+/* ── Mock: 3자비교 데이터 ── */
+const mock3Way = {
+  bidder: [
+    { item: '재료비', amount: 1057 },
+    { item: '가공비', amount: 1470 },
+    { item: '경비', amount: 620 },
+    { item: '이윤', amount: 380 },
+    { item: '총원가', amount: 3527 },
+  ],
+  oem: [
+    { item: '재료비', amount: 1120 },
+    { item: '가공비', amount: 1380 },
+    { item: '경비', amount: 590 },
+    { item: '이윤', amount: 350 },
+    { item: '총원가', amount: 3440 },
+  ],
+  mobis: [
+    { item: '재료비', amount: 1090 },
+    { item: '가공비', amount: 1500 },
+    { item: '경비', amount: 610 },
+    { item: '이윤', amount: 370 },
+    { item: '총원가', amount: 3570 },
+  ],
+};
+
+const statusChip = (status: 'ok' | 'warn' | 'error') => {
   switch (status) {
-    case 'auto_mapped': return '#4caf50';
-    case 'needs_review': return '#ff9800';
-    case 'manual': return '#f44336';
-    default: return '#9e9e9e';
+    case 'ok': return <Chip icon={<CheckCircle />} label="정상" size="small" color="success" sx={{ fontWeight: 600 }} />;
+    case 'warn': return <Chip icon={<Warning />} label="확인필요" size="small" color="warning" sx={{ fontWeight: 600 }} />;
+    case 'error': return <Chip icon={<ErrorIcon />} label="오류" size="small" color="error" sx={{ fontWeight: 600 }} />;
   }
 };
 
-const statusLabel = (status: string) => {
-  switch (status) {
-    case 'auto_mapped': return '자동매핑';
-    case 'needs_review': return '검토필요';
-    case 'manual': return '수동매핑';
-    default: return status;
-  }
-};
+const fmt = (n: number) => n.toLocaleString('ko-KR');
 
 const ParsedDataReview: React.FC = () => {
-  const [estimates, setEstimates] = useState<any[]>([]);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [mappingItems, setMappingItems] = useState<MappingItem[]>([]);
-  const [summary, setSummary] = useState<MappingSummary | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [editValue, setEditValue] = useState('');
+  const navigate = useNavigate();
+  const [tab3Way, setTab3Way] = useState(0);
+  const [reviewed, setReviewed] = useState(false);
+  const [highlightRow, setHighlightRow] = useState<number | null>(null);
 
-  useEffect(() => {
-    loadEstimates();
-  }, []);
-
-  const loadEstimates = async () => {
-    try {
-      const res = await parsingAPI.getEstimates({ page: 1, size: 100, status: 'parsed' });
-      setEstimates(res.data.data?.items || []);
-    } catch {
-      try {
-        const res = await parsingAPI.getEstimates({ page: 1, size: 100 });
-        setEstimates(res.data.data?.items || []);
-      } catch {}
-    }
-  };
-
-  const runAutoMap = async () => {
-    if (!selectedId) return;
-    setLoading(true);
-    setError('');
-    try {
-      await mappingAPI.autoMap(selectedId);
-      await loadMapping(selectedId);
-    } catch (e: any) {
-      setError(e.response?.data?.detail || '자동 매핑 실행 실패');
-    }
-    setLoading(false);
-  };
-
-  const loadMapping = async (id: number) => {
-    try {
-      const res = await mappingAPI.getMapping(id);
-      const data = res.data.data;
-      setMappingItems(data.items);
-      setSummary(data.summary);
-    } catch {
-      setMappingItems([]);
-      setSummary(null);
-    }
-  };
-
-  const handleEdit = (index: number, currentName: string) => {
-    setEditingIndex(index);
-    setEditValue(currentName);
-  };
-
-  const handleSave = async (index: number) => {
-    if (!selectedId) return;
-    try {
-      await mappingAPI.updateItem(selectedId, index, { confirmed_name: editValue });
-      setEditingIndex(null);
-      await loadMapping(selectedId);
-    } catch (e: any) {
-      setError('수정 실패');
-    }
-  };
-
-  const handleSelectEstimate = (id: number) => {
-    setSelectedId(id);
-    loadMapping(id);
-  };
+  const totalOk = mockStructured.flatMap(s => s.items).filter(i => i.status === 'ok').length;
+  const totalWarn = mockStructured.flatMap(s => s.items).filter(i => i.status === 'warn').length;
+  const totalError = mockStructured.flatMap(s => s.items).filter(i => i.status === 'error').length;
 
   return (
-    <Box sx={{ p: 3, maxWidth: 1400, mx: 'auto' }}>
-      <Typography variant="h5" fontWeight={700} sx={{ mb: 1, color: '#003875' }}>
-        ② 파싱 데이터 검토
-      </Typography>
+    <Box sx={{ maxWidth: 1400, mx: 'auto' }}>
+      <WorkflowStepper activeStep={1} />
+
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+        <Typography variant="h5" fontWeight={700} color="#003875">데이터 검토</Typography>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Chip icon={<CheckCircle />} label={`정상 ${totalOk}`} size="small" color="success" variant="outlined" />
+          <Chip icon={<Warning />} label={`확인필요 ${totalWarn}`} size="small" color="warning" variant="outlined" />
+          <Chip icon={<ErrorIcon />} label={`오류 ${totalError}`} size="small" color="error" variant="outlined" />
+        </Box>
+      </Box>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        파싱된 데이터가 정확한지 확인하고, 매핑이 잘못된 항목은 수동으로 보정합니다. 매핑 정확도를 사전에 확인하세요.
+        좌측 원본 데이터와 우측 구조화 결과를 대조하여 매핑 정확도를 확인하세요.
       </Typography>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>{error}</Alert>}
+      {/* ── 좌우 Split 레이아웃 ── */}
+      <Grid container spacing={2} sx={{ mb: 3 }}>
+        {/* 좌: 원본 데이터 */}
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Paper sx={{ p: 2, borderRadius: 2, height: '100%' }}>
+            <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, color: '#003875' }}>
+              📄 원본 데이터 (셀 위치)
+            </Typography>
+            <TableContainer sx={{ maxHeight: 500 }}>
+              <Table size="small" stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 700, bgcolor: '#f5f7fa', width: 60 }}>행</TableCell>
+                    <TableCell sx={{ fontWeight: 700, bgcolor: '#f5f7fa', width: 40 }}>열</TableCell>
+                    <TableCell sx={{ fontWeight: 700, bgcolor: '#f5f7fa' }}>값</TableCell>
+                    <TableCell sx={{ fontWeight: 700, bgcolor: '#f5f7fa', width: 80 }}>유형</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {mockRawData.map((cell, i) => (
+                    <TableRow
+                      key={i}
+                      hover
+                      selected={highlightRow === cell.row}
+                      onClick={() => setHighlightRow(cell.row)}
+                      sx={{
+                        cursor: 'pointer',
+                        bgcolor: cell.type === '섹션 헤더' ? '#e8eef5' : cell.type === '소계' ? '#fff8e1' : undefined,
+                      }}
+                    >
+                      <TableCell sx={{ fontFamily: 'monospace', color: '#666' }}>{cell.row}</TableCell>
+                      <TableCell sx={{ fontFamily: 'monospace', color: '#666' }}>{cell.col}</TableCell>
+                      <TableCell sx={{ fontWeight: cell.type === '섹션 헤더' || cell.type === '소계' ? 700 : 400 }}>
+                        {cell.value}
+                      </TableCell>
+                      <TableCell>
+                        <Chip label={cell.type} size="small" variant="outlined"
+                          sx={{ fontSize: 11, height: 22 }} />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
+        </Grid>
 
-      {/* 견적서 선택 + 자동매핑 실행 */}
-      <Paper sx={{ p: 2, mb: 3, display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-        <FormControl sx={{ minWidth: 300 }}>
-          <InputLabel>검토할 견적서 선택</InputLabel>
-          <Select
-            value={selectedId || ''}
-            label="검토할 견적서 선택"
-            onChange={(e) => handleSelectEstimate(Number(e.target.value))}
-          >
-            {estimates.map((est) => (
-              <MenuItem key={est.id} value={est.id}>
-                [{est.id}] {est.file_name} ({est.status})
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <Button
-          variant="contained"
-          startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <PlayArrow />}
-          onClick={runAutoMap}
-          disabled={!selectedId || loading}
-          sx={{ bgcolor: '#003875' }}
-        >
-          자동 매핑 실행
-        </Button>
+        {/* 우: 구조화 트리/아코디언 */}
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Paper sx={{ p: 2, borderRadius: 2, height: '100%' }}>
+            <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, color: '#003875' }}>
+              🏗️ 구조화된 데이터 (섹션별)
+            </Typography>
+            <Box sx={{ maxHeight: 500, overflow: 'auto' }}>
+              {mockStructured.map((section, si) => (
+                <Accordion key={si} defaultExpanded={si < 2} sx={{ '&:before': { display: 'none' }, boxShadow: 'none', border: '1px solid #e0e0e0', mb: 1 }}>
+                  <AccordionSummary expandIcon={<ExpandMore />} sx={{ bgcolor: '#f8f9fc' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
+                      <Typography fontWeight={700}>{section.name}</Typography>
+                      <Box sx={{ flex: 1 }} />
+                      <Chip label={`₩${fmt(section.subtotal)}`} size="small"
+                        sx={{ bgcolor: '#003875', color: '#fff', fontWeight: 700 }} />
+                      <Chip label={`${section.items.length}건`} size="small" variant="outlined" />
+                    </Box>
+                  </AccordionSummary>
+                  <AccordionDetails sx={{ p: 0 }}>
+                    <Table size="small">
+                      <TableBody>
+                        {section.items.map((item, ii) => (
+                          <TableRow key={ii} hover>
+                            <TableCell sx={{ pl: 3 }}>{item.name}</TableCell>
+                            <TableCell align="right" sx={{ fontFamily: 'monospace' }}>
+                              {item.unitPrice ? `₩${fmt(item.unitPrice)}` : ''}
+                            </TableCell>
+                            <TableCell align="right" sx={{ fontFamily: 'monospace' }}>
+                              {item.quantity ?? ''}
+                            </TableCell>
+                            <TableCell align="right" sx={{ fontWeight: 600, fontFamily: 'monospace' }}>
+                              ₩{fmt(item.amount)}
+                            </TableCell>
+                            <TableCell align="center">{statusChip(item.status)}</TableCell>
+                            <TableCell>
+                              {item.note && (
+                                <Tooltip title={item.note}>
+                                  <Typography variant="caption" color="warning.main" sx={{ cursor: 'help' }}>
+                                    ⚠ {item.note}
+                                  </Typography>
+                                </Tooltip>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </AccordionDetails>
+                </Accordion>
+              ))}
+            </Box>
+          </Paper>
+        </Grid>
+      </Grid>
+
+      {/* ── 3자 비교 탭 ── */}
+      <Paper sx={{ mb: 3, borderRadius: 2, overflow: 'hidden' }}>
+        <Box sx={{ px: 2, pt: 1, bgcolor: '#f8f9fc' }}>
+          <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1, color: '#003875' }}>
+            📊 3자 비교 (입찰 / OEM / MOBIS)
+          </Typography>
+          <Tabs value={tab3Way} onChange={(_, v) => setTab3Way(v)} indicatorColor="primary">
+            <Tab label="입찰" />
+            <Tab label="OEM" />
+            <Tab label="MOBIS" />
+            <Tab label="나란히 비교" />
+          </Tabs>
+        </Box>
+        <Box sx={{ p: 2 }}>
+          {tab3Way < 3 ? (
+            <TableContainer>
+              <Table size="small">
+                <TableHead>
+                  <TableRow sx={{ bgcolor: '#f5f5f5' }}>
+                    <TableCell sx={{ fontWeight: 700 }}>항목</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 700 }}>금액 (원)</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {(tab3Way === 0 ? mock3Way.bidder : tab3Way === 1 ? mock3Way.oem : mock3Way.mobis).map((r, i) => (
+                    <TableRow key={i} hover sx={{ bgcolor: r.item === '총원가' ? '#e8eef5' : undefined }}>
+                      <TableCell sx={{ fontWeight: r.item === '총원가' ? 700 : 400 }}>{r.item}</TableCell>
+                      <TableCell align="right" sx={{ fontWeight: r.item === '총원가' ? 700 : 400, fontFamily: 'monospace' }}>
+                        ₩{fmt(r.amount)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <TableContainer>
+              <Table size="small">
+                <TableHead>
+                  <TableRow sx={{ bgcolor: '#f5f5f5' }}>
+                    <TableCell sx={{ fontWeight: 700 }}>항목</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 700 }}>입찰</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 700 }}>OEM</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 700 }}>MOBIS</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 700 }}>최대 차이</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {mock3Way.bidder.map((r, i) => {
+                    const oemVal = mock3Way.oem[i].amount;
+                    const mobisVal = mock3Way.mobis[i].amount;
+                    const vals = [r.amount, oemVal, mobisVal];
+                    const minV = Math.min(...vals);
+                    const maxV = Math.max(...vals);
+                    const diff = minV > 0 ? ((maxV - minV) / minV * 100).toFixed(1) : '-';
+                    return (
+                      <TableRow key={i} hover sx={{ bgcolor: r.item === '총원가' ? '#e8eef5' : undefined }}>
+                        <TableCell sx={{ fontWeight: r.item === '총원가' ? 700 : 400 }}>{r.item}</TableCell>
+                        <TableCell align="right" sx={{
+                          fontFamily: 'monospace',
+                          bgcolor: r.amount === maxV && vals.filter(v => v === maxV).length === 1 ? '#ffebee' : undefined,
+                          fontWeight: r.amount === minV ? 700 : 400,
+                        }}>₩{fmt(r.amount)}</TableCell>
+                        <TableCell align="right" sx={{
+                          fontFamily: 'monospace',
+                          bgcolor: oemVal === maxV && vals.filter(v => v === maxV).length === 1 ? '#ffebee' : undefined,
+                          fontWeight: oemVal === minV ? 700 : 400,
+                        }}>₩{fmt(oemVal)}</TableCell>
+                        <TableCell align="right" sx={{
+                          fontFamily: 'monospace',
+                          bgcolor: mobisVal === maxV && vals.filter(v => v === maxV).length === 1 ? '#ffebee' : undefined,
+                          fontWeight: mobisVal === minV ? 700 : 400,
+                        }}>₩{fmt(mobisVal)}</TableCell>
+                        <TableCell align="right">
+                          <Chip label={`${diff}%`} size="small" variant="outlined"
+                            color={Number(diff) > 5 ? 'warning' : 'default'} />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </Box>
       </Paper>
 
-      {/* 매핑 정확도 요약 카드 */}
-      {summary && (
-        <Grid container spacing={2} sx={{ mb: 3 }}>
-          {[
-            { label: '전체 항목', value: summary.total, color: '#1976d2' },
-            { label: '자동매핑 (정확)', value: summary.auto_mapped, color: '#4caf50' },
-            { label: '검토 필요', value: summary.needs_review, color: '#ff9800' },
-            { label: '수동 보정 필요', value: summary.manual, color: '#f44336' },
-          ].map((card) => (
-            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={card.label}>
-              <Card sx={{ borderLeft: `4px solid ${card.color}` }}>
-                <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                  <Typography variant="h4" fontWeight="bold" color={card.color}>
-                    {card.value}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {card.label}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+      {/* ── 검토 완료 / 네비게이션 ── */}
+      {reviewed && (
+        <Alert severity="success" sx={{ mb: 2 }}>
+          데이터 검토가 완료되었습니다. 검증 단계로 진행할 수 있습니다.
+        </Alert>
       )}
 
-      {/* 매핑 정확도 바 */}
-      {summary && summary.total > 0 && (
-        <Paper sx={{ p: 2, mb: 3 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Typography variant="body2" fontWeight={600}>매핑 정확도:</Typography>
-            <LinearProgress
-              variant="determinate"
-              value={(summary.auto_mapped / summary.total) * 100}
-              sx={{ flex: 1, height: 8, borderRadius: 4 }}
-            />
-            <Typography variant="body2" fontWeight={700} color="#003875">
-              {((summary.auto_mapped / summary.total) * 100).toFixed(1)}%
-            </Typography>
-          </Box>
-        </Paper>
-      )}
-
-      {/* 매핑 결과 테이블 */}
-      {mappingItems.length > 0 && (
-        <TableContainer component={Paper}>
-          <Table size="small">
-            <TableHead>
-              <TableRow sx={{ bgcolor: '#f5f5f5' }}>
-                <TableCell width={50}>#</TableCell>
-                <TableCell>원본 항목명</TableCell>
-                <TableCell>→</TableCell>
-                <TableCell>표준 매핑명</TableCell>
-                <TableCell>카테고리</TableCell>
-                <TableCell width={80}>신뢰도</TableCell>
-                <TableCell width={100}>상태</TableCell>
-                <TableCell width={80}>액션</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {mappingItems.map((item) => (
-                <TableRow
-                  key={item.item_index}
-                  sx={{
-                    bgcolor: item.confirmed ? '#f1f8e9' : item.status === 'needs_review' ? '#fff8e1' : 'inherit',
-                    '&:hover': { bgcolor: '#e3f2fd' }
-                  }}
-                >
-                  <TableCell>{item.item_index + 1}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>{item.original_name}</TableCell>
-                  <TableCell>→</TableCell>
-                  <TableCell>
-                    {editingIndex === item.item_index ? (
-                      <TextField
-                        size="small"
-                        value={editValue}
-                        onChange={(e) => setEditValue(e.target.value)}
-                        autoFocus
-                        fullWidth
-                      />
-                    ) : (
-                      <Typography sx={{ color: statusColor(item.status), fontWeight: 'bold' }}>
-                        {item.matched_name || '-'}
-                      </Typography>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Chip label={item.category || '-'} size="small" variant="outlined" />
-                  </TableCell>
-                  <TableCell>
-                    <Typography sx={{ color: statusColor(item.status), fontWeight: 'bold' }}>
-                      {(item.score * 100).toFixed(0)}%
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={statusLabel(item.status)}
-                      size="small"
-                      sx={{ bgcolor: statusColor(item.status), color: 'white', fontWeight: 'bold' }}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    {editingIndex === item.item_index ? (
-                      <>
-                        <Tooltip title="저장">
-                          <IconButton size="small" color="primary" onClick={() => handleSave(item.item_index)}>
-                            <Save />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="취소">
-                          <IconButton size="small" onClick={() => setEditingIndex(null)}>
-                            <Cancel />
-                          </IconButton>
-                        </Tooltip>
-                      </>
-                    ) : (
-                      <Tooltip title="수동 보정">
-                        <IconButton size="small" onClick={() => handleEdit(item.item_index, item.matched_name)}>
-                          <Edit />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-                    {item.confirmed && <Check fontSize="small" color="success" />}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
-
-      {selectedId && mappingItems.length === 0 && !loading && (
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Typography color="text.secondary">
-            매핑 데이터가 없습니다. "자동 매핑 실행" 버튼을 클릭하여 매핑을 시작하세요.
-          </Typography>
-        </Paper>
-      )}
-
-      {!selectedId && (
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Typography color="text.secondary">
-            검토할 견적서를 선택하세요. 파싱이 완료된 견적서만 표시됩니다.
-          </Typography>
-        </Paper>
-      )}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Button variant="outlined" startIcon={<NavigateBefore />} onClick={() => navigate('/parsing')}>
+          파싱으로 돌아가기
+        </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          {!reviewed && (
+            <Button variant="contained" color="success" startIcon={<CheckCircle />}
+              onClick={() => setReviewed(true)} sx={{ fontWeight: 700 }}>
+              검토 완료
+            </Button>
+          )}
+          <Button variant="contained" endIcon={<NavigateNext />}
+            onClick={() => navigate('/verification')}
+            disabled={!reviewed}
+            sx={{ bgcolor: '#003875', px: 4 }}>
+            검증으로 이동
+          </Button>
+        </Box>
+      </Box>
     </Box>
   );
 };

@@ -13,11 +13,11 @@ const mainFlowItems = [
   { label: '② 데이터 검토', icon: <FactCheck />, path: '/review' },
   { label: '③ 검증', icon: <Assessment />, path: '/verification' },
   { label: '④ 견적서 비교', icon: <CompareArrows />, path: '/comparison' },
+  { label: '⑤ 리포트', icon: <Insights />, path: '/report' },
 ];
 
 const subMenuItems = [
   { label: '대시보드', icon: <Dashboard />, path: '/dashboard' },
-  { label: '리포트', icon: <Insights />, path: '/report' },
   { label: '모델관리', icon: <ModelTraining />, path: '/models' },
   { label: '이력/알림', icon: <History />, path: '/history' },
   { label: '설정', icon: <Settings />, path: '/settings' },

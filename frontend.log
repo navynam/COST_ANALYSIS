@@ -4942,3 +4942,1586 @@ src/pages/Verification.tsx
 
 webpack compiled with 1 warning
 No issues found.
+Compiling...
+Compiled with warnings.
+
+[eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:10:   'Alert' is defined but never used           @typescript-eslint/no-unused-vars
+  Line 10:24:  'LinearProgress' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 13:3:   'PlayArrow' is defined but never used       @typescript-eslint/no-unused-vars
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:10:   'Alert' is defined but never used           @typescript-eslint/no-unused-vars
+  Line 10:24:  'LinearProgress' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 13:3:   'PlayArrow' is defined but never used       @typescript-eslint/no-unused-vars
+
+webpack compiled with 1 warning
+No issues found.
+Compiling...
+Compiled with warnings.
+
+[eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:10:   'Alert' is defined but never used           @typescript-eslint/no-unused-vars
+  Line 10:24:  'LinearProgress' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 13:3:   'PlayArrow' is defined but never used       @typescript-eslint/no-unused-vars
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:10:   'Alert' is defined but never used           @typescript-eslint/no-unused-vars
+  Line 10:24:  'LinearProgress' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 13:3:   'PlayArrow' is defined but never used       @typescript-eslint/no-unused-vars
+
+webpack compiled with 1 warning
+ERROR in src/pages/Parsing.tsx:229:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    227 |
+    228 |             <Grid container spacing={2} sx={{ mb: 2 }}>
+  > 229 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    230 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    231 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    232 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.sheets}</Typography>
+
+ERROR in src/pages/Parsing.tsx:237:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    235 |                 </Card>
+    236 |               </Grid>
+  > 237 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    238 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    239 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    240 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.parts}</Typography>
+
+ERROR in src/pages/Parsing.tsx:245:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    243 |                 </Card>
+    244 |               </Grid>
+  > 245 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    246 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    247 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    248 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.sections.length}</Typography>
+
+ERROR in src/pages/Parsing.tsx:253:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    251 |                 </Card>
+    252 |               </Grid>
+  > 253 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    254 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    255 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    256 |                     <Typography variant="h3" fontWeight={700} color="#003875">3</Typography>
+
+Compiling...
+Compiled with warnings.
+
+[eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/ParsedDataReview.tsx
+  Line 10:10:  'Divider' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 10:19:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 10:25:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:10:   'Alert' is defined but never used           @typescript-eslint/no-unused-vars
+  Line 10:24:  'LinearProgress' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 13:3:   'PlayArrow' is defined but never used       @typescript-eslint/no-unused-vars
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/ParsedDataReview.tsx
+  Line 10:10:  'Divider' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 10:19:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 10:25:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:10:   'Alert' is defined but never used           @typescript-eslint/no-unused-vars
+  Line 10:24:  'LinearProgress' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 13:3:   'PlayArrow' is defined but never used       @typescript-eslint/no-unused-vars
+
+webpack compiled with 1 warning
+ERROR in src/pages/ParsedDataReview.tsx:158:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    156 |       <Grid container spacing={2} sx={{ mb: 3 }}>
+    157 |         {/* 좌: 원본 데이터 */}
+  > 158 |         <Grid item xs={12} md={6}>
+        |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    159 |           <Paper sx={{ p: 2, borderRadius: 2, height: '100%' }}>
+    160 |             <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, color: '#003875' }}>
+    161 |               📄 원본 데이터 (셀 위치)
+
+ERROR in src/pages/ParsedDataReview.tsx:203:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    201 |
+    202 |         {/* 우: 구조화 트리/아코디언 */}
+  > 203 |         <Grid item xs={12} md={6}>
+        |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    204 |           <Paper sx={{ p: 2, borderRadius: 2, height: '100%' }}>
+    205 |             <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, color: '#003875' }}>
+    206 |               🏗️ 구조화된 데이터 (섹션별)
+
+ERROR in src/pages/Parsing.tsx:229:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    227 |
+    228 |             <Grid container spacing={2} sx={{ mb: 2 }}>
+  > 229 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    230 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    231 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    232 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.sheets}</Typography>
+
+ERROR in src/pages/Parsing.tsx:237:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    235 |                 </Card>
+    236 |               </Grid>
+  > 237 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    238 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    239 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    240 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.parts}</Typography>
+
+ERROR in src/pages/Parsing.tsx:245:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    243 |                 </Card>
+    244 |               </Grid>
+  > 245 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    246 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    247 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    248 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.sections.length}</Typography>
+
+ERROR in src/pages/Parsing.tsx:253:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    251 |                 </Card>
+    252 |               </Grid>
+  > 253 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    254 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    255 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    256 |                     <Typography variant="h3" fontWeight={700} color="#003875">3</Typography>
+
+Compiling...
+Compiled with warnings.
+
+[eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/ParsedDataReview.tsx
+  Line 10:10:  'Divider' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 10:19:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 10:25:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/ParsedDataReview.tsx
+  Line 10:10:  'Divider' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 10:19:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 10:25:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+webpack compiled with 1 warning
+ERROR in src/pages/ParsedDataReview.tsx:158:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    156 |       <Grid container spacing={2} sx={{ mb: 3 }}>
+    157 |         {/* 좌: 원본 데이터 */}
+  > 158 |         <Grid item xs={12} md={6}>
+        |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    159 |           <Paper sx={{ p: 2, borderRadius: 2, height: '100%' }}>
+    160 |             <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, color: '#003875' }}>
+    161 |               📄 원본 데이터 (셀 위치)
+
+ERROR in src/pages/ParsedDataReview.tsx:203:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    201 |
+    202 |         {/* 우: 구조화 트리/아코디언 */}
+  > 203 |         <Grid item xs={12} md={6}>
+        |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    204 |           <Paper sx={{ p: 2, borderRadius: 2, height: '100%' }}>
+    205 |             <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, color: '#003875' }}>
+    206 |               🏗️ 구조화된 데이터 (섹션별)
+
+ERROR in src/pages/Parsing.tsx:229:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    227 |
+    228 |             <Grid container spacing={2} sx={{ mb: 2 }}>
+  > 229 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    230 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    231 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    232 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.sheets}</Typography>
+
+ERROR in src/pages/Parsing.tsx:237:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    235 |                 </Card>
+    236 |               </Grid>
+  > 237 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    238 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    239 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    240 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.parts}</Typography>
+
+ERROR in src/pages/Parsing.tsx:245:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    243 |                 </Card>
+    244 |               </Grid>
+  > 245 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    246 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    247 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    248 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.sections.length}</Typography>
+
+ERROR in src/pages/Parsing.tsx:253:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    251 |                 </Card>
+    252 |               </Grid>
+  > 253 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    254 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    255 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    256 |                     <Typography variant="h3" fontWeight={700} color="#003875">3</Typography>
+
+ERROR in src/pages/Verification.tsx:79:11
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; key: string; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; key: string; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    77 |       <Grid container spacing={2} sx={{ mb: 3 }}>
+    78 |         {summaryCards.map(c => (
+  > 79 |           <Grid item xs={12} sm={4} key={c.label}>
+       |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    80 |             <Card sx={{ borderRadius: 3, border: `2px solid ${c.color}20`, bgcolor: c.bg }}>
+    81 |               <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 3, '&:last-child': { pb: 3 } }}>
+    82 |                 <Box sx={{ color: c.color }}>{c.icon}</Box>
+
+Compiling...
+Compiled with warnings.
+
+[eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/ParsedDataReview.tsx
+  Line 10:10:  'Divider' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 10:19:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 10:25:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:35:  'Card' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 7:54:  'Grid' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 9:46:  'Tooltip' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:55:  'Divider' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:64:  'LinearProgress' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/ParsedDataReview.tsx
+  Line 10:10:  'Divider' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 10:19:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 10:25:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:35:  'Card' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 7:54:  'Grid' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 9:46:  'Tooltip' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:55:  'Divider' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:64:  'LinearProgress' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+webpack compiled with 1 warning
+ERROR in src/pages/ParsedDataReview.tsx:158:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    156 |       <Grid container spacing={2} sx={{ mb: 3 }}>
+    157 |         {/* 좌: 원본 데이터 */}
+  > 158 |         <Grid item xs={12} md={6}>
+        |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    159 |           <Paper sx={{ p: 2, borderRadius: 2, height: '100%' }}>
+    160 |             <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, color: '#003875' }}>
+    161 |               📄 원본 데이터 (셀 위치)
+
+ERROR in src/pages/ParsedDataReview.tsx:203:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    201 |
+    202 |         {/* 우: 구조화 트리/아코디언 */}
+  > 203 |         <Grid item xs={12} md={6}>
+        |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    204 |           <Paper sx={{ p: 2, borderRadius: 2, height: '100%' }}>
+    205 |             <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, color: '#003875' }}>
+    206 |               🏗️ 구조화된 데이터 (섹션별)
+
+ERROR in src/pages/Parsing.tsx:229:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    227 |
+    228 |             <Grid container spacing={2} sx={{ mb: 2 }}>
+  > 229 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    230 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    231 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    232 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.sheets}</Typography>
+
+ERROR in src/pages/Parsing.tsx:237:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    235 |                 </Card>
+    236 |               </Grid>
+  > 237 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    238 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    239 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    240 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.parts}</Typography>
+
+ERROR in src/pages/Parsing.tsx:245:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    243 |                 </Card>
+    244 |               </Grid>
+  > 245 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    246 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    247 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    248 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.sections.length}</Typography>
+
+ERROR in src/pages/Parsing.tsx:253:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    251 |                 </Card>
+    252 |               </Grid>
+  > 253 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    254 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    255 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    256 |                     <Typography variant="h3" fontWeight={700} color="#003875">3</Typography>
+
+ERROR in src/pages/QuotationComparison.tsx:193:34
+TS2322: Type '{ children: string; fontWeight: number; }' is not assignable to type 'IntrinsicAttributes & TableCellProps'.
+  Property 'fontWeight' does not exist on type 'IntrinsicAttributes & TableCellProps'.
+    191 |                   {mockMaterials.map((m, i) => (
+    192 |                     <TableRow key={i} sx={{ bgcolor: m.changed ? '#fff3e0' : undefined }}>
+  > 193 |                       <TableCell fontWeight={600}>{m.part}</TableCell>
+        |                                  ^^^^^^^^^^
+    194 |                       <TableCell>{m.bidder}</TableCell>
+    195 |                       <TableCell>{m.oem}</TableCell>
+    196 |                       <TableCell sx={{ fontWeight: m.changed ? 700 : 400, color: m.changed ? '#e65100' : undefined }}>
+
+ERROR in src/pages/Verification.tsx:79:11
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; key: string; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; key: string; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    77 |       <Grid container spacing={2} sx={{ mb: 3 }}>
+    78 |         {summaryCards.map(c => (
+  > 79 |           <Grid item xs={12} sm={4} key={c.label}>
+       |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    80 |             <Card sx={{ borderRadius: 3, border: `2px solid ${c.color}20`, bgcolor: c.bg }}>
+    81 |               <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 3, '&:last-child': { pb: 3 } }}>
+    82 |                 <Box sx={{ color: c.color }}>{c.icon}</Box>
+
+Compiling...
+Compiled with warnings.
+
+[eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/ParsedDataReview.tsx
+  Line 10:10:  'Divider' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 10:19:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 10:25:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:35:  'Card' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 7:54:  'Grid' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 9:46:  'Tooltip' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:55:  'Divider' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:64:  'LinearProgress' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/ParsedDataReview.tsx
+  Line 10:10:  'Divider' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 10:19:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 10:25:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:35:  'Card' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 7:54:  'Grid' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 9:46:  'Tooltip' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:55:  'Divider' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:64:  'LinearProgress' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+webpack compiled with 1 warning
+ERROR in src/pages/ParsedDataReview.tsx:158:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    156 |       <Grid container spacing={2} sx={{ mb: 3 }}>
+    157 |         {/* 좌: 원본 데이터 */}
+  > 158 |         <Grid item xs={12} md={6}>
+        |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    159 |           <Paper sx={{ p: 2, borderRadius: 2, height: '100%' }}>
+    160 |             <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, color: '#003875' }}>
+    161 |               📄 원본 데이터 (셀 위치)
+
+ERROR in src/pages/ParsedDataReview.tsx:203:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    201 |
+    202 |         {/* 우: 구조화 트리/아코디언 */}
+  > 203 |         <Grid item xs={12} md={6}>
+        |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    204 |           <Paper sx={{ p: 2, borderRadius: 2, height: '100%' }}>
+    205 |             <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, color: '#003875' }}>
+    206 |               🏗️ 구조화된 데이터 (섹션별)
+
+ERROR in src/pages/Parsing.tsx:229:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    227 |
+    228 |             <Grid container spacing={2} sx={{ mb: 2 }}>
+  > 229 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    230 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    231 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    232 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.sheets}</Typography>
+
+ERROR in src/pages/Parsing.tsx:237:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    235 |                 </Card>
+    236 |               </Grid>
+  > 237 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    238 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    239 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    240 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.parts}</Typography>
+
+ERROR in src/pages/Parsing.tsx:245:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    243 |                 </Card>
+    244 |               </Grid>
+  > 245 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    246 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    247 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    248 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.sections.length}</Typography>
+
+ERROR in src/pages/Parsing.tsx:253:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    251 |                 </Card>
+    252 |               </Grid>
+  > 253 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    254 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    255 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    256 |                     <Typography variant="h3" fontWeight={700} color="#003875">3</Typography>
+
+ERROR in src/pages/QuotationComparison.tsx:193:34
+TS2322: Type '{ children: string; fontWeight: number; }' is not assignable to type 'IntrinsicAttributes & TableCellProps'.
+  Property 'fontWeight' does not exist on type 'IntrinsicAttributes & TableCellProps'.
+    191 |                   {mockMaterials.map((m, i) => (
+    192 |                     <TableRow key={i} sx={{ bgcolor: m.changed ? '#fff3e0' : undefined }}>
+  > 193 |                       <TableCell fontWeight={600}>{m.part}</TableCell>
+        |                                  ^^^^^^^^^^
+    194 |                       <TableCell>{m.bidder}</TableCell>
+    195 |                       <TableCell>{m.oem}</TableCell>
+    196 |                       <TableCell sx={{ fontWeight: m.changed ? 700 : 400, color: m.changed ? '#e65100' : undefined }}>
+
+ERROR in src/pages/Report.tsx:82:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    80 |       <Grid container spacing={3}>
+    81 |         {/* ── 검증 통과율 도넛 차트 ── */}
+  > 82 |         <Grid item xs={12} md={4}>
+       |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    83 |           <Paper sx={{ p: 3, borderRadius: 2, height: '100%', textAlign: 'center' }}>
+    84 |             <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 2 }}>검증 통과율</Typography>
+    85 |             {/* CSS Donut */}
+
+ERROR in src/pages/Report.tsx:113:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    111 |
+    112 |         {/* ── 주요 이슈 Top 10 ── */}
+  > 113 |         <Grid item xs={12} md={8}>
+        |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    114 |           <Paper sx={{ p: 0, borderRadius: 2, height: '100%', overflow: 'hidden' }}>
+    115 |             <Box sx={{ p: 2, bgcolor: '#f5f7fa' }}>
+    116 |               <Typography variant="subtitle1" fontWeight={700}>🔥 주요 이슈 Top 10</Typography>
+
+ERROR in src/pages/Report.tsx:149:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    147 |
+    148 |         {/* ── 업체간 비교 요약 테이블 ── */}
+  > 149 |         <Grid item xs={12}>
+        |         ^^^^^^^^^^^^^^^^^^^
+    150 |           <Paper sx={{ borderRadius: 2, overflow: 'hidden' }}>
+    151 |             <Box sx={{ p: 2, bgcolor: '#f5f7fa' }}>
+    152 |               <Typography variant="subtitle1" fontWeight={700}>📋 업체간 비교 요약</Typography>
+
+ERROR in src/pages/Verification.tsx:79:11
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; key: string; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; key: string; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    77 |       <Grid container spacing={2} sx={{ mb: 3 }}>
+    78 |         {summaryCards.map(c => (
+  > 79 |           <Grid item xs={12} sm={4} key={c.label}>
+       |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    80 |             <Card sx={{ borderRadius: 3, border: `2px solid ${c.color}20`, bgcolor: c.bg }}>
+    81 |               <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 3, '&:last-child': { pb: 3 } }}>
+    82 |                 <Box sx={{ color: c.color }}>{c.icon}</Box>
+
+Compiling...
+Compiled with warnings.
+
+[eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/ParsedDataReview.tsx
+  Line 10:10:  'Divider' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 10:19:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 10:25:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:35:  'Card' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 7:54:  'Grid' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 9:46:  'Tooltip' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:55:  'Divider' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:64:  'LinearProgress' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/ParsedDataReview.tsx
+  Line 10:10:  'Divider' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 10:19:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 10:25:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:35:  'Card' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 7:54:  'Grid' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 9:46:  'Tooltip' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:55:  'Divider' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:64:  'LinearProgress' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+webpack compiled with 1 warning
+ERROR in src/pages/ParsedDataReview.tsx:158:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    156 |       <Grid container spacing={2} sx={{ mb: 3 }}>
+    157 |         {/* 좌: 원본 데이터 */}
+  > 158 |         <Grid item xs={12} md={6}>
+        |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    159 |           <Paper sx={{ p: 2, borderRadius: 2, height: '100%' }}>
+    160 |             <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, color: '#003875' }}>
+    161 |               📄 원본 데이터 (셀 위치)
+
+ERROR in src/pages/ParsedDataReview.tsx:203:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    201 |
+    202 |         {/* 우: 구조화 트리/아코디언 */}
+  > 203 |         <Grid item xs={12} md={6}>
+        |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    204 |           <Paper sx={{ p: 2, borderRadius: 2, height: '100%' }}>
+    205 |             <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, color: '#003875' }}>
+    206 |               🏗️ 구조화된 데이터 (섹션별)
+
+ERROR in src/pages/Parsing.tsx:229:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    227 |
+    228 |             <Grid container spacing={2} sx={{ mb: 2 }}>
+  > 229 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    230 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    231 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    232 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.sheets}</Typography>
+
+ERROR in src/pages/Parsing.tsx:237:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    235 |                 </Card>
+    236 |               </Grid>
+  > 237 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    238 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    239 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    240 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.parts}</Typography>
+
+ERROR in src/pages/Parsing.tsx:245:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    243 |                 </Card>
+    244 |               </Grid>
+  > 245 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    246 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    247 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    248 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.sections.length}</Typography>
+
+ERROR in src/pages/Parsing.tsx:253:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    251 |                 </Card>
+    252 |               </Grid>
+  > 253 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    254 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    255 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    256 |                     <Typography variant="h3" fontWeight={700} color="#003875">3</Typography>
+
+ERROR in src/pages/QuotationComparison.tsx:193:34
+TS2322: Type '{ children: string; fontWeight: number; }' is not assignable to type 'IntrinsicAttributes & TableCellProps'.
+  Property 'fontWeight' does not exist on type 'IntrinsicAttributes & TableCellProps'.
+    191 |                   {mockMaterials.map((m, i) => (
+    192 |                     <TableRow key={i} sx={{ bgcolor: m.changed ? '#fff3e0' : undefined }}>
+  > 193 |                       <TableCell fontWeight={600}>{m.part}</TableCell>
+        |                                  ^^^^^^^^^^
+    194 |                       <TableCell>{m.bidder}</TableCell>
+    195 |                       <TableCell>{m.oem}</TableCell>
+    196 |                       <TableCell sx={{ fontWeight: m.changed ? 700 : 400, color: m.changed ? '#e65100' : undefined }}>
+
+ERROR in src/pages/Report.tsx:82:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    80 |       <Grid container spacing={3}>
+    81 |         {/* ── 검증 통과율 도넛 차트 ── */}
+  > 82 |         <Grid item xs={12} md={4}>
+       |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    83 |           <Paper sx={{ p: 3, borderRadius: 2, height: '100%', textAlign: 'center' }}>
+    84 |             <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 2 }}>검증 통과율</Typography>
+    85 |             {/* CSS Donut */}
+
+ERROR in src/pages/Report.tsx:113:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    111 |
+    112 |         {/* ── 주요 이슈 Top 10 ── */}
+  > 113 |         <Grid item xs={12} md={8}>
+        |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    114 |           <Paper sx={{ p: 0, borderRadius: 2, height: '100%', overflow: 'hidden' }}>
+    115 |             <Box sx={{ p: 2, bgcolor: '#f5f7fa' }}>
+    116 |               <Typography variant="subtitle1" fontWeight={700}>🔥 주요 이슈 Top 10</Typography>
+
+ERROR in src/pages/Report.tsx:149:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    147 |
+    148 |         {/* ── 업체간 비교 요약 테이블 ── */}
+  > 149 |         <Grid item xs={12}>
+        |         ^^^^^^^^^^^^^^^^^^^
+    150 |           <Paper sx={{ borderRadius: 2, overflow: 'hidden' }}>
+    151 |             <Box sx={{ p: 2, bgcolor: '#f5f7fa' }}>
+    152 |               <Typography variant="subtitle1" fontWeight={700}>📋 업체간 비교 요약</Typography>
+
+ERROR in src/pages/Verification.tsx:79:11
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; key: string; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; key: string; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    77 |       <Grid container spacing={2} sx={{ mb: 3 }}>
+    78 |         {summaryCards.map(c => (
+  > 79 |           <Grid item xs={12} sm={4} key={c.label}>
+       |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    80 |             <Card sx={{ borderRadius: 3, border: `2px solid ${c.color}20`, bgcolor: c.bg }}>
+    81 |               <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 3, '&:last-child': { pb: 3 } }}>
+    82 |                 <Box sx={{ color: c.color }}>{c.icon}</Box>
+
+Compiling...
+Compiled with warnings.
+
+[eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/ParsedDataReview.tsx
+  Line 10:10:  'Divider' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 10:19:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 10:25:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:35:  'Card' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 7:54:  'Grid' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 9:46:  'Tooltip' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:55:  'Divider' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:64:  'LinearProgress' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/ParsedDataReview.tsx
+  Line 10:10:  'Divider' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 10:19:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 10:25:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:35:  'Card' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 7:54:  'Grid' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 9:46:  'Tooltip' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:55:  'Divider' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:64:  'LinearProgress' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+webpack compiled with 1 warning
+ERROR in src/pages/ParsedDataReview.tsx:158:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    156 |       <Grid container spacing={2} sx={{ mb: 3 }}>
+    157 |         {/* 좌: 원본 데이터 */}
+  > 158 |         <Grid item xs={12} md={6}>
+        |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    159 |           <Paper sx={{ p: 2, borderRadius: 2, height: '100%' }}>
+    160 |             <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, color: '#003875' }}>
+    161 |               📄 원본 데이터 (셀 위치)
+
+ERROR in src/pages/ParsedDataReview.tsx:203:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    201 |
+    202 |         {/* 우: 구조화 트리/아코디언 */}
+  > 203 |         <Grid item xs={12} md={6}>
+        |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    204 |           <Paper sx={{ p: 2, borderRadius: 2, height: '100%' }}>
+    205 |             <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, color: '#003875' }}>
+    206 |               🏗️ 구조화된 데이터 (섹션별)
+
+ERROR in src/pages/Parsing.tsx:229:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    227 |
+    228 |             <Grid container spacing={2} sx={{ mb: 2 }}>
+  > 229 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    230 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    231 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    232 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.sheets}</Typography>
+
+ERROR in src/pages/Parsing.tsx:237:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    235 |                 </Card>
+    236 |               </Grid>
+  > 237 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    238 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    239 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    240 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.parts}</Typography>
+
+ERROR in src/pages/Parsing.tsx:245:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    243 |                 </Card>
+    244 |               </Grid>
+  > 245 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    246 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    247 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    248 |                     <Typography variant="h3" fontWeight={700} color="#003875">{mockSummary.sections.length}</Typography>
+
+ERROR in src/pages/Parsing.tsx:253:15
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    251 |                 </Card>
+    252 |               </Grid>
+  > 253 |               <Grid item xs={6} sm={3}>
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    254 |                 <Card variant="outlined" sx={{ textAlign: 'center', bgcolor: '#fff' }}>
+    255 |                   <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+    256 |                     <Typography variant="h3" fontWeight={700} color="#003875">3</Typography>
+
+ERROR in src/pages/QuotationComparison.tsx:193:34
+TS2322: Type '{ children: string; fontWeight: number; }' is not assignable to type 'IntrinsicAttributes & TableCellProps'.
+  Property 'fontWeight' does not exist on type 'IntrinsicAttributes & TableCellProps'.
+    191 |                   {mockMaterials.map((m, i) => (
+    192 |                     <TableRow key={i} sx={{ bgcolor: m.changed ? '#fff3e0' : undefined }}>
+  > 193 |                       <TableCell fontWeight={600}>{m.part}</TableCell>
+        |                                  ^^^^^^^^^^
+    194 |                       <TableCell>{m.bidder}</TableCell>
+    195 |                       <TableCell>{m.oem}</TableCell>
+    196 |                       <TableCell sx={{ fontWeight: m.changed ? 700 : 400, color: m.changed ? '#e65100' : undefined }}>
+
+ERROR in src/pages/Report.tsx:82:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    80 |       <Grid container spacing={3}>
+    81 |         {/* ── 검증 통과율 도넛 차트 ── */}
+  > 82 |         <Grid item xs={12} md={4}>
+       |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    83 |           <Paper sx={{ p: 3, borderRadius: 2, height: '100%', textAlign: 'center' }}>
+    84 |             <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 2 }}>검증 통과율</Typography>
+    85 |             {/* CSS Donut */}
+
+ERROR in src/pages/Report.tsx:113:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    111 |
+    112 |         {/* ── 주요 이슈 Top 10 ── */}
+  > 113 |         <Grid item xs={12} md={8}>
+        |         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    114 |           <Paper sx={{ p: 0, borderRadius: 2, height: '100%', overflow: 'hidden' }}>
+    115 |             <Box sx={{ p: 2, bgcolor: '#f5f7fa' }}>
+    116 |               <Typography variant="subtitle1" fontWeight={700}>🔥 주요 이슈 Top 10</Typography>
+
+ERROR in src/pages/Report.tsx:149:9
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    147 |
+    148 |         {/* ── 업체간 비교 요약 테이블 ── */}
+  > 149 |         <Grid item xs={12}>
+        |         ^^^^^^^^^^^^^^^^^^^
+    150 |           <Paper sx={{ borderRadius: 2, overflow: 'hidden' }}>
+    151 |             <Box sx={{ p: 2, bgcolor: '#f5f7fa' }}>
+    152 |               <Typography variant="subtitle1" fontWeight={700}>📋 업체간 비교 요약</Typography>
+
+ERROR in src/pages/Verification.tsx:79:11
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; item: true; xs: number; sm: number; key: string; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; item: true; xs: number; sm: number; key: string; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'item' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+    77 |       <Grid container spacing={2} sx={{ mb: 3 }}>
+    78 |         {summaryCards.map(c => (
+  > 79 |           <Grid item xs={12} sm={4} key={c.label}>
+       |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    80 |             <Card sx={{ borderRadius: 3, border: `2px solid ${c.color}20`, bgcolor: c.bg }}>
+    81 |               <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 3, '&:last-child': { pb: 3 } }}>
+    82 |                 <Box sx={{ color: c.color }}>{c.icon}</Box>
+
+Compiling...
+Compiled with warnings.
+
+[eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/ParsedDataReview.tsx
+  Line 10:10:  'Divider' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 10:19:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 10:25:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:35:  'Card' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 7:54:  'Grid' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 9:46:  'Tooltip' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:55:  'Divider' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:64:  'LinearProgress' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/ParsedDataReview.tsx
+  Line 10:10:  'Divider' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 10:19:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 10:25:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:35:  'Card' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 7:54:  'Grid' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 9:46:  'Tooltip' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:55:  'Divider' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:64:  'LinearProgress' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+webpack compiled with 1 warning
+ERROR in src/pages/QuotationComparison.tsx:193:34
+TS2322: Type '{ children: string; fontWeight: number; }' is not assignable to type 'IntrinsicAttributes & TableCellProps'.
+  Property 'fontWeight' does not exist on type 'IntrinsicAttributes & TableCellProps'.
+    191 |                   {mockMaterials.map((m, i) => (
+    192 |                     <TableRow key={i} sx={{ bgcolor: m.changed ? '#fff3e0' : undefined }}>
+  > 193 |                       <TableCell fontWeight={600}>{m.part}</TableCell>
+        |                                  ^^^^^^^^^^
+    194 |                       <TableCell>{m.bidder}</TableCell>
+    195 |                       <TableCell>{m.oem}</TableCell>
+    196 |                       <TableCell sx={{ fontWeight: m.changed ? 700 : 400, color: m.changed ? '#e65100' : undefined }}>
+
+Compiling...
+Compiled with warnings.
+
+[eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/ParsedDataReview.tsx
+  Line 10:10:  'Divider' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 10:19:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 10:25:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:35:  'Card' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 7:54:  'Grid' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 9:46:  'Tooltip' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:55:  'Divider' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:64:  'LinearProgress' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/layouts/MainLayout.tsx
+  Line 4:25:   'AccountCircle' is defined but never used          @typescript-eslint/no-unused-vars
+  Line 10:17:  'logout' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  Line 11:9:   'sidebarWidth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Dashboard.tsx
+  Line 5:27:  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/History.tsx
+  Line 7:52:  'IconButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/ParsedDataReview.tsx
+  Line 10:10:  'Divider' is defined but never used      @typescript-eslint/no-unused-vars
+  Line 10:19:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 10:25:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Parsing.tsx
+  Line 5:48:   'useEffect' is defined but never used             @typescript-eslint/no-unused-vars
+  Line 8:28:   'Alert' is defined but never used                 @typescript-eslint/no-unused-vars
+  Line 103:9:  'currentFile' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/pages/QuotationComparison.tsx
+  Line 7:35:  'Card' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used     @typescript-eslint/no-unused-vars
+  Line 7:54:  'Grid' is defined but never used            @typescript-eslint/no-unused-vars
+  Line 9:46:  'Tooltip' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:55:  'Divider' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 9:64:  'LinearProgress' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Report.tsx
+  Line 7:35:  'Card' is defined but never used         @typescript-eslint/no-unused-vars
+  Line 7:41:  'CardContent' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/pages/Verification.tsx
+  Line 9:3:   'Alert' is defined but never used    @typescript-eslint/no-unused-vars
+  Line 9:20:  'Divider' is defined but never used  @typescript-eslint/no-unused-vars
+  Line 9:29:  'Tooltip' is defined but never used  @typescript-eslint/no-unused-vars
+
+webpack compiled with 1 warning
+No issues found.

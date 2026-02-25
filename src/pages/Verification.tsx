@@ -1,282 +1,197 @@
 /**
- * @fileoverview ③ 검증 페이지
- * @description 계산 정확성 확인. 온톨로지 규칙 기반 합산/비율 정합성 체크, 이상값 감지.
+ * @fileoverview ③ 검증 페이지 - UI 고도화
+ * @description 요약 카드, 검증 항목 테이블(수식/에러/이상값), 드릴다운 하이라이트
  */
 import React, { useState } from 'react';
 import {
-  Box, Typography, Button, Card, CardContent, Grid, Chip,
+  Box, Typography, Paper, Button, Card, CardContent, Grid, Chip,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Paper, Alert, CircularProgress, Select, MenuItem, FormControl,
-  InputLabel, Tooltip, LinearProgress,
+  Alert, Collapse, Divider, Tooltip,
 } from '@mui/material';
 import {
-  PlayArrow, CheckCircle, Warning, Error as ErrorIcon, Rule,
+  CheckCircle, Warning, Error as ErrorIcon, NavigateNext, NavigateBefore,
+  KeyboardArrowDown, KeyboardArrowUp,
 } from '@mui/icons-material';
+import WorkflowStepper from '../components/WorkflowStepper';
+import { useNavigate } from 'react-router-dom';
 
-// 검증 규칙 타입
-interface VerificationRule {
+/* ── Mock 검증 결과 ── */
+interface VRule {
   id: string;
   ruleName: string;
-  category: string;
-  description: string;
+  category: '수식검증' | '에러감지' | '이상값';
   status: 'pass' | 'warning' | 'fail';
-  expectedValue: number | null;
-  actualValue: number | null;
-  deviation: number | null;
+  expected: string;
+  actual: string;
+  diff: string;
   message: string;
+  cellRef?: string; // e.g. "Sheet1!D7"
 }
 
-// 더미 검증 결과 (실제 API 연동 시 교체)
-const dummyResults: VerificationRule[] = [
-  {
-    id: '1', ruleName: '재료비 합산 검증', category: '합산 정합성',
-    description: '하위 재료비 항목 합산이 재료비 소계와 일치하는지 확인',
-    status: 'pass', expectedValue: 23500000, actualValue: 23500000, deviation: 0,
-    message: '재료비 합산 정확',
-  },
-  {
-    id: '2', ruleName: '가공비 비율 검증', category: '비율 정합성',
-    description: '가공비가 총원가 대비 적정 비율(20~40%) 범위 내인지 확인',
-    status: 'warning', expectedValue: 35, actualValue: 42.3, deviation: 7.3,
-    message: '가공비 비율 42.3%로 기준 상한(40%) 초과',
-  },
-  {
-    id: '3', ruleName: '제경비 합산 검증', category: '합산 정합성',
-    description: '제경비 하위 항목 합산이 소계와 일치하는지 확인',
-    status: 'pass', expectedValue: 8700000, actualValue: 8700000, deviation: 0,
-    message: '제경비 합산 정확',
-  },
-  {
-    id: '4', ruleName: '이익률 범위 검증', category: '비율 정합성',
-    description: '이익률이 업종 평균 범위(5~15%) 내인지 확인',
-    status: 'pass', expectedValue: 10, actualValue: 8.5, deviation: -1.5,
-    message: '이익률 8.5%로 적정 범위 내',
-  },
-  {
-    id: '5', ruleName: '단가 이상값 감지', category: '이상값 감지',
-    description: '항목별 단가가 과거 평균 대비 ±30% 이상 벗어나는지 확인',
-    status: 'fail', expectedValue: 15000, actualValue: 28500, deviation: 90,
-    message: 'CNC 가공 단가 ₩28,500 → 과거 평균 ₩15,000 대비 90% 높음',
-  },
-  {
-    id: '6', ruleName: '총합계 검증', category: '합산 정합성',
-    description: '모든 대분류 합산이 총합계와 일치하는지 확인',
-    status: 'pass', expectedValue: 49280000, actualValue: 49280000, deviation: 0,
-    message: '총합계 일치',
-  },
-  {
-    id: '7', ruleName: '수량×단가=금액 검증', category: '계산 정합성',
-    description: '각 항목의 수량×단가가 금액과 일치하는지 확인',
-    status: 'warning', expectedValue: 3600000, actualValue: 3540000, deviation: -1.7,
-    message: '고무 실링: 수량(600)×단가(6,000)=3,600,000 ≠ 기재금액 3,540,000',
-  },
+const mockRules: VRule[] = [
+  { id: '1', ruleName: '재료비 소계 = 부품합', category: '수식검증', status: 'pass', expected: '1,057', actual: '1,057', diff: '0', message: '재료비 소계 정확', cellRef: 'Sheet1!D7' },
+  { id: '2', ruleName: '가공비 = 노무비 + 경비', category: '수식검증', status: 'pass', expected: '1,470', actual: '1,470', diff: '0', message: '가공비 합산 정확', cellRef: 'Sheet1!D11' },
+  { id: '3', ruleName: '제조원가 = 재료비 + 가공비', category: '수식검증', status: 'pass', expected: '2,527', actual: '2,527', diff: '0', message: '제조원가 정확', cellRef: 'Sheet1!D15' },
+  { id: '4', ruleName: '총원가 합산 검증', category: '수식검증', status: 'warning', expected: '3,527', actual: '3,547', diff: '+0.6%', message: '총원가 20원 불일치 (반올림 차이 가능)', cellRef: 'Sheet1!D22' },
+  { id: '5', ruleName: '#N/A 에러 감지', category: '에러감지', status: 'fail', expected: '없음', actual: '#N/A', diff: '-', message: 'Sheet2!C15 에 #N/A 에러 발견', cellRef: 'Sheet2!C15' },
+  { id: '6', ruleName: '#DIV/0! 에러 감지', category: '에러감지', status: 'fail', expected: '없음', actual: '#DIV/0!', diff: '-', message: 'Sheet3!E8 에 #DIV/0! 에러 발견', cellRef: 'Sheet3!E8' },
+  { id: '7', ruleName: '빈 셀 감지 (필수항목)', category: '에러감지', status: 'warning', expected: '값 존재', actual: '빈 셀', diff: '-', message: 'Sheet1!B12 단가 미입력', cellRef: 'Sheet1!B12' },
+  { id: '8', ruleName: 'PP+TD20 단가 이상값', category: '이상값', status: 'pass', expected: '±30% 이내', actual: '2,150원', diff: '-5%', message: '기준 단가 대비 정상 범위', cellRef: 'Sheet1!B5' },
+  { id: '9', ruleName: '경비 이상값', category: '이상값', status: 'warning', expected: '±30% 이내', actual: '620원', diff: '+18%', message: '전분기 평균 525원 대비 18% 상승', cellRef: 'Sheet1!D10' },
+  { id: '10', ruleName: '금형 수정비 이상값', category: '이상값', status: 'fail', expected: '±30% 이내', actual: '3,000,000원', diff: '+85%', message: '동종 부품 평균 1,620,000원 대비 85% 초과', cellRef: 'Sheet1!D28' },
 ];
 
-const statusIcon = (status: string) => {
-  switch (status) {
-    case 'pass': return <CheckCircle sx={{ color: '#4caf50' }} />;
-    case 'warning': return <Warning sx={{ color: '#ff9800' }} />;
-    case 'fail': return <ErrorIcon sx={{ color: '#f44336' }} />;
-    default: return null;
-  }
+const statusIcon = (s: string) => {
+  if (s === 'pass') return <CheckCircle sx={{ color: '#4caf50', fontSize: 20 }} />;
+  if (s === 'warning') return <Warning sx={{ color: '#ff9800', fontSize: 20 }} />;
+  return <ErrorIcon sx={{ color: '#f44336', fontSize: 20 }} />;
 };
-
-const statusChipColor = (status: string): 'success' | 'warning' | 'error' => {
-  switch (status) {
-    case 'pass': return 'success';
-    case 'warning': return 'warning';
-    case 'fail': return 'error';
-    default: return 'warning';
-  }
-};
-
-const formatAmount = (amount: number) =>
-  amount.toLocaleString('ko-KR', { style: 'currency', currency: 'KRW', maximumFractionDigits: 0 });
 
 const Verification: React.FC = () => {
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [results, setResults] = useState<VerificationRule[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [categoryFilter, setCategoryFilter] = useState('');
+  const navigate = useNavigate();
+  const [selectedRule, setSelectedRule] = useState<string | null>(null);
+  const [filterCat, setFilterCat] = useState<string>('all');
 
-  const runVerification = async () => {
-    if (!selectedId) return;
-    setLoading(true);
-    // TODO: 실제 API 연동 → await verificationAPI.run(selectedId)
-    await new Promise(r => setTimeout(r, 1500));
-    setResults(dummyResults);
-    setLoading(false);
-  };
+  const passCount = mockRules.filter(r => r.status === 'pass').length;
+  const warnCount = mockRules.filter(r => r.status === 'warning').length;
+  const failCount = mockRules.filter(r => r.status === 'fail').length;
 
-  const filteredResults = categoryFilter
-    ? results.filter(r => r.category === categoryFilter)
-    : results;
+  const filtered = filterCat === 'all' ? mockRules : mockRules.filter(r => r.category === filterCat);
 
-  const summary = {
-    total: results.length,
-    pass: results.filter(r => r.status === 'pass').length,
-    warning: results.filter(r => r.status === 'warning').length,
-    fail: results.filter(r => r.status === 'fail').length,
-  };
-
-  const categories = Array.from(new Set(results.map(r => r.category)));
+  const summaryCards = [
+    { label: 'Pass', count: passCount, color: '#4caf50', icon: <CheckCircle sx={{ fontSize: 36 }} />, bg: '#e8f5e9' },
+    { label: 'Warning', count: warnCount, color: '#ff9800', icon: <Warning sx={{ fontSize: 36 }} />, bg: '#fff8e1' },
+    { label: 'Fail', count: failCount, color: '#f44336', icon: <ErrorIcon sx={{ fontSize: 36 }} />, bg: '#ffebee' },
+  ];
 
   return (
-    <Box sx={{ p: 3, maxWidth: 1400, mx: 'auto' }}>
-      <Typography variant="h5" fontWeight={700} sx={{ mb: 1, color: '#003875' }}>
-        ③ 검증
-      </Typography>
+    <Box sx={{ maxWidth: 1400, mx: 'auto' }}>
+      <WorkflowStepper activeStep={2} />
+
+      <Typography variant="h5" fontWeight={700} color="#003875" sx={{ mb: 0.5 }}>검증</Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        계산이 정확하게 되어 있는지 확인합니다. 온톨로지 규칙 기반으로 합산/비율 정합성을 체크하고 이상값을 감지합니다.
+        수식 정합성, 에러 셀 감지, 이상값 탐지 결과를 확인합니다. 행 클릭 시 해당 셀 위치를 확인할 수 있습니다.
       </Typography>
 
-      {/* 견적서 선택 + 검증 실행 */}
-      <Paper sx={{ p: 2, mb: 3, display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-        <FormControl sx={{ minWidth: 300 }}>
-          <InputLabel>검증할 견적서 선택</InputLabel>
-          <Select
-            value={selectedId || ''}
-            label="검증할 견적서 선택"
-            onChange={(e) => setSelectedId(Number(e.target.value))}
-          >
-            <MenuItem value={1}>[1] 현대차_브레이크패드_견적서.xlsx</MenuItem>
-            <MenuItem value={2}>[2] 기아_엔진마운트_견적서.xlsx</MenuItem>
-            <MenuItem value={3}>[3] 현대트랜시스_변속기_견적서.xlsx</MenuItem>
-          </Select>
-        </FormControl>
-        <Button
-          variant="contained"
-          startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Rule />}
-          onClick={runVerification}
-          disabled={!selectedId || loading}
-          sx={{ bgcolor: '#003875' }}
-        >
-          검증 실행
+      {/* ── 요약 카드 3개 ── */}
+      <Grid container spacing={2} sx={{ mb: 3 }}>
+        {summaryCards.map(c => (
+          <Grid size={{ xs: 12, sm: 4 }} key={c.label}>
+            <Card sx={{ borderRadius: 3, border: `2px solid ${c.color}20`, bgcolor: c.bg }}>
+              <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 3, '&:last-child': { pb: 3 } }}>
+                <Box sx={{ color: c.color }}>{c.icon}</Box>
+                <Box>
+                  <Typography variant="h3" fontWeight={800} color={c.color}>{c.count}</Typography>
+                  <Typography variant="body2" fontWeight={600} color="text.secondary">{c.label}</Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+
+      {/* ── 필터 칩 ── */}
+      <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+        {['all', '수식검증', '에러감지', '이상값'].map(cat => (
+          <Chip key={cat} label={cat === 'all' ? '전체' : cat}
+            onClick={() => setFilterCat(cat)}
+            variant={filterCat === cat ? 'filled' : 'outlined'}
+            color={filterCat === cat ? 'primary' : 'default'}
+            sx={{ fontWeight: 600 }} />
+        ))}
+      </Box>
+
+      {/* ── 검증 테이블 ── */}
+      <TableContainer component={Paper} sx={{ borderRadius: 2, mb: 3 }}>
+        <Table size="small">
+          <TableHead>
+            <TableRow sx={{ bgcolor: '#f5f7fa' }}>
+              <TableCell width={50}>상태</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>규칙명</TableCell>
+              <TableCell sx={{ fontWeight: 700 }} width={90}>카테고리</TableCell>
+              <TableCell sx={{ fontWeight: 700 }} align="right">기대값</TableCell>
+              <TableCell sx={{ fontWeight: 700 }} align="right">실제값</TableCell>
+              <TableCell sx={{ fontWeight: 700 }} align="right">차이</TableCell>
+              <TableCell sx={{ fontWeight: 700 }}>셀 위치</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filtered.map(rule => {
+              const isSelected = selectedRule === rule.id;
+              return (
+                <React.Fragment key={rule.id}>
+                  <TableRow
+                    hover
+                    selected={isSelected}
+                    onClick={() => setSelectedRule(isSelected ? null : rule.id)}
+                    sx={{
+                      cursor: 'pointer',
+                      bgcolor: rule.status === 'fail' ? '#fff5f5' : rule.status === 'warning' ? '#fffdf5' : undefined,
+                      '&:hover': { bgcolor: '#e3f2fd !important' },
+                    }}
+                  >
+                    <TableCell>{statusIcon(rule.status)}</TableCell>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <Typography variant="body2" fontWeight={600}>{rule.ruleName}</Typography>
+                        {isSelected ? <KeyboardArrowUp fontSize="small" /> : <KeyboardArrowDown fontSize="small" />}
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      <Chip label={rule.category} size="small" variant="outlined" sx={{ fontSize: 11 }} />
+                    </TableCell>
+                    <TableCell align="right" sx={{ fontFamily: 'monospace' }}>{rule.expected}</TableCell>
+                    <TableCell align="right" sx={{ fontFamily: 'monospace', fontWeight: 600 }}>{rule.actual}</TableCell>
+                    <TableCell align="right">
+                      {rule.diff !== '-' && rule.diff !== '0' ? (
+                        <Chip label={rule.diff} size="small"
+                          color={rule.status === 'pass' ? 'success' : rule.status === 'warning' ? 'warning' : 'error'} />
+                      ) : (
+                        <Typography variant="body2" color="text.secondary">{rule.diff}</Typography>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Chip label={rule.cellRef || '-'} size="small" variant="outlined"
+                        sx={{ fontFamily: 'monospace', fontSize: 11 }} />
+                    </TableCell>
+                  </TableRow>
+                  {/* Drill-down detail */}
+                  <TableRow>
+                    <TableCell colSpan={7} sx={{ py: 0, border: 0 }}>
+                      <Collapse in={isSelected} unmountOnExit>
+                        <Box sx={{ p: 2, bgcolor: '#f8f9fc', borderRadius: 1, my: 1 }}>
+                          <Typography variant="body2" fontWeight={600} sx={{ mb: 0.5 }}>상세 설명</Typography>
+                          <Typography variant="body2" color="text.secondary">{rule.message}</Typography>
+                          {rule.cellRef && (
+                            <Box sx={{ mt: 1, p: 1.5, bgcolor: '#fff', borderRadius: 1, border: '1px solid #e0e0e0', display: 'inline-block' }}>
+                              <Typography variant="caption" color="text.secondary">셀 위치</Typography>
+                              <Typography variant="body1" fontWeight={700} fontFamily="monospace" color="#003875">
+                                📍 {rule.cellRef}
+                              </Typography>
+                            </Box>
+                          )}
+                        </Box>
+                      </Collapse>
+                    </TableCell>
+                  </TableRow>
+                </React.Fragment>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {/* ── 네비게이션 ── */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Button variant="outlined" startIcon={<NavigateBefore />} onClick={() => navigate('/review')}>
+          데이터 검토로
         </Button>
-        {results.length > 0 && (
-          <FormControl size="small" sx={{ minWidth: 150 }}>
-            <InputLabel>규칙 카테고리</InputLabel>
-            <Select
-              value={categoryFilter}
-              label="규칙 카테고리"
-              onChange={(e) => setCategoryFilter(e.target.value)}
-            >
-              <MenuItem value="">전체</MenuItem>
-              {categories.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
-            </Select>
-          </FormControl>
-        )}
-      </Paper>
-
-      {/* 검증 결과 요약 */}
-      {results.length > 0 && (
-        <Grid container spacing={2} sx={{ mb: 3 }}>
-          {[
-            { label: '전체 규칙', value: summary.total, color: '#1976d2', icon: <Rule /> },
-            { label: '통과', value: summary.pass, color: '#4caf50', icon: <CheckCircle /> },
-            { label: '경고', value: summary.warning, color: '#ff9800', icon: <Warning /> },
-            { label: '실패', value: summary.fail, color: '#f44336', icon: <ErrorIcon /> },
-          ].map((card) => (
-            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={card.label}>
-              <Card sx={{ borderLeft: `4px solid ${card.color}` }}>
-                <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 2 }}>
-                  <Box sx={{ color: card.color }}>{card.icon}</Box>
-                  <Box>
-                    <Typography variant="h4" fontWeight="bold" color={card.color}>
-                      {card.value}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {card.label}
-                    </Typography>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      )}
-
-      {/* 검증 결과 테이블 */}
-      {filteredResults.length > 0 && (
-        <TableContainer component={Paper}>
-          <Table size="small">
-            <TableHead>
-              <TableRow sx={{ bgcolor: '#f5f5f5' }}>
-                <TableCell width={60}>상태</TableCell>
-                <TableCell>규칙명</TableCell>
-                <TableCell>카테고리</TableCell>
-                <TableCell align="right">기대값</TableCell>
-                <TableCell align="right">실제값</TableCell>
-                <TableCell align="right">편차</TableCell>
-                <TableCell>메시지</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredResults.map((rule) => (
-                <TableRow
-                  key={rule.id}
-                  sx={{
-                    bgcolor: rule.status === 'fail' ? '#ffebee' :
-                             rule.status === 'warning' ? '#fff8e1' : 'inherit',
-                    '&:hover': { bgcolor: '#e3f2fd' },
-                  }}
-                >
-                  <TableCell>{statusIcon(rule.status)}</TableCell>
-                  <TableCell>
-                    <Tooltip title={rule.description}>
-                      <Typography variant="body2" fontWeight={600}>{rule.ruleName}</Typography>
-                    </Tooltip>
-                  </TableCell>
-                  <TableCell>
-                    <Chip label={rule.category} size="small" variant="outlined" />
-                  </TableCell>
-                  <TableCell align="right">
-                    {rule.expectedValue != null
-                      ? (rule.expectedValue > 100 ? formatAmount(rule.expectedValue) : `${rule.expectedValue}%`)
-                      : '-'}
-                  </TableCell>
-                  <TableCell align="right">
-                    {rule.actualValue != null
-                      ? (rule.actualValue > 100 ? formatAmount(rule.actualValue) : `${rule.actualValue}%`)
-                      : '-'}
-                  </TableCell>
-                  <TableCell align="right">
-                    {rule.deviation != null ? (
-                      <Chip
-                        label={`${rule.deviation > 0 ? '+' : ''}${rule.deviation.toFixed(1)}%`}
-                        size="small"
-                        color={statusChipColor(rule.status)}
-                      />
-                    ) : '-'}
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2">{rule.message}</Typography>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
-
-      {loading && (
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <CircularProgress sx={{ mb: 2 }} />
-          <Typography color="text.secondary">온톨로지 규칙 기반 검증 중...</Typography>
-        </Paper>
-      )}
-
-      {!selectedId && !loading && (
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Rule sx={{ fontSize: 48, color: '#ccc', mb: 1 }} />
-          <Typography color="text.secondary">
-            검증할 견적서를 선택하고 "검증 실행" 버튼을 클릭하세요.
-          </Typography>
-          <Typography variant="caption" color="text.disabled" sx={{ mt: 1, display: 'block' }}>
-            합산 정합성 · 비율 정합성 · 계산 정합성 · 이상값 감지
-          </Typography>
-        </Paper>
-      )}
+        <Button variant="contained" endIcon={<NavigateNext />}
+          onClick={() => navigate('/comparison')}
+          sx={{ bgcolor: '#003875', px: 4 }}>
+          견적 비교로 이동
+        </Button>
+      </Box>
     </Box>
   );
 };
