@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { NavigateNext, NavigateBefore, Close, ExpandMore, ChevronRight } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import EnhancedRelationView from '../components/EnhancedRelationView';
 
 /* ── 색상 상수 ── */
 const C = {
@@ -257,7 +258,13 @@ const StatusBadge: React.FC<{ status: 'normal' | 'anomaly' }> = ({ status }) => 
 );
 
 /* ── 리스트 뷰 컴포넌트 ── */
-const ListViewRow: React.FC<{ item: ListItem; depth?: number }> = ({ item, depth = 0 }) => {
+const ListViewRow: React.FC<{ 
+  item: ListItem; 
+  depth?: number; 
+  onCellClick?: (name: string) => void;
+  onAmountClick?: (event: React.MouseEvent<HTMLElement>, row: CostRow, groupTitle: string) => void;
+  groupTitle?: string;
+}> = ({ item, depth = 0, onCellClick, onAmountClick, groupTitle = '' }) => {
   const [open, setOpen] = useState(false);
   const hasChildren = item.children && item.children.length > 0;
   const isAnomaly = item.status === 'anomaly';
@@ -276,7 +283,13 @@ const ListViewRow: React.FC<{ item: ListItem; depth?: number }> = ({ item, depth
           {hasChildren && (open ? <ExpandMore sx={{ fontSize: 16, verticalAlign: 'middle', mr: 0.5 }} /> : <ChevronRight sx={{ fontSize: 16, verticalAlign: 'middle', mr: 0.5 }} />)}
           {item.category}
         </TableCell>
-        <TableCell sx={{ ...tdSx, fontWeight: 500 }}>
+        <TableCell 
+          sx={{ 
+            ...tdSx, fontWeight: 500,
+            cursor: 'pointer', '&:hover': { bgcolor: '#e8f4fd' }
+          }}
+          onClick={() => onCellClick?.(item.name)}
+        >
           {item.name}
           {isAnomaly && <Typography component="span" sx={{ ml: 0.5, color: C.red, fontSize: 11 }}>⚠️</Typography>}
         </TableCell>
@@ -284,7 +297,35 @@ const ListViewRow: React.FC<{ item: ListItem; depth?: number }> = ({ item, depth
         <TableCell sx={tdSx}>{item.unit}</TableCell>
         <TableCell sx={tdSx}>{item.qty}</TableCell>
         <TableCell sx={tdSx}>{item.unitPrice}</TableCell>
-        <TableCell sx={{ ...tdSx, fontWeight: 600, ...(isAnomaly && { color: C.red }) }}>{item.amount}</TableCell>
+        <TableCell sx={{
+          ...tdSx, 
+          fontWeight: 600, 
+          ...(isAnomaly && { color: C.red }),
+          cursor: 'pointer',
+          '&:hover': { bgcolor: '#e8f4fd', borderRadius: '4px' },
+        }} onClick={(e) => {
+          // ListItem을 CostRow 형식으로 변환
+          const costRow: CostRow = {
+            level: 'L1',
+            category: item.category,
+            name: item.name,
+            spec: item.spec,
+            unit: item.unit,
+            qty: item.qty,
+            unitPrice: item.unitPrice,
+            amount: item.amount,
+            ratio: item.ratio,
+            confidence: item.confidence,
+            status: item.status,
+            anomalyReason: item.status === 'anomaly' ? '이상값 감지됨' : undefined,
+          };
+          onAmountClick?.(e, costRow, groupTitle);
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            {item.amount}
+            <Typography component="span" sx={{ fontSize: 10, color: C.gray, ml: 0.5 }}>💡</Typography>
+          </Box>
+        </TableCell>
         <TableCell sx={tdSx}>{item.ratio}</TableCell>
         <TableCell sx={tdSx}><MiniConfidence value={item.confidence} /></TableCell>
         <TableCell sx={tdSx}><StatusBadge status={item.status} /></TableCell>
@@ -296,7 +337,14 @@ const ListViewRow: React.FC<{ item: ListItem; depth?: number }> = ({ item, depth
               <Table size="small">
                 <TableBody>
                   {item.children!.map(child => (
-                    <ListViewRow key={child.id} item={child} depth={depth + 1} />
+                    <ListViewRow 
+                      key={child.id} 
+                      item={child} 
+                      depth={depth + 1} 
+                      onCellClick={onCellClick}
+                      onAmountClick={onAmountClick}
+                      groupTitle={groupTitle}
+                    />
                   ))}
                 </TableBody>
               </Table>
@@ -309,13 +357,37 @@ const ListViewRow: React.FC<{ item: ListItem; depth?: number }> = ({ item, depth
 };
 
 /* ── 관계도 뷰 ── */
-const RelationView: React.FC = () => {
-  const nodes = [
+const RelationView: React.FC<{ onNodeClick?: (name: string) => void }> = ({ onNodeClick }) => {
+  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
+
+  const toggleExpand = (nodeId: string) => {
+    const newExpanded = new Set(expandedNodes);
+    if (newExpanded.has(nodeId)) {
+      newExpanded.delete(nodeId);
+    } else {
+      newExpanded.add(nodeId);
+    }
+    setExpandedNodes(newExpanded);
+  };
+
+  const baseNodes = [
     { id: 'root', label: 'HEAD LINING', sub: '생산원가', amount: '₩76,800', detail: '파싱항목 24건', confidence: 92, x: 400, y: 30, w: 200, h: 100, status: 'normal' as const },
-    { id: 'substrate', label: 'SUBSTRATE', sub: '기재', amount: '₩18,500', detail: '24.1%', confidence: 95, x: 100, y: 220, w: 180, h: 100, status: 'normal' as const },
+    { id: 'substrate', label: 'SUBSTRATE', sub: '기재', amount: '₩18,500', detail: '24.1%', confidence: 95, x: 100, y: 220, w: 180, h: 100, status: 'normal' as const, hasChildren: true },
     { id: 'processing', label: '가공비 합계', sub: '4개 공정', amount: '₩23,100', detail: '30.1%', confidence: 93, x: 400, y: 220, w: 180, h: 100, status: 'normal' as const },
     { id: 'skin', label: 'SKIN 표피재', sub: '이상치 감지', amount: '₩22,700', detail: '29.6%', confidence: 75, x: 700, y: 220, w: 180, h: 100, status: 'anomaly' as const },
   ];
+
+  // SUBSTRATE의 서브 노드들
+  const substrateChildren = [
+    { id: 'base_material', label: 'BASE MATERIAL', sub: 'PP+GF30', amount: '₩12,000', detail: '15.6%', confidence: 94, x: 50, y: 380, w: 140, h: 80, status: 'normal' as const, parent: 'substrate' },
+    { id: 'extrusion', label: '압출 성형', sub: '가공비', amount: '₩6,500', detail: '8.5%', confidence: 94, x: 200, y: 380, w: 140, h: 80, status: 'normal' as const, parent: 'substrate' },
+  ];
+
+  // 확장 상태에 따라 표시할 노드들 결정
+  const nodes = [...baseNodes];
+  if (expandedNodes.has('substrate')) {
+    nodes.push(...substrateChildren);
+  }
 
   const edges = [
     { from: 'root', to: 'substrate', anomaly: false },
@@ -371,7 +443,10 @@ const RelationView: React.FC = () => {
               flexDirection: 'column',
               justifyContent: 'center',
               zIndex: 1,
+              cursor: 'pointer',
+              '&:hover': { transform: 'scale(1.02)', transition: 'transform 0.2s' }
             }}
+            onClick={() => onNodeClick?.(n.label)}
           >
             <Typography sx={{ fontSize: 10, color: isAnomaly ? C.red : C.gray, fontWeight: 600, mb: 0.25 }}>
               {isAnomaly ? '⚠️ ' : ''}{n.sub}
@@ -387,55 +462,86 @@ const RelationView: React.FC = () => {
   );
 };
 
-/* ── 원본보기 뷰 ── */
-const OriginalView: React.FC = () => (
-  <Paper sx={{ borderRadius: '10px', border: `1px solid ${C.border}`, boxShadow: 'none', overflow: 'auto' }}>
-    <Box sx={{ p: 2, bgcolor: '#f9f9fb', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', gap: 1 }}>
-      <Typography sx={{ fontSize: 14, fontWeight: 600 }}>📄 엑셀 원본 데이터</Typography>
-      <Typography sx={{ fontSize: 11, color: C.gray }}>— 파싱 전 원본 셀 매핑</Typography>
-    </Box>
-    <Table size="small" sx={{ minWidth: 700 }}>
-      <TableBody>
-        {excelData.map((row, ri) => (
-          <TableRow key={ri}>
-            {/* Row number */}
-            <TableCell sx={{ fontSize: 10, color: C.gray, bgcolor: '#f5f5f5', width: 30, textAlign: 'center', borderRight: `1px solid ${C.border}`, py: 0.75, px: 0.5 }}>
-              {ri + 1}
-            </TableCell>
-            {row.cols.map((col: any, ci: number) => (
-              <TableCell
-                key={ci}
-                colSpan={col.colSpan || 1}
-                sx={{
-                  fontSize: ri === 0 ? 15 : 12,
-                  fontWeight: col.bold ? 700 : 400,
-                  textAlign: col.align || 'left',
-                  bgcolor: col.bg || '#fff',
-                  color: col.color || C.dark,
-                  py: ri === 0 ? 1.5 : 0.75,
-                  px: 1,
-                  border: `1px solid ${C.border}`,
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {col.text}
-              </TableCell>
+/* ── 원본보기 팝업 다이얼로그 ── */
+const OriginalViewDialog: React.FC<{ open: boolean; onClose: () => void; highlightedCell: { row: number; col: number } | null }> = ({ open, onClose, highlightedCell }) => (
+  <Dialog open={open} onClose={onClose} maxWidth="xl" fullWidth>
+    <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Typography sx={{ fontSize: 16, fontWeight: 600 }}>📄 엑셀 원본 데이터</Typography>
+        <Typography sx={{ fontSize: 12, color: C.gray }}>— 파싱 전 원본 셀 매핑</Typography>
+      </Box>
+      <IconButton onClick={onClose} size="small">
+        <Close />
+      </IconButton>
+    </DialogTitle>
+    <DialogContent sx={{ p: 0 }}>
+      <Box sx={{ overflow: 'auto', maxHeight: '70vh' }}>
+        <Table size="small" sx={{ minWidth: 700 }}>
+          <TableBody>
+            {excelData.map((row, ri) => (
+              <TableRow key={ri}>
+                {/* Row number */}
+                <TableCell sx={{ 
+                  fontSize: 10, color: C.gray, bgcolor: '#f5f5f5', width: 30, textAlign: 'center', 
+                  borderRight: `1px solid ${C.border}`, py: 0.75, px: 0.5,
+                  ...(highlightedCell?.row === ri && { bgcolor: '#fff3cd', fontWeight: 700 })
+                }}>
+                  {ri + 1}
+                </TableCell>
+                {row.cols.map((col: any, ci: number) => (
+                  <TableCell
+                    key={ci}
+                    colSpan={col.colSpan || 1}
+                    sx={{
+                      fontSize: ri === 0 ? 15 : 12,
+                      fontWeight: col.bold ? 700 : 400,
+                      textAlign: col.align || 'left',
+                      bgcolor: col.bg || '#fff',
+                      color: col.color || C.dark,
+                      py: ri === 0 ? 1.5 : 0.75,
+                      px: 1,
+                      border: `1px solid ${C.border}`,
+                      whiteSpace: 'nowrap',
+                      // 하이라이트 스타일
+                      ...(highlightedCell?.row === ri && highlightedCell?.col === ci && {
+                        bgcolor: '#fff3cd !important',
+                        border: `2px solid ${C.orange} !important`,
+                        fontWeight: 700,
+                        position: 'relative',
+                        '&::after': {
+                          content: '"📍"',
+                          position: 'absolute',
+                          top: -8,
+                          right: -8,
+                          fontSize: 12,
+                        }
+                      })
+                    }}
+                  >
+                    {col.text}
+                  </TableCell>
+                ))}
+              </TableRow>
             ))}
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-    <Box sx={{ p: 1.5, bgcolor: '#f9f9fb', borderTop: `1px solid ${C.border}`, display: 'flex', gap: 2 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-        <Box sx={{ width: 12, height: 12, bgcolor: '#d4edda', borderRadius: 2, border: '1px solid #c3e6cb' }} />
-        <Typography sx={{ fontSize: 10, color: C.gray }}>정상 파싱</Typography>
+          </TableBody>
+        </Table>
       </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-        <Box sx={{ width: 12, height: 12, bgcolor: '#f8d7da', borderRadius: 2, border: '1px solid #f5c6cb' }} />
-        <Typography sx={{ fontSize: 10, color: C.gray }}>이상치 감지</Typography>
+      <Box sx={{ p: 1.5, bgcolor: '#f9f9fb', borderTop: `1px solid ${C.border}`, display: 'flex', gap: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <Box sx={{ width: 12, height: 12, bgcolor: '#d4edda', borderRadius: 2, border: '1px solid #c3e6cb' }} />
+          <Typography sx={{ fontSize: 10, color: C.gray }}>정상 파싱</Typography>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <Box sx={{ width: 12, height: 12, bgcolor: '#f8d7da', borderRadius: 2, border: '1px solid #f5c6cb' }} />
+          <Typography sx={{ fontSize: 10, color: C.gray }}>이상치 감지</Typography>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <Box sx={{ width: 12, height: 12, bgcolor: '#fff3cd', borderRadius: 2, border: `1px solid ${C.orange}` }} />
+          <Typography sx={{ fontSize: 10, color: C.gray }}>선택된 항목</Typography>
+        </Box>
       </Box>
-    </Box>
-  </Paper>
+    </DialogContent>
+  </Dialog>
 );
 
 /* ── 메인 컴포넌트 ── */
@@ -445,6 +551,13 @@ const Analysis: React.FC = () => {
   const [editCell, setEditCell] = useState<{ groupId: string; rowIdx: number; field: 'unitPrice' | 'amount' } | null>(null);
   const [editValue, setEditValue] = useState('');
   const [anomalyAnchor, setAnomalyAnchor] = useState<{ el: HTMLElement; reason: string } | null>(null);
+  const [originalViewOpen, setOriginalViewOpen] = useState(false);
+  const [highlightedCell, setHighlightedCell] = useState<{ row: number; col: number } | null>(null);
+  const [calculationAnchor, setCalculationAnchor] = useState<{ 
+    el: HTMLElement; 
+    row: CostRow;
+    groupTitle: string;
+  } | null>(null);
 
   const startEdit = (groupId: string, rowIdx: number, field: 'unitPrice' | 'amount', currentValue: string) => {
     setEditCell({ groupId, rowIdx, field });
@@ -453,7 +566,29 @@ const Analysis: React.FC = () => {
 
   const isOverhead = (groupId: string) => groupId === 'overhead';
 
-  const tabLabels = ['표준', '리스트', '관계도', '원본보기'];
+  const tabLabels = ['표준', '리스트', '관계도'];
+
+  // 셀 클릭 시 원본 엑셀에서 해당 위치 찾기
+  const handleCellClick = (itemName: string) => {
+    const rowIndex = excelData.findIndex(row => 
+      row.cols.some(col => col.text && col.text.includes(itemName.replace(' ⚠️', '')))
+    );
+    if (rowIndex !== -1) {
+      setHighlightedCell({ row: rowIndex, col: 1 }); // 품명 컬럼 하이라이트
+      setOriginalViewOpen(true);
+    }
+  };
+
+  // 금액 클릭 시 계산식 표시 (풍성한 도움말)
+  const handleAmountClick = (event: React.MouseEvent<HTMLElement>, row: CostRow, groupTitle: string) => {
+    setCalculationAnchor({ 
+      el: event.currentTarget, 
+      row,
+      groupTitle
+    });
+  };
+
+
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: C.bg }}>
@@ -530,6 +665,17 @@ const Analysis: React.FC = () => {
         {/* ──── 표준 뷰 ──── */}
         {activeTab === 0 && (
           <>
+            {/* 원본보기 버튼 */}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+              <Button 
+                variant="outlined" 
+                size="small" 
+                onClick={() => setOriginalViewOpen(true)}
+                sx={{ ...btnOutlineSx, fontSize: 12 }}
+              >
+                📄 원본보기
+              </Button>
+            </Box>
             {costGroups.map(group => (
               <Paper key={group.id} sx={{ mb: 2, borderRadius: '10px', border: `1px solid ${C.border}`, boxShadow: 'none', overflow: 'hidden' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 2.5, py: 1.75, bgcolor: '#f9f9fb', borderBottom: `1px solid ${C.border}` }}>
@@ -573,7 +719,13 @@ const Analysis: React.FC = () => {
                         }}>
                           <TableCell sx={tdSx}><LevelBadge level={row.level} /></TableCell>
                           <TableCell sx={{ ...tdSx, ...(isSubRow && { color: C.gray }) }}>{row.category}</TableCell>
-                          <TableCell sx={{ ...tdSx, fontWeight: 500, ...(isSubRow && { pl: 3.5 }) }}>
+                          <TableCell 
+                            sx={{ 
+                              ...tdSx, fontWeight: 500, ...(isSubRow && { pl: 3.5 }),
+                              cursor: 'pointer', '&:hover': { bgcolor: '#e8f4fd' }
+                            }}
+                            onClick={() => handleCellClick(row.name)}
+                          >
                             {row.name}
                             {row.hasSub && <Typography component="span" sx={{ fontSize: 11, ml: 1, color: C.blue }}>📎 하위 견적서</Typography>}
                           </TableCell>
@@ -594,15 +746,26 @@ const Analysis: React.FC = () => {
                           <TableCell sx={{
                             ...tdSx, fontWeight: 600,
                             ...(isAnomaly && { color: C.red }),
-                            cursor: row.editable ? 'pointer' : 'default',
-                            '&:hover': row.editable ? { bgcolor: '#e8f4fd', borderRadius: '4px' } : {},
-                          }} onClick={() => row.editable && startEdit(group.id, ri, 'amount', row.amount)}>
+                            cursor: 'pointer',
+                            '&:hover': { bgcolor: '#e8f4fd', borderRadius: '4px' },
+                          }} onClick={(e) => {
+                            if (row.editable) {
+                              startEdit(group.id, ri, 'amount', row.amount);
+                            } else {
+                              handleAmountClick(e, row, group.title);
+                            }
+                          }}>
                             {editCell?.groupId === group.id && editCell.rowIdx === ri && editCell.field === 'amount' ? (
                               <ClickAwayListener onClickAway={() => setEditCell(null)}>
                                 <TextField size="small" value={editValue} onChange={e => setEditValue(e.target.value)} autoFocus
                                   sx={{ '& input': { fontSize: 12, p: '4px 8px' } }} />
                               </ClickAwayListener>
-                            ) : row.amount}
+                            ) : (
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                {row.amount}
+                                <Typography component="span" sx={{ fontSize: 10, color: C.gray, ml: 0.5 }}>💡</Typography>
+                              </Box>
+                            )}
                           </TableCell>
                           <TableCell sx={tdSx}>{row.ratio}</TableCell>
                           <TableCell sx={tdSx}><MiniConfidence value={row.confidence} /></TableCell>
@@ -681,6 +844,17 @@ const Analysis: React.FC = () => {
         {/* ──── 리스트 뷰 ──── */}
         {activeTab === 1 && (
           <>
+            {/* 원본보기 버튼 */}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+              <Button 
+                variant="outlined" 
+                size="small" 
+                onClick={() => setOriginalViewOpen(true)}
+                sx={{ ...btnOutlineSx, fontSize: 12 }}
+              >
+                📄 원본보기
+              </Button>
+            </Box>
             {listData.map(group => (
               <Paper key={group.id} sx={{ mb: 2, borderRadius: '10px', border: `1px solid ${C.border}`, boxShadow: 'none', overflow: 'hidden' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, px: 2.5, py: 1.75, bgcolor: '#f9f9fb', borderBottom: `1px solid ${C.border}` }}>
@@ -704,7 +878,13 @@ const Analysis: React.FC = () => {
                   </TableHead>
                   <TableBody>
                     {group.items.map(item => (
-                      <ListViewRow key={item.id} item={item} />
+                      <ListViewRow 
+                        key={item.id} 
+                        item={item} 
+                        onCellClick={handleCellClick}
+                        onAmountClick={handleAmountClick}
+                        groupTitle={group.title}
+                      />
                     ))}
                   </TableBody>
                 </Table>
@@ -715,19 +895,38 @@ const Analysis: React.FC = () => {
 
         {/* ──── 관계도 뷰 ──── */}
         {activeTab === 2 && (
+          <>
+            {/* 원본보기 버튼 */}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+              <Button 
+                variant="outlined" 
+                size="small" 
+                onClick={() => setOriginalViewOpen(true)}
+                sx={{ ...btnOutlineSx, fontSize: 12 }}
+              >
+                📄 원본보기
+              </Button>
+            </Box>
           <Paper sx={{ borderRadius: '10px', border: `1px solid ${C.border}`, boxShadow: 'none', overflow: 'hidden' }}>
             <Box sx={{ px: 2.5, py: 1.75, bgcolor: '#f9f9fb', borderBottom: `1px solid ${C.border}` }}>
               <Typography sx={{ fontSize: 14, fontWeight: 600 }}>🔗 원가 구조 관계도</Typography>
               <Typography sx={{ fontSize: 11, color: C.gray }}>노드 간 관계와 이상치를 시각적으로 확인합니다</Typography>
             </Box>
             <Box sx={{ p: 3 }}>
-              <RelationView />
+              <EnhancedRelationView listData={listData} onNodeClick={handleCellClick} />
             </Box>
           </Paper>
+          </>
         )}
 
-        {/* ──── 원본보기 뷰 ──── */}
-        {activeTab === 3 && <OriginalView />}
+        {/* 원본보기 다이얼로그 */}
+        <OriginalViewDialog 
+          open={originalViewOpen} 
+          onClose={() => setOriginalViewOpen(false)} 
+          highlightedCell={highlightedCell} 
+        />
+
+
 
         {/* Navigation */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
@@ -754,6 +953,238 @@ const Analysis: React.FC = () => {
           <Typography sx={{ fontWeight: 600, mb: 0.75, color: C.orange, fontSize: 12 }}>🤖 AI 판단 근거</Typography>
           <Typography sx={{ fontSize: 12, color: '#ddd' }}>{anomalyAnchor?.reason}</Typography>
         </Box>
+      </Popover>
+
+      {/* Enhanced Calculation Popover */}
+      <Popover
+        open={!!calculationAnchor}
+        anchorEl={calculationAnchor?.el}
+        onClose={() => setCalculationAnchor(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        {calculationAnchor && (
+          <Paper sx={{ 
+            maxWidth: 400, 
+            bgcolor: '#fff', 
+            borderRadius: '12px', 
+            border: `1px solid ${C.border}`, 
+            boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+            overflow: 'hidden'
+          }}>
+            {/* Header */}
+            <Box sx={{ 
+              bgcolor: C.blue, 
+              color: '#fff', 
+              p: 2,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1
+            }}>
+              <Typography sx={{ fontSize: 16, fontWeight: 700 }}>
+                🧮 계산식 상세 정보
+              </Typography>
+            </Box>
+
+            {/* Content */}
+            <Box sx={{ p: 3 }}>
+              {/* 항목 정보 */}
+              <Box sx={{ mb: 3 }}>
+                <Typography sx={{ fontSize: 12, color: C.gray, mb: 1 }}>
+                  {calculationAnchor.groupTitle} &gt; {calculationAnchor.row.category}
+                </Typography>
+                <Typography sx={{ fontSize: 16, fontWeight: 600, color: C.dark, mb: 0.5 }}>
+                  {calculationAnchor.row.name}
+                </Typography>
+                {calculationAnchor.row.spec && (
+                  <Typography sx={{ fontSize: 12, color: C.gray }}>
+                    규격: {calculationAnchor.row.spec}
+                  </Typography>
+                )}
+              </Box>
+
+              {/* 계산식 */}
+              <Box sx={{ mb: 3 }}>
+                <Typography sx={{ fontSize: 13, fontWeight: 600, color: C.blue, mb: 1.5 }}>
+                  💰 계산 과정
+                </Typography>
+                
+                {calculationAnchor.row.qty && calculationAnchor.row.unitPrice ? (
+                  <>
+                    {/* 수량 × 단가 × 가중치 형태 */}
+                    <Box sx={{ 
+                      bgcolor: '#f8f9fa', 
+                      p: 2, 
+                      borderRadius: '8px',
+                      border: `1px solid ${C.border}`,
+                      mb: 2
+                    }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+                        <Typography sx={{ fontSize: 14, fontWeight: 600, color: C.dark }}>
+                          수량
+                        </Typography>
+                        <Typography sx={{ fontSize: 14, fontFamily: 'monospace' }}>
+                          {calculationAnchor.row.qty} {calculationAnchor.row.unit}
+                        </Typography>
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+                        <Typography sx={{ fontSize: 14, fontWeight: 600, color: C.dark }}>
+                          단가
+                        </Typography>
+                        <Typography sx={{ fontSize: 14, fontFamily: 'monospace' }}>
+                          ₩{calculationAnchor.row.unitPrice}
+                        </Typography>
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                        <Typography sx={{ fontSize: 14, fontWeight: 600, color: C.dark }}>
+                          가중치
+                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography sx={{ fontSize: 14, fontFamily: 'monospace' }}>
+                            {calculationAnchor.row.status === 'anomaly' ? '1.2' : '1.0'}
+                          </Typography>
+                          {calculationAnchor.row.status === 'anomaly' && (
+                            <Chip 
+                              label="이상치 조정" 
+                              size="small" 
+                              sx={{ 
+                                bgcolor: '#ffebee', 
+                                color: C.red, 
+                                fontSize: '10px',
+                                height: 20 
+                              }} 
+                            />
+                          )}
+                        </Box>
+                      </Box>
+
+                      {/* 계산 결과 */}
+                      <Box sx={{ 
+                        bgcolor: '#fff', 
+                        p: 1.5, 
+                        borderRadius: '6px',
+                        border: `2px solid ${C.blue}`,
+                        textAlign: 'center'
+                      }}>
+                        <Typography sx={{ 
+                          fontSize: 16, 
+                          fontFamily: 'monospace', 
+                          fontWeight: 700,
+                          color: C.blue
+                        }}>
+                          {calculationAnchor.row.qty} × ₩{calculationAnchor.row.unitPrice} × {calculationAnchor.row.status === 'anomaly' ? '1.2' : '1.0'} = ₩{calculationAnchor.row.amount}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </>
+                ) : (
+                  <Box sx={{ 
+                    bgcolor: '#f8f9fa', 
+                    p: 2, 
+                    borderRadius: '8px',
+                    border: `1px solid ${C.border}`,
+                    textAlign: 'center'
+                  }}>
+                    <Typography sx={{ 
+                      fontSize: 16, 
+                      fontFamily: 'monospace', 
+                      fontWeight: 600,
+                      color: C.orange
+                    }}>
+                      고정 배분액 = ₩{calculationAnchor.row.amount}
+                    </Typography>
+                    <Typography sx={{ fontSize: 12, color: C.gray, mt: 0.5 }}>
+                      수량/단가 기반이 아닌 일괄 배분 비용
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+
+              {/* 추가 정보 */}
+              <Box sx={{ 
+                display: 'grid', 
+                gridTemplateColumns: '1fr 1fr', 
+                gap: 2,
+                pt: 2,
+                borderTop: `1px solid ${C.border}` 
+              }}>
+                <Box>
+                  <Typography sx={{ fontSize: 11, color: C.gray, mb: 0.5 }}>
+                    전체 대비 비율
+                  </Typography>
+                  <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
+                    {calculationAnchor.row.ratio}
+                  </Typography>
+                </Box>
+                
+                <Box>
+                  <Typography sx={{ fontSize: 11, color: C.gray, mb: 0.5 }}>
+                    AI 신뢰도
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
+                      {calculationAnchor.row.confidence}%
+                    </Typography>
+                    <Box sx={{
+                      width: 40,
+                      height: 6,
+                      bgcolor: '#e0e0e0',
+                      borderRadius: 3,
+                      overflow: 'hidden'
+                    }}>
+                      <Box sx={{
+                        width: `${calculationAnchor.row.confidence}%`,
+                        height: '100%',
+                        bgcolor: calculationAnchor.row.confidence >= 90 ? C.green : 
+                               calculationAnchor.row.confidence >= 70 ? C.orange : C.red,
+                      }} />
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+
+              {/* 이상치 정보 */}
+              {calculationAnchor.row.status === 'anomaly' && calculationAnchor.row.anomalyReason && (
+                <Box sx={{ 
+                  mt: 2, 
+                  p: 2, 
+                  bgcolor: '#fff5f5', 
+                  border: `1px solid ${C.red}20`,
+                  borderRadius: '8px' 
+                }}>
+                  <Typography sx={{ 
+                    fontSize: 12, 
+                    fontWeight: 600, 
+                    color: C.red, 
+                    mb: 0.5,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5
+                  }}>
+                    ⚠️ 이상치 감지
+                  </Typography>
+                  <Typography sx={{ fontSize: 12, color: C.red }}>
+                    {calculationAnchor.row.anomalyReason}
+                  </Typography>
+                </Box>
+              )}
+
+              {/* Footer */}
+              <Typography sx={{ 
+                fontSize: 10, 
+                color: C.gray, 
+                textAlign: 'center',
+                mt: 2,
+                pt: 1,
+                borderTop: `1px solid ${C.border}` 
+              }}>
+                클릭하여 닫기
+              </Typography>
+            </Box>
+          </Paper>
+        )}
       </Popover>
     </Box>
   );

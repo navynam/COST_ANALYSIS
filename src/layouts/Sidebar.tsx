@@ -5,8 +5,11 @@ import {
 } from '@mui/material';
 import {
   Dashboard, Description, FactCheck, CompareArrows, Assessment, Insights,
-  ModelTraining, History, Settings, ChevronLeft, ChevronRight, AutoGraph,
+  ModelTraining, History, Settings, ChevronLeft, ChevronRight, AutoGraph, Logout,
 } from '@mui/icons-material';
+import { useAuth } from '../contexts/AuthContext';
+
+const dashboardItem = { label: '대시보드', icon: <Dashboard />, path: '/dashboard' };
 
 const mainFlowItems = [
   { label: '파싱(업로드)', icon: <Description />, path: '/parsing' },
@@ -18,7 +21,6 @@ const mainFlowItems = [
 ];
 
 const subMenuItems = [
-  { label: '대시보드', icon: <Dashboard />, path: '/dashboard' },
   { label: '모델관리', icon: <ModelTraining />, path: '/models' },
   { label: '이력/알림', icon: <History />, path: '/history' },
   { label: '설정', icon: <Settings />, path: '/settings' },
@@ -35,6 +37,12 @@ const SIDEBAR_COLLAPSED = 68;
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <Box sx={{
@@ -43,18 +51,75 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
       transition: 'width 0.3s', overflow: 'hidden', flexShrink: 0,
       display: 'flex', flexDirection: 'column',
     }}>
-      {/* 로고 */}
-      <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1.5, minHeight: 64 }}>
-        <Box sx={{
-          width: 36, height: 36, bgcolor: '#003875', borderRadius: 1,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-        }}>
-          <Typography sx={{ color: '#fff', fontWeight: 900, fontSize: 14 }}>HD</Typography>
+      {/* 로고 + 토글 버튼 */}
+      <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 64 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: 1 }}>
+          <Box sx={{
+            width: 36, height: 36, bgcolor: '#003875', borderRadius: 1,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          }}>
+            <Typography sx={{ color: '#fff', fontWeight: 900, fontSize: 14 }}>HD</Typography>
+          </Box>
+          {!collapsed && (
+            <Typography variant="subtitle2" fontWeight={700} noWrap>견적서 분석</Typography>
+          )}
         </Box>
-        {!collapsed && (
-          <Typography variant="subtitle2" fontWeight={700} noWrap>견적서 분석</Typography>
-        )}
+        
+        {/* 토글 버튼 */}
+        <IconButton 
+          onClick={onToggle} 
+          sx={{ 
+            color: 'rgba(255,255,255,0.7)',
+            width: 32, 
+            height: 32,
+            bgcolor: 'rgba(255,255,255,0.1)',
+            '&:hover': { 
+              bgcolor: 'rgba(255,255,255,0.2)',
+              color: '#fff',
+            },
+            transition: 'all 0.2s',
+          }}
+        >
+          {collapsed ? <ChevronRight fontSize="small" /> : <ChevronLeft fontSize="small" />}
+        </IconButton>
       </Box>
+
+      <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
+
+      {/* 대시보드 - 최상단 */}
+      <List sx={{ py: 1 }}>
+        {(() => {
+          const active = location.pathname === dashboardItem.path;
+          return (
+            <ListItemButton
+              onClick={() => navigate(dashboardItem.path)}
+              sx={{
+                mx: 1, borderRadius: 1.5, mb: 0.5,
+                bgcolor: active ? 'rgba(0,56,117,0.5)' : 'transparent',
+                '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' },
+                px: collapsed ? 1.5 : 2,
+                justifyContent: collapsed ? 'center' : 'flex-start',
+              }}
+            >
+              <ListItemIcon sx={{
+                color: active ? '#4dabf7' : 'rgba(255,255,255,0.6)',
+                minWidth: collapsed ? 0 : 40,
+              }}>
+                {dashboardItem.icon}
+              </ListItemIcon>
+              {!collapsed && (
+                <ListItemText
+                  primary={dashboardItem.label}
+                  primaryTypographyProps={{
+                    fontSize: 14, fontWeight: active ? 600 : 400,
+                    color: active ? '#fff' : 'rgba(255,255,255,0.7)',
+                  }}
+                />
+              )}
+            </ListItemButton>
+          );
+        })()}
+      </List>
 
       <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
 
@@ -142,12 +207,36 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
         })}
       </List>
 
-      {/* 토글 */}
-      <Box sx={{ p: 1, display: 'flex', justifyContent: 'center' }}>
-        <IconButton onClick={onToggle} sx={{ color: 'rgba(255,255,255,0.5)' }}>
-          {collapsed ? <ChevronRight /> : <ChevronLeft />}
-        </IconButton>
+      {/* 로그아웃 버튼 */}
+      <Box sx={{ p: 2 }}>
+        <ListItemButton
+          onClick={handleLogout}
+          sx={{
+            mx: 1, borderRadius: 1.5, mb: 0.5,
+            '&:hover': { bgcolor: 'rgba(255,87,87,0.15)' },
+            px: collapsed ? 1.5 : 2,
+            justifyContent: collapsed ? 'center' : 'flex-start',
+          }}
+        >
+          <ListItemIcon sx={{
+            color: 'rgba(255,87,87,0.8)',
+            minWidth: collapsed ? 0 : 40,
+          }}>
+            <Logout />
+          </ListItemIcon>
+          {!collapsed && (
+            <ListItemText
+              primary="로그아웃"
+              primaryTypographyProps={{
+                fontSize: 14, fontWeight: 400,
+                color: 'rgba(255,87,87,0.8)',
+              }}
+            />
+          )}
+        </ListItemButton>
       </Box>
+
+
     </Box>
   );
 };

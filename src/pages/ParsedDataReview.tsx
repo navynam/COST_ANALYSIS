@@ -1,275 +1,417 @@
 /**
- * @fileoverview ② 검증 페이지 — 파싱 데이터 검증
- * @description 원본 ↔ 파싱 데이터를 나란히 비교, 차이 하이라이트, 매핑 상태 칩
+ * @fileoverview 검증 페이지 - 현대모비스 견적서 기반 UX
+ * @description 원본과 AI파싱 결과 나란히 비교, 실시간 하이라이트, 원클릭 수정
  */
 import React, { useState } from 'react';
 import {
-  Box, Typography, Paper, Button, Chip, Grid,
+  Box, Typography, Paper, Button, Chip, Grid, Card, CardContent,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Alert, Tooltip,
+  Alert, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions,
+  TextField, FormControl, InputLabel, Select, MenuItem, IconButton,
 } from '@mui/material';
 import {
   CheckCircle, Warning, Error as ErrorIcon, NavigateNext, NavigateBefore,
+  Edit, Visibility, Assessment, Close,
 } from '@mui/icons-material';
 import WorkflowStepper from '../components/WorkflowStepper';
 import { useNavigate } from 'react-router-dom';
 
-/* ── Mock: 원본 엑셀 데이터 ── */
-interface RawCell {
-  row: number;
-  col: string;
-  value: string;
-  type: string;
-}
-
-const mockRawData: RawCell[] = [
-  { row: 3, col: 'A', value: 'DUCT ASSY-SD A/VENT, LH', type: '부품명' },
-  { row: 3, col: 'B', value: 'PP+TD20', type: '재질' },
-  { row: 3, col: 'C', value: '0.45', type: '중량(kg)' },
-  { row: 4, col: 'A', value: '재료비', type: '섹션 헤더' },
-  { row: 5, col: 'A', value: 'PP+TD20 원재료', type: '항목명' },
-  { row: 5, col: 'B', value: '2,150', type: '단가' },
-  { row: 5, col: 'C', value: '0.45', type: '수량(kg)' },
-  { row: 5, col: 'D', value: '967', type: '금액' },
-  { row: 6, col: 'A', value: 'Masterbatch', type: '항목명' },
-  { row: 6, col: 'B', value: '4,500', type: '단가' },
-  { row: 6, col: 'C', value: '0.02', type: '수량(kg)' },
-  { row: 6, col: 'D', value: '90', type: '금액' },
-  { row: 7, col: 'A', value: '재료비 소계', type: '소계' },
-  { row: 7, col: 'D', value: '1,057', type: '금액' },
-  { row: 8, col: 'A', value: '가공비', type: '섹션 헤더' },
-  { row: 9, col: 'A', value: '노무비', type: '항목명' },
-  { row: 9, col: 'D', value: '850', type: '금액' },
-  { row: 10, col: 'A', value: '경비', type: '항목명' },
-  { row: 10, col: 'D', value: '620', type: '금액' },
-  { row: 11, col: 'A', value: '가공비 소계', type: '소계' },
-  { row: 11, col: 'D', value: '1,470', type: '금액' },
-];
-
-/* ── Mock: 파싱(구조화) 결과 — 원본과 1:1 매핑 ── */
-interface ParsedCell {
-  row: number;
-  col: string;
+/* ── 검증 항목 데이터 (현대모비스 견적서 기반) ── */
+interface VerificationItem {
+  id: string;
+  fieldName: string;
+  originalValue: string;
   parsedValue: string;
-  mappedField: string;
-  status: 'ok' | 'warn' | 'error';
-  diff?: string; // 원본과 차이가 있는 경우
+  confidence: number;
+  status: 'correct' | 'warning' | 'error';
+  cellRef: string;
+  message?: string;
+  category: 'material_cost' | 'processing_cost' | 'overhead_cost' | 'total' | 'metadata';
 }
 
-const mockParsedData: ParsedCell[] = [
-  { row: 3, col: 'A', parsedValue: 'DUCT ASSY-SD A/VENT, LH', mappedField: 'product_name', status: 'ok' },
-  { row: 3, col: 'B', parsedValue: 'PP+TD20', mappedField: 'material', status: 'ok' },
-  { row: 3, col: 'C', parsedValue: '0.45', mappedField: 'weight_kg', status: 'ok' },
-  { row: 4, col: 'A', parsedValue: '재료비', mappedField: 'section_header', status: 'ok' },
-  { row: 5, col: 'A', parsedValue: 'PP+TD20 원재료', mappedField: 'item_name', status: 'ok' },
-  { row: 5, col: 'B', parsedValue: '2,150', mappedField: 'unit_price', status: 'ok' },
-  { row: 5, col: 'C', parsedValue: '0.45', mappedField: 'quantity', status: 'ok' },
-  { row: 5, col: 'D', parsedValue: '967', mappedField: 'amount', status: 'ok' },
-  { row: 6, col: 'A', parsedValue: 'Masterbatch', mappedField: 'item_name', status: 'ok' },
-  { row: 6, col: 'B', parsedValue: '4,500', mappedField: 'unit_price', status: 'ok' },
-  { row: 6, col: 'C', parsedValue: '0.02', mappedField: 'quantity', status: 'ok' },
-  { row: 6, col: 'D', parsedValue: '90', mappedField: 'amount', status: 'ok' },
-  { row: 7, col: 'A', parsedValue: '재료비 소계', mappedField: 'subtotal_label', status: 'ok' },
-  { row: 7, col: 'D', parsedValue: '1,057', mappedField: 'subtotal_amount', status: 'ok' },
-  { row: 8, col: 'A', parsedValue: '가공비', mappedField: 'section_header', status: 'ok' },
-  { row: 9, col: 'A', parsedValue: '노무비', mappedField: 'item_name', status: 'ok' },
-  { row: 9, col: 'D', parsedValue: '850', mappedField: 'amount', status: 'ok' },
-  { row: 10, col: 'A', parsedValue: '경비', mappedField: 'item_name', status: 'warn', diff: '필드 매핑 확인 필요 — overhead vs expense' },
-  { row: 10, col: 'D', parsedValue: '620', mappedField: 'amount', status: 'ok' },
-  { row: 11, col: 'A', parsedValue: '가공비 소계', mappedField: 'subtotal_label', status: 'ok' },
-  { row: 11, col: 'D', parsedValue: '1,470', mappedField: 'subtotal_amount', status: 'error', diff: '원본: 1,470 / 파싱: 1,470 — 타입 불일치 (string vs number)' },
+const mockVerificationData: VerificationItem[] = [
+  {
+    id: '1',
+    fieldName: '재료비',
+    originalValue: '1,250,000',
+    parsedValue: '125,000',
+    confidence: 75,
+    status: 'error',
+    cellRef: 'B12',
+    message: '콤마 인식 오류로 인한 값 차이',
+    category: 'material_cost',
+  },
+  {
+    id: '2',
+    fieldName: '가공비',
+    originalValue: '800,000',
+    parsedValue: '800,000',
+    confidence: 98,
+    status: 'correct',
+    cellRef: 'B15',
+    category: 'processing_cost',
+  },
+  {
+    id: '3',
+    fieldName: '제경비',
+    originalValue: '350,000',
+    parsedValue: '350,000',
+    confidence: 95,
+    status: 'correct',
+    cellRef: 'B18',
+    category: 'overhead_cost',
+  },
+  {
+    id: '4',
+    fieldName: '합계',
+    originalValue: '2,400,000',
+    parsedValue: '24,000',
+    confidence: 45,
+    status: 'error',
+    cellRef: 'B21',
+    message: '계산 검증: 1,250,000 + 800,000 + 350,000 = 2,400,000',
+    category: 'total',
+  },
+  {
+    id: '5',
+    fieldName: '업체명',
+    originalValue: '㈜대한제조',
+    parsedValue: '대한제조',
+    confidence: 82,
+    status: 'warning',
+    cellRef: 'C5',
+    message: '법인 표기 누락',
+    category: 'metadata',
+  },
+  {
+    id: '6',
+    fieldName: '견적일자',
+    originalValue: '2024.02.15',
+    parsedValue: '',
+    confidence: 35,
+    status: 'error',
+    cellRef: 'C6',
+    message: '날짜 형식 인식 실패',
+    category: 'metadata',
+  },
+  {
+    id: '7',
+    fieldName: '단위중량',
+    originalValue: '0.45kg',
+    parsedValue: '0.45',
+    confidence: 88,
+    status: 'warning',
+    cellRef: 'D8',
+    message: '단위 정보 누락',
+    category: 'material_cost',
+  },
 ];
 
-const statusChip = (status: 'ok' | 'warn' | 'error') => {
-  switch (status) {
-    case 'ok': return <Chip icon={<CheckCircle />} label="🟢" size="small" color="success" sx={{ fontWeight: 600, minWidth: 50 }} />;
-    case 'warn': return <Chip icon={<Warning />} label="🟡" size="small" color="warning" sx={{ fontWeight: 600, minWidth: 50 }} />;
-    case 'error': return <Chip icon={<ErrorIcon />} label="🔴" size="small" color="error" sx={{ fontWeight: 600, minWidth: 50 }} />;
-  }
+// 원본 엑셀 미리보기 데이터
+const mockExcelData = [
+  { row: 12, col: 'B', field: '재료비', value: '1,250,000', type: 'number' },
+  { row: 15, col: 'B', field: '가공비', value: '800,000', type: 'number' },
+  { row: 18, col: 'B', field: '제경비', value: '350,000', type: 'number' },
+  { row: 21, col: 'B', field: '합계', value: '2,400,000', type: 'number' },
+  { row: 5, col: 'C', field: '업체명', value: '㈜대한제조', type: 'text' },
+  { row: 6, col: 'C', field: '견적일자', value: '2024.02.15', type: 'date' },
+  { row: 8, col: 'D', field: '단위중량', value: '0.45kg', type: 'text' },
+];
+
+const statusColor = {
+  correct: { bg: '#e8f5e8', border: '#4caf50', text: '#2e7d32' },
+  warning: { bg: '#fff8e1', border: '#ff9800', text: '#ef6c00' },
+  error: { bg: '#ffebee', border: '#f44336', text: '#c62828' },
+};
+
+const confidenceColor = (confidence: number) => {
+  if (confidence >= 90) return '#4caf50';
+  if (confidence >= 70) return '#ff9800';
+  return '#f44336';
 };
 
 const ParsedDataReview: React.FC = () => {
   const navigate = useNavigate();
-  const [highlightRow, setHighlightRow] = useState<string | null>(null);
-  const [reviewed, setReviewed] = useState(false);
+  const [highlightedCell, setHighlightedCell] = useState<string>('');
+  const [editDialog, setEditDialog] = useState<{ open: boolean; item?: VerificationItem }>({ open: false });
+  const [correctedValue, setCorrectedValue] = useState('');
 
-  const totalOk = mockParsedData.filter(c => c.status === 'ok').length;
-  const totalWarn = mockParsedData.filter(c => c.status === 'warn').length;
-  const totalError = mockParsedData.filter(c => c.status === 'error').length;
+  const totalCorrect = mockVerificationData.filter(item => item.status === 'correct').length;
+  const totalWarning = mockVerificationData.filter(item => item.status === 'warning').length;
+  const totalError = mockVerificationData.filter(item => item.status === 'error').length;
 
-  const rowKey = (row: number, col: string) => `${row}-${col}`;
+  const handleCellHighlight = (cellRef: string) => {
+    setHighlightedCell(cellRef);
+    setTimeout(() => setHighlightedCell(''), 3000); // 3초 후 하이라이트 제거
+  };
+
+  const handleEdit = (item: VerificationItem) => {
+    setEditDialog({ open: true, item });
+    setCorrectedValue(item.originalValue);
+  };
+
+  const handleSaveEdit = () => {
+    // 실제로는 서버로 수정된 값 전송
+    console.log('수정된 값:', correctedValue);
+    setEditDialog({ open: false });
+    setCorrectedValue('');
+    alert('수정사항이 저장되었습니다!');
+  };
+
+  const handleApprove = (item: VerificationItem) => {
+    console.log('승인됨:', item.id);
+    alert(`"${item.fieldName}" 값이 승인되었습니다.`);
+  };
 
   return (
-    <Box sx={{ maxWidth: 1400, mx: 'auto' }}>
+    <Box sx={{ maxWidth: 1400, mx: 'auto', p: 3 }}>
       <WorkflowStepper activeStep={1} />
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-        <Typography variant="h5" fontWeight={700} color="#003875">검증</Typography>
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <Chip icon={<CheckCircle />} label={`정상 ${totalOk}`} size="small" color="success" variant="outlined" />
-          <Chip icon={<Warning />} label={`확인필요 ${totalWarn}`} size="small" color="warning" variant="outlined" />
-          <Chip icon={<ErrorIcon />} label={`오류 ${totalError}`} size="small" color="error" variant="outlined" />
+      {/* 헤더 */}
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h4" fontWeight={700} color="#003875" sx={{ mb: 1 }}>
+          🔍 견적서 검증
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          <strong>파일명:</strong> 현대모비스_제조견적서_2024.xlsx
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+          <Chip icon={<CheckCircle />} label={`✅ ${totalCorrect}개 정상`} 
+            sx={{ bgcolor: '#e8f5e8', color: '#2e7d32' }} />
+          <Chip icon={<Warning />} label={`⚠️ ${totalWarning}개 검토 필요`} 
+            sx={{ bgcolor: '#fff8e1', color: '#ef6c00' }} />
+          <Chip icon={<ErrorIcon />} label={`❌ ${totalError}개 오류`} 
+            sx={{ bgcolor: '#ffebee', color: '#c62828' }} />
         </Box>
       </Box>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        원본 엑셀 데이터와 파싱된 구조화 데이터를 나란히 비교하여 파싱 정확도를 확인하세요. 차이가 있는 셀은 하이라이트됩니다.
-      </Typography>
 
-      {/* ── 좌우 비교 레이아웃 ── */}
-      <Grid container spacing={2} sx={{ mb: 3 }}>
-        {/* 좌: 원본 데이터 */}
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Paper sx={{ p: 2, borderRadius: 2, height: '100%' }}>
-            <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, color: '#003875' }}>
-              📄 원본 엑셀 데이터
-            </Typography>
-            <TableContainer sx={{ maxHeight: 600 }}>
-              <Table size="small" stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 700, bgcolor: '#f5f7fa', width: 50 }}>행</TableCell>
-                    <TableCell sx={{ fontWeight: 700, bgcolor: '#f5f7fa', width: 40 }}>열</TableCell>
-                    <TableCell sx={{ fontWeight: 700, bgcolor: '#f5f7fa' }}>값</TableCell>
-                    <TableCell sx={{ fontWeight: 700, bgcolor: '#f5f7fa', width: 80 }}>유형</TableCell>
+      {/* 요약 카드 */}
+      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 3, mb: 4 }}>
+        <Card sx={{ textAlign: 'center', border: '2px solid #4caf50', bgcolor: '#e8f5e8' }}>
+          <CardContent>
+            <Typography variant="h2" fontWeight={800} color="#2e7d32">{totalCorrect}</Typography>
+            <Typography variant="body2" color="#2e7d32">정상 추출</Typography>
+          </CardContent>
+        </Card>
+        <Card sx={{ textAlign: 'center', border: '2px solid #ff9800', bgcolor: '#fff8e1' }}>
+          <CardContent>
+            <Typography variant="h2" fontWeight={800} color="#ef6c00">{totalWarning}</Typography>
+            <Typography variant="body2" color="#ef6c00">검토 필요</Typography>
+          </CardContent>
+        </Card>
+        <Card sx={{ textAlign: 'center', border: '2px solid #f44336', bgcolor: '#ffebee' }}>
+          <CardContent>
+            <Typography variant="h2" fontWeight={800} color="#c62828">{totalError}</Typography>
+            <Typography variant="body2" color="#c62828">수정 필요</Typography>
+          </CardContent>
+        </Card>
+        <Card sx={{ textAlign: 'center', border: '2px solid #2196f3', bgcolor: '#e3f2fd' }}>
+          <CardContent>
+            <Typography variant="h2" fontWeight={800} color="#1976d2">85%</Typography>
+            <Typography variant="body2" color="#1976d2">전체 신뢰도</Typography>
+          </CardContent>
+        </Card>
+      </Box>
+
+      {/* 메인 비교 영역 */}
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '5fr 7fr' }, gap: 3, mb: 3 }}>
+        {/* 원본 엑셀 미리보기 */}
+        <Paper sx={{ p: 3, height: '600px' }}>
+          <Typography variant="h6" fontWeight={700} sx={{ mb: 2, color: '#003875' }}>
+            📊 원본 엑셀 미리보기
+          </Typography>
+          <TableContainer sx={{ height: '500px', overflow: 'auto' }}>
+            <Table size="small">
+              <TableHead>
+                <TableRow sx={{ bgcolor: '#f5f7fa' }}>
+                  <TableCell sx={{ fontWeight: 700 }}>행</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>항목</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>값</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>위치</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {mockExcelData.map((cell) => (
+                  <TableRow 
+                    key={`${cell.row}-${cell.col}`}
+                    sx={{
+                      bgcolor: highlightedCell === cell.row + cell.col ? '#ffeb3b' : undefined,
+                      transition: 'background-color 0.5s ease',
+                    }}
+                  >
+                    <TableCell sx={{ fontFamily: 'monospace' }}>{cell.row}</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>{cell.field}</TableCell>
+                    <TableCell sx={{ 
+                      fontWeight: 700,
+                      color: cell.type === 'number' ? '#1976d2' : '#333',
+                    }}>{cell.value}</TableCell>
+                    <TableCell>
+                      <Chip 
+                        label={cell.col + cell.row} 
+                        size="small" 
+                        variant="outlined"
+                        sx={{ fontFamily: 'monospace', fontSize: '11px' }}
+                      />
+                    </TableCell>
                   </TableRow>
-                </TableHead>
-                <TableBody>
-                  {mockRawData.map((cell, i) => {
-                    const key = rowKey(cell.row, cell.col);
-                    const parsed = mockParsedData.find(p => p.row === cell.row && p.col === cell.col);
-                    const hasDiff = parsed?.status === 'warn' || parsed?.status === 'error';
-                    return (
-                      <TableRow
-                        key={i}
-                        hover
-                        selected={highlightRow === key}
-                        onClick={() => setHighlightRow(highlightRow === key ? null : key)}
-                        sx={{
-                          cursor: 'pointer',
-                          bgcolor: highlightRow === key ? '#e3f2fd' :
-                            hasDiff ? (parsed?.status === 'error' ? '#ffebee' : '#fff8e1') :
-                            cell.type === '섹션 헤더' ? '#e8eef5' : cell.type === '소계' ? '#f5f5f5' : undefined,
-                          transition: 'background-color 0.2s',
-                        }}
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+
+        {/* AI 파싱 결과 검증 */}
+        <Paper sx={{ p: 3, height: '600px' }}>
+          <Typography variant="h6" fontWeight={700} sx={{ mb: 2, color: '#003875' }}>
+            🤖 AI 파싱 결과 검증
+          </Typography>
+          <Box sx={{ height: '500px', overflow: 'auto' }}>
+            {mockVerificationData.map((item) => {
+              const colors = statusColor[item.status];
+              return (
+                <Paper 
+                  key={item.id}
+                  sx={{ 
+                    p: 2, mb: 2, 
+                    border: `2px solid ${colors.border}`, 
+                    bgcolor: colors.bg,
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    '&:hover': { 
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                      transform: 'translateY(-2px)',
+                    }
+                  }}
+                  onClick={() => handleCellHighlight(item.cellRef.replace(/[^0-9A-Z]/g, ''))}
+                >
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                    <Typography variant="subtitle1" fontWeight={700} color={colors.text}>
+                      {item.fieldName}
+                    </Typography>
+                    <Chip 
+                      label={`${item.confidence}%`}
+                      size="small"
+                      sx={{ 
+                        bgcolor: confidenceColor(item.confidence),
+                        color: 'white',
+                        fontWeight: 700,
+                      }}
+                    />
+                  </Box>
+                  
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    원본: {item.originalValue} → 파싱: {item.parsedValue || '인식 실패'} 
+                    {item.status !== 'correct' && <span style={{ color: colors.text }}> ❌</span>}
+                  </Typography>
+
+                  {item.message && (
+                    <Alert severity={item.status === 'error' ? 'error' : 'warning'} sx={{ mb: 2, fontSize: '12px' }}>
+                      {item.message}
+                    </Alert>
+                  )}
+
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    {item.status !== 'correct' && (
+                      <Button 
+                        size="small" 
+                        variant="contained" 
+                        startIcon={<Edit />}
+                        onClick={(e) => { e.stopPropagation(); handleEdit(item); }}
+                        sx={{ bgcolor: '#ff9800', '&:hover': { bgcolor: '#f57c00' } }}
                       >
-                        <TableCell sx={{ fontFamily: 'monospace', color: '#666' }}>{cell.row}</TableCell>
-                        <TableCell sx={{ fontFamily: 'monospace', color: '#666' }}>{cell.col}</TableCell>
-                        <TableCell sx={{
-                          fontWeight: cell.type === '섹션 헤더' || cell.type === '소계' ? 700 : 400,
-                          ...(hasDiff && { borderLeft: `3px solid ${parsed?.status === 'error' ? '#f44336' : '#ff9800'}` }),
-                        }}>
-                          {cell.value}
-                        </TableCell>
-                        <TableCell>
-                          <Chip label={cell.type} size="small" variant="outlined" sx={{ fontSize: 11, height: 22 }} />
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-        </Grid>
+                        수정
+                      </Button>
+                    )}
+                    <Button 
+                      size="small" 
+                      variant="contained" 
+                      startIcon={<CheckCircle />}
+                      onClick={(e) => { e.stopPropagation(); handleApprove(item); }}
+                      sx={{ bgcolor: '#4caf50', '&:hover': { bgcolor: '#388e3c' } }}
+                    >
+                      {item.status === 'correct' ? '확인됨' : '맞음'}
+                    </Button>
+                  </Box>
+                </Paper>
+              );
+            })}
+          </Box>
+        </Paper>
+      </Box>
 
-        {/* 우: 파싱 데이터 */}
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Paper sx={{ p: 2, borderRadius: 2, height: '100%' }}>
-            <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1.5, color: '#003875' }}>
-              🏗️ 파싱된 구조화 데이터
-            </Typography>
-            <TableContainer sx={{ maxHeight: 600 }}>
-              <Table size="small" stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 700, bgcolor: '#f5f7fa', width: 50 }}>행</TableCell>
-                    <TableCell sx={{ fontWeight: 700, bgcolor: '#f5f7fa', width: 40 }}>열</TableCell>
-                    <TableCell sx={{ fontWeight: 700, bgcolor: '#f5f7fa' }}>파싱값</TableCell>
-                    <TableCell sx={{ fontWeight: 700, bgcolor: '#f5f7fa', width: 110 }}>매핑 필드</TableCell>
-                    <TableCell sx={{ fontWeight: 700, bgcolor: '#f5f7fa', width: 60 }} align="center">상태</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {mockParsedData.map((cell, i) => {
-                    const key = rowKey(cell.row, cell.col);
-                    const hasDiff = cell.status === 'warn' || cell.status === 'error';
-                    return (
-                      <TableRow
-                        key={i}
-                        hover
-                        selected={highlightRow === key}
-                        onClick={() => setHighlightRow(highlightRow === key ? null : key)}
-                        sx={{
-                          cursor: 'pointer',
-                          bgcolor: highlightRow === key ? '#e3f2fd' :
-                            hasDiff ? (cell.status === 'error' ? '#ffebee' : '#fff8e1') : undefined,
-                          transition: 'background-color 0.2s',
-                        }}
-                      >
-                        <TableCell sx={{ fontFamily: 'monospace', color: '#666' }}>{cell.row}</TableCell>
-                        <TableCell sx={{ fontFamily: 'monospace', color: '#666' }}>{cell.col}</TableCell>
-                        <TableCell sx={{
-                          fontWeight: 600,
-                          ...(hasDiff && { borderLeft: `3px solid ${cell.status === 'error' ? '#f44336' : '#ff9800'}` }),
-                        }}>
-                          {hasDiff ? (
-                            <Tooltip title={cell.diff || ''} arrow>
-                              <Box component="span" sx={{ cursor: 'help' }}>
-                                {cell.parsedValue}
-                                {cell.status === 'error' ? ' ❌' : ' ⚠️'}
-                              </Box>
-                            </Tooltip>
-                          ) : cell.parsedValue}
-                        </TableCell>
-                        <TableCell>
-                          <Chip label={cell.mappedField} size="small" variant="outlined"
-                            sx={{ fontSize: 10, height: 22, fontFamily: 'monospace' }} />
-                        </TableCell>
-                        <TableCell align="center">{statusChip(cell.status)}</TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-        </Grid>
-      </Grid>
-
-      {/* 차이 요약 */}
-      {(totalWarn > 0 || totalError > 0) && (
-        <Alert severity={totalError > 0 ? 'error' : 'warning'} sx={{ mb: 3 }}>
-          {totalError > 0 && `오류 ${totalError}건 — 파싱 결과를 재확인하세요. `}
-          {totalWarn > 0 && `확인필요 ${totalWarn}건 — 매핑 정확도를 점검하세요.`}
-        </Alert>
-      )}
-
-      {/* 검토 완료 / 네비게이션 */}
-      {reviewed && (
-        <Alert severity="success" sx={{ mb: 2 }}>
-          검증이 완료되었습니다. 분석 단계로 진행할 수 있습니다.
-        </Alert>
-      )}
-
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Button variant="outlined" startIcon={<NavigateBefore />} onClick={() => navigate('/parsing')}>
-          파싱으로 돌아가기
-        </Button>
+      {/* 하단 액션 */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="body2" color="text.secondary">
+          <strong>진행상황:</strong> {mockVerificationData.length}개 항목 중 {totalCorrect}개 검토 완료 ({Math.round((totalCorrect / mockVerificationData.length) * 100)}%)
+        </Typography>
         <Box sx={{ display: 'flex', gap: 2 }}>
-          {!reviewed && (
-            <Button variant="contained" color="success" startIcon={<CheckCircle />}
-              onClick={() => setReviewed(true)} sx={{ fontWeight: 700 }}>
-              검증 완료
-            </Button>
-          )}
-          <Button variant="contained" endIcon={<NavigateNext />}
+          <Button 
+            variant="outlined" 
+            startIcon={<NavigateBefore />} 
+            onClick={() => navigate('/parsing')}
+          >
+            뒤로가기
+          </Button>
+          <Button 
+            variant="contained" 
+            endIcon={<NavigateNext />}
             onClick={() => navigate('/analysis')}
-            disabled={!reviewed}
-            sx={{ bgcolor: '#003875', px: 4 }}>
-            분석으로 이동
+            sx={{ bgcolor: '#003875', px: 4, py: 1.5, fontSize: '16px' }}
+          >
+            검증 완료 및 다음 단계 →
           </Button>
         </Box>
       </Box>
+
+      {/* 수정 다이얼로그 */}
+      <Dialog 
+        open={editDialog.open} 
+        onClose={() => setEditDialog({ open: false })}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          필드 값 수정
+          <IconButton onClick={() => setEditDialog({ open: false })}>
+            <Close />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ pt: 2 }}>
+            <TextField
+              label="필드명"
+              value={editDialog.item?.fieldName || ''}
+              fullWidth
+              disabled
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              label="현재 AI 파싱값"
+              value={editDialog.item?.parsedValue || ''}
+              fullWidth
+              disabled
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              label="수정된 값"
+              value={correctedValue}
+              onChange={(e) => setCorrectedValue(e.target.value)}
+              fullWidth
+              placeholder="올바른 값을 입력하세요"
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setEditDialog({ open: false })}>취소</Button>
+          <Button 
+            onClick={handleSaveEdit} 
+            variant="contained"
+            sx={{ bgcolor: '#003875' }}
+          >
+            저장
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

@@ -51,8 +51,8 @@ export default function App() {
             <Route path="/settings" element={<Settings />} />
 
             {/* 기본 리다이렉트 */}
-            <Route path="/" element={<Navigate to="/parsing" replace />} />
-            <Route path="*" element={<Navigate to="/parsing" replace />} />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Route>
         </Routes>
       </HashRouter>

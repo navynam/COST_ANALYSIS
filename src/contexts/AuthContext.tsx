@@ -28,7 +28,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [state]);
 
   const login = (user: { id: string; name: string }) => {
-    setState({ isAuthenticated: false, user });
+    setState({ isAuthenticated: true, user }); // 바로 인증 완료
+    setIsOtpVerified(true);
+    localStorage.setItem('otpVerified', 'true');
   };
 
   const setOtpVerified = () => {

@@ -43,7 +43,7 @@ const initialFiles: FileItem[] = [
 
 const statusConfig: Record<FileStatus, { label: string; emoji: string; color: string }> = {
   extracting: { label: '추출중', emoji: '⏳', color: C.orange },
-  complete: { label: '추출완료', emoji: '✅', color: C.green },
+  complete: { label: '검증', emoji: '✅', color: C.green },
   failed: { label: '추출실패', emoji: '❌', color: C.red },
   analyzing: { label: '분석완료', emoji: '🟣', color: C.purple },
 };
@@ -109,9 +109,9 @@ const Parsing: React.FC = () => {
   const statusCards: { key: 'all' | FileStatus; label: string; colorKey: string }[] = [
     { key: 'all', label: '전체', colorKey: C.dark },
     { key: 'extracting', label: '추출중', colorKey: C.orange },
-    { key: 'complete', label: '완료', colorKey: C.green },
-    { key: 'failed', label: '실패', colorKey: C.red },
+    { key: 'complete', label: '검증', colorKey: C.green },
     { key: 'analyzing', label: '분석완료', colorKey: C.purple },
+    { key: 'failed', label: '실패', colorKey: C.red },
   ];
 
   return (

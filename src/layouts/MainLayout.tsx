@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom';
 import { Box, AppBar, Toolbar, Typography, IconButton, Badge, Avatar } from '@mui/material';
 import { Notifications, AccountCircle } from '@mui/icons-material';
 import Sidebar, { SIDEBAR_WIDTH, SIDEBAR_COLLAPSED } from './Sidebar';
@@ -7,8 +7,13 @@ import { useAuth } from '../contexts/AuthContext';
 
 const MainLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, logout, isAuthenticated } = useAuth();
   const sidebarWidth = collapsed ? SIDEBAR_COLLAPSED : SIDEBAR_WIDTH;
+
+  // 인증되지 않은 사용자는 로그인 페이지로 리다이렉트
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>

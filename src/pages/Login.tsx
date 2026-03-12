@@ -26,12 +26,12 @@ const Login: React.FC = () => {
     try {
       // TODO: 실제 API 연동
       // const res = await authAPI.login(data.employeeId, data.password);
-      // 임시 로그인 처리
+      // 임시 로그인 처리 - 바로 대시보드로 이동
       if (data.employeeId && data.password) {
         setError('');
         setFailCount(0);
-        login({ id: data.employeeId, name: '홍길동' });
-        navigate('/otp');
+        login({ id: data.employeeId, name: 'HANY' }); // 사용자명 변경
+        navigate('/dashboard');
       }
     } catch (err: any) {
       const newCount = failCount + 1;
