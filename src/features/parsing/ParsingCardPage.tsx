@@ -90,11 +90,18 @@ const FileCard: React.FC<{
           label: '추출중', 
           bgColor: '#fff3e0' 
         };
-      case 'complete':
+      case 'verifying':
+        return { 
+          color: '#2196f3', 
+          icon: <Schedule sx={{ fontSize: 16 }} />, 
+          label: '검증중', 
+          bgColor: '#e3f2fd' 
+        };
+      case 'verified':
         return { 
           color: '#4caf50', 
           icon: <CheckCircle sx={{ fontSize: 16 }} />, 
-          label: '완료', 
+          label: '검증완료', 
           bgColor: '#e8f5e8' 
         };
       case 'analyzing':
@@ -103,6 +110,13 @@ const FileCard: React.FC<{
           icon: <Analytics sx={{ fontSize: 16 }} />, 
           label: '분석중', 
           bgColor: '#f3e5f5' 
+        };
+      case 'analyzed':
+        return { 
+          color: '#34c759', 
+          icon: <CheckCircle sx={{ fontSize: 16 }} />, 
+          label: '분석완료', 
+          bgColor: '#e8f5e9' 
         };
       case 'failed':
         return { 
@@ -252,7 +266,7 @@ const FileCard: React.FC<{
           )}
 
           {/* ✅ Toss 스타일 추출 결과 (완료, 분석중, 검증 단계) - 컴팩트 */}
-          {(file.status === 'complete' || file.status === 'analyzing') && (
+          {(file.status === 'verifying' || file.status === 'verified' || file.status === 'analyzing' || file.status === 'analyzed') && (
             <Box sx={{ p: 2, bgcolor: '#f0fdf4', borderRadius: '10px', border: '1px solid #dcfce7' }}>
               <Typography sx={{ 
                 fontSize: 12, 
@@ -426,7 +440,7 @@ const FileCard: React.FC<{
         pt: 0.5, 
         mt: 'auto'
       }}>
-        {file.status === 'complete' && (
+        {file.status === 'verifying' && (
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Button 
               variant="outlined"
@@ -470,6 +484,54 @@ const FileCard: React.FC<{
               }}
             >
               검증하기
+            </Button>
+          </Box>
+        )}
+
+        {file.status === 'verified' && (
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button 
+              variant="outlined"
+              onClick={(e) => { e.stopPropagation(); onNoteClick(file.id.toString()); }}
+              sx={{ 
+                fontSize: 12, 
+                fontWeight: 600,
+                textTransform: 'none', 
+                borderRadius: '8px', 
+                py: 1,
+                px: 3,
+                minWidth: 120,
+                whiteSpace: 'nowrap',
+                borderColor: '#0064ff',
+                color: '#0064ff',
+                '&:hover': { 
+                  borderColor: '#0056d3',
+                  bgcolor: 'rgba(0, 100, 255, 0.04)'
+                }
+              }}
+            >
+              📝 노트({getNoteCount(file.id.toString())})
+            </Button>
+            <Button 
+              variant="contained" 
+              fullWidth
+              onClick={(e) => { e.stopPropagation(); onAnalysis(); }}
+              sx={{ 
+                fontSize: 16, 
+                fontWeight: 700,
+                textTransform: 'none', 
+                bgcolor: '#4caf50', 
+                borderRadius: '12px', 
+                py: 1.25,
+                boxShadow: 'none',
+                letterSpacing: '-0.3px',
+                '&:hover': { 
+                  bgcolor: '#388e3c',
+                  boxShadow: 'none'
+                } 
+              }}
+            >
+              분석하기
             </Button>
           </Box>
         )}
@@ -598,18 +660,66 @@ const FileCard: React.FC<{
                 fontSize: 16, 
                 fontWeight: 700,
                 textTransform: 'none', 
-                bgcolor: '#00c896', 
+                bgcolor: '#9c27b0', 
                 borderRadius: '12px',
                 py: 1.25,
                 boxShadow: 'none',
                 letterSpacing: '-0.3px',
                 '&:hover': { 
-                  bgcolor: '#00b085',
+                  bgcolor: '#7b1fa2',
                   boxShadow: 'none'
                 }
               }}
             >
-              상세보기
+              분석 상세보기
+            </Button>
+          </Box>
+        )}
+
+        {file.status === 'analyzed' && (
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button 
+              variant="outlined"
+              onClick={(e) => { e.stopPropagation(); onNoteClick(file.id.toString()); }}
+              sx={{ 
+                fontSize: 12, 
+                fontWeight: 600,
+                textTransform: 'none', 
+                borderRadius: '8px', 
+                py: 1,
+                px: 3,
+                minWidth: 120,
+                whiteSpace: 'nowrap',
+                borderColor: '#0064ff',
+                color: '#0064ff',
+                '&:hover': { 
+                  borderColor: '#0056d3',
+                  bgcolor: 'rgba(0, 100, 255, 0.04)'
+                }
+              }}
+            >
+              📝 노트({getNoteCount(file.id.toString())})
+            </Button>
+            <Button 
+              variant="contained" 
+              fullWidth
+              onClick={(e) => { e.stopPropagation(); onAnalysis(); }}
+              sx={{ 
+                fontSize: 16, 
+                fontWeight: 700,
+                textTransform: 'none', 
+                bgcolor: '#34c759', 
+                borderRadius: '12px',
+                py: 1.25,
+                boxShadow: 'none',
+                letterSpacing: '-0.3px',
+                '&:hover': { 
+                  bgcolor: '#2da44e',
+                  boxShadow: 'none'
+                }
+              }}
+            >
+              분석 결과 보기
             </Button>
           </Box>
         )}

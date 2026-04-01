@@ -16,7 +16,11 @@ export const BRAND_COLORS = {
 export const PARSING_STATUS_MAP: Record<string, { label: string; color: 'success' | 'error' | 'warning' | 'info' | 'default' }> = {
   uploading: { label: '업로드중', color: 'info' },
   parsing: { label: '파싱중', color: 'warning' },
-  parsed: { label: '완료', color: 'success' },
+  extracting: { label: '추출중', color: 'warning' },
+  verifying: { label: '검증중', color: 'info' },
+  verified: { label: '검증완료', color: 'success' },
+  analyzing: { label: '분석중', color: 'info' },
+  analyzed: { label: '분석완료', color: 'success' },
   failed: { label: '실패', color: 'error' },
 };
 

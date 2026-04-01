@@ -1448,8 +1448,24 @@ const ParsedDataReviewPage: React.FC = () => {
           <Button
             variant="contained"
             size="small"
-            onClick={() => navigate('/analysis')}
-            sx={{ textTransform: 'none', fontSize: 12, borderRadius: '6px', bgcolor: '#34c759', color: '#fff', '&:hover': { bgcolor: '#2e7d32' } }}
+            onClick={() => {
+              // TODO: 실제 API 연동 시 파일 상태를 'verified'로 변경
+              console.log('✅ 검증완료: 파일 상태 → verified');
+              alert('✅ 검증이 완료되었습니다.');
+            }}
+            sx={{ textTransform: 'none', fontSize: 12, borderRadius: '6px', bgcolor: '#4caf50', color: '#fff', '&:hover': { bgcolor: '#388e3c' } }}
+          >
+            ✅ 검증완료
+          </Button>
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => {
+              // TODO: 실제 API 연동 시 파일 상태를 'analyzing'으로 변경
+              console.log('📊 분석으로 이동: 파일 상태 → analyzing');
+              navigate('/analysis');
+            }}
+            sx={{ textTransform: 'none', fontSize: 12, borderRadius: '6px', bgcolor: '#9c27b0', color: '#fff', '&:hover': { bgcolor: '#7b1fa2' } }}
           >
             분석으로 이동 →
           </Button>

@@ -1,4 +1,4 @@
-export type FileStatus = 'extracting' | 'complete' | 'failed' | 'analyzing';
+export type FileStatus = 'extracting' | 'verifying' | 'verified' | 'analyzing' | 'analyzed' | 'failed';
 
 export interface FileItem {
   id: number;

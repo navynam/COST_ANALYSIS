@@ -136,7 +136,11 @@ const AnalysisPage: React.FC = () => {
             sx={{ ...btnOutlineSx, borderColor: C.border, color: C.dark }}>
             검증으로
           </Button>
-          <Button variant="contained" size="small" sx={{ ...btnOutlineSx, bgcolor: C.blue, color: '#fff', borderColor: C.blue, '&:hover': { bgcolor: '#0077ED' } }}>
+          <Button variant="contained" size="small" onClick={() => {
+              // TODO: 실제 API 연동 시 파일 상태를 'analyzed'로 변경
+              console.log('✅ 분석완료: 파일 상태 → analyzed');
+              alert('✅ 분석이 완료되었습니다. 상태가 "분석완료"로 변경되었습니다.');
+            }} sx={{ ...btnOutlineSx, bgcolor: C.blue, color: '#fff', borderColor: C.blue, '&:hover': { bgcolor: '#0077ED' } }}>
             완료 &amp; 저장
           </Button>
           <Button variant="contained" endIcon={<NavigateNext />} onClick={() => navigate('/comparison')}

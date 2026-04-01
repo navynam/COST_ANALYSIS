@@ -122,23 +122,33 @@ const FileTable: React.FC<FileTableProps> = ({
                       </Button>
 
                       {/* 메인 액션 버튼 */}
-                      {f.status === 'complete' && (
+                      {f.status === 'extracting' && (
+                        <Button size="small" variant="outlined" disabled sx={{ fontSize: 12, textTransform: 'none', borderRadius: '6px' }}>추출중</Button>
+                      )}
+                      {f.status === 'verifying' && (
                         <Button size="small" variant="contained"
                           sx={{ fontSize: 12, textTransform: 'none', bgcolor: C.blue, borderRadius: '6px', boxShadow: 'none', '&:hover': { bgcolor: '#0077ED' } }}
                           onClick={() => onVerify(f.id.toString(), f.name)}>검증하기</Button>
                       )}
-                      {f.status === 'extracting' && (
-                        <Button size="small" variant="outlined" disabled sx={{ fontSize: 12, textTransform: 'none', borderRadius: '6px' }}>처리중</Button>
+                      {f.status === 'verified' && (
+                        <Button size="small" variant="contained"
+                          sx={{ fontSize: 12, textTransform: 'none', bgcolor: C.green, borderRadius: '6px', boxShadow: 'none', '&:hover': { bgcolor: '#2d9d3f' } }}
+                          onClick={onAnalysis}>분석하기</Button>
+                      )}
+                      {f.status === 'analyzing' && (
+                        <Button size="small" variant="contained"
+                          sx={{ fontSize: 12, textTransform: 'none', bgcolor: C.purple, borderRadius: '6px', boxShadow: 'none' }}
+                          onClick={onAnalysis}>분석중</Button>
+                      )}
+                      {f.status === 'analyzed' && (
+                        <Button size="small" variant="contained"
+                          sx={{ fontSize: 12, textTransform: 'none', bgcolor: '#34c759', borderRadius: '6px', boxShadow: 'none' }}
+                          onClick={onAnalysis}>결과보기</Button>
                       )}
                       {f.status === 'failed' && (
                         <Button size="small" variant="outlined"
                           sx={{ fontSize: 12, textTransform: 'none', borderRadius: '6px', color: C.red, borderColor: C.red }}
-                          onClick={e => { e.stopPropagation(); onFailedDetail(f); }}>추출실패</Button>
-                      )}
-                      {f.status === 'analyzing' && (
-                        <Button size="small" variant="contained"
-                          sx={{ fontSize: 12, textTransform: 'none', bgcolor: C.blue, borderRadius: '6px', boxShadow: 'none' }}
-                          onClick={onAnalysis}>상세보기</Button>
+                          onClick={e => { e.stopPropagation(); onFailedDetail(f); }}>실패 상세</Button>
                       )}
                     </Box>
                   </TableCell>

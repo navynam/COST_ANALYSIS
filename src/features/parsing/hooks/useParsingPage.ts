@@ -21,7 +21,7 @@ export const useParsingPage = () => {
 
   useEffect(() => {
     const filterParam = searchParams.get('filter') as FileStatus;
-    if (filterParam && ['extracting', 'complete', 'analyzing', 'failed'].includes(filterParam)) {
+    if (filterParam && ['extracting', 'verifying', 'verified', 'analyzing', 'analyzed', 'failed'].includes(filterParam)) {
       setFilter(filterParam);
     }
   }, [searchParams]);
@@ -53,9 +53,11 @@ export const useParsingPage = () => {
   const counts = {
     all: files.length,
     extracting: files.filter(f => f.status === 'extracting').length,
-    complete: files.filter(f => f.status === 'complete').length,
-    failed: files.filter(f => f.status === 'failed').length,
+    verifying: files.filter(f => f.status === 'verifying').length,
+    verified: files.filter(f => f.status === 'verified').length,
     analyzing: files.filter(f => f.status === 'analyzing').length,
+    analyzed: files.filter(f => f.status === 'analyzed').length,
+    failed: files.filter(f => f.status === 'failed').length,
   };
 
   const handleFiles = useCallback((fileList: FileList | File[]) => {
@@ -80,9 +82,11 @@ export const useParsingPage = () => {
 
   const statusCards: { key: 'all' | FileStatus; label: string; colorKey: string }[] = [
     { key: 'all', label: '전체', colorKey: C.dark },
-    { key: 'extracting', label: '추출', colorKey: C.orange },
-    { key: 'complete', label: '검증', colorKey: C.green },
-    { key: 'analyzing', label: '분석', colorKey: C.purple },
+    { key: 'extracting', label: '추출중', colorKey: C.orange },
+    { key: 'verifying', label: '검증중', colorKey: C.blue },
+    { key: 'verified', label: '검증완료', colorKey: C.green },
+    { key: 'analyzing', label: '분석중', colorKey: C.purple },
+    { key: 'analyzed', label: '분석완료', colorKey: '#34c759' },
     { key: 'failed', label: '실패', colorKey: C.red },
   ];
 
