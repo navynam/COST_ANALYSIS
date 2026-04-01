@@ -311,7 +311,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                       color: '#15803d',
                       fontWeight: 500
                     }}>
-                      정확도
+                      신뢰도
                     </Typography>
                   </Box>
                   
