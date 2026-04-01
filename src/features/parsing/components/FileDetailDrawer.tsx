@@ -24,11 +24,18 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
           label: '추출중', 
           bgColor: '#fff3e0' 
         };
-      case 'complete':
+      case 'verifying':
+        return { 
+          color: '#2196f3', 
+          icon: <Schedule sx={{ fontSize: 16 }} />, 
+          label: '검증중', 
+          bgColor: '#e3f2fd' 
+        };
+      case 'verified':
         return { 
           color: '#4caf50', 
           icon: <CheckCircle sx={{ fontSize: 16 }} />, 
-          label: '완료', 
+          label: '검증완료', 
           bgColor: '#e8f5e8' 
         };
       case 'analyzing':
@@ -37,6 +44,13 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
           icon: <CheckCircle sx={{ fontSize: 16 }} />, 
           label: '분석중', 
           bgColor: '#f3e5f5' 
+        };
+      case 'analyzed':
+        return { 
+          color: '#34c759', 
+          icon: <CheckCircle sx={{ fontSize: 16 }} />, 
+          label: '분석완료', 
+          bgColor: '#e8f5e9' 
         };
       case 'failed':
         return { 
@@ -262,7 +276,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
             )}
 
             {/* ✅ 추출 완료 상태 (파싱 카드와 동일) */}
-            {(file.status === 'complete' || file.status === 'analyzing') && (
+            {(file.status === 'verifying' || file.status === 'verified' || file.status === 'analyzing' || file.status === 'analyzed') && (
               <Box sx={{ p: 2.5, bgcolor: '#f0fdf4', borderRadius: '12px', border: '1px solid #dcfce7' }}>
                 <Typography sx={{ 
                   fontSize: 14, 
@@ -602,7 +616,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
             bgcolor: 'white',
             borderTop: '1px solid #f2f4f6'
           }}>
-            {(file.status === 'complete' || file.status === 'analyzing') && (
+            {(file.status === 'verifying' || file.status === 'verified' || file.status === 'analyzing' || file.status === 'analyzed') && (
               <Button 
                 fullWidth 
                 variant="contained" 

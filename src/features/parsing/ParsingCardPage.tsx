@@ -817,7 +817,7 @@ ${currentFile?.status === 'extracting' ? `
 - 현재 진행률: ${currentFile?.progress || 0}%
 - 예상 완료 시간: 2-3분
 - 권장사항: 추출 완료까지 대기
-` : currentFile?.status === 'complete' ? `
+` : (currentFile?.status === 'verifying' || currentFile?.status === 'verified') ? `
 ✅ 추출 완료
 - 파싱 항목: ${currentFile?.parsedItems || 0}개
 - 이상치: ${currentFile?.anomalies || 0}개
@@ -832,7 +832,7 @@ ${currentFile?.status === 'extracting' ? `
 `}
 
 📋 **다음 단계 권고:**
-1. ${currentFile?.status === 'complete' ? '검증 페이지로 이동하여 데이터 정확성 확인' : '파일 상태가 완료될 때까지 대기'}
+1. ${(currentFile?.status === 'verifying' || currentFile?.status === 'verified') ? '검증 페이지로 이동하여 데이터 정확성 확인' : '파일 상태가 완료될 때까지 대기'}
 2. ${currentFile?.anomalies && currentFile.anomalies > 0 ? '이상치 항목 우선 검토' : '표준 검증 프로세스 진행'}
 3. 문제 발견시 이 노트에 세부 사항 기록
       `;
