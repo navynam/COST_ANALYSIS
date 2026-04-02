@@ -115,12 +115,12 @@ const DashboardPage: React.FC = () => {
       <Grid container spacing={2} sx={{ mb: 4 }}>
         <Grid item xs={12} md={7}>
           <Typography variant="subtitle1" fontWeight={600} gutterBottom sx={{ mb: 2 }}>내가 해야할 작업</Typography>
-          <Paper sx={{ p: 2, borderRadius: 2, height: 250 }}>
-            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 1.5 }}>
+          <Paper sx={{ p: 2, borderRadius: 2, height: 180 }}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1.5 }}>
               {workItems.map((item) => (
                 <Card key={item.status}
                   sx={{ cursor: 'pointer', transition: 'all 0.2s', '&:hover': { transform: 'translateY(-2px)', boxShadow: 4, bgcolor: `${item.color}10` }, border: `2px solid ${item.color}30` }}
-                  onClick={() => navigate(`/parsing?filter=${item.filter}`)}>
+                  onClick={() => navigate('/parsing_card')}>
                   <CardContent sx={{ textAlign: 'center', py: 1.5, px: 1.5, '&:last-child': { pb: 1.5 } }}>
                     <Typography fontSize={16} sx={{ mb: 0.3 }}>{item.icon}</Typography>
                     <Typography variant="h5" fontWeight={700} sx={{ color: item.color, mb: 0.3 }}>{item.count}</Typography>

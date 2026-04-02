@@ -36,10 +36,12 @@ const getWorkStatusCounts = () => {
 };
 
 export const workItems = [
-  { status: '추출', label: '추출 대기', count: getWorkStatusCounts()['추출'], icon: '⏳', color: '#ff9500', filter: 'extracting' },
-  { status: '검증', label: '검증 대기', count: getWorkStatusCounts()['검증'], icon: '✅', color: '#34c759', filter: 'complete' },
-  { status: '분석', label: '분석 대기', count: getWorkStatusCounts()['분석'], icon: '📊', color: '#af52de', filter: 'analyzing' },
-  { status: '실패', label: '처리 실패', count: getWorkStatusCounts()['실패'], icon: '❌', color: '#ff3b30', filter: 'failed' },
+  { status: 'extracting', label: '추출중', count: 3, icon: '⚙️', color: '#ff9500', filter: 'extracting' },
+  { status: 'verifying', label: '검증중', count: 2, icon: '🔍', color: '#007aff', filter: 'verifying' },
+  { status: 'verified', label: '검증완료', count: 5, icon: '✅', color: '#34c759', filter: 'verified' },
+  { status: 'analyzing', label: '분석중', count: 1, icon: '📊', color: '#af52de', filter: 'analyzing' },
+  { status: 'analyzed', label: '분석완료', count: 4, icon: '📈', color: '#00c896', filter: 'analyzed' },
+  { status: 'failed', label: '실패', count: 2, icon: '❌', color: '#ff3b30', filter: 'failed' },
 ];
 
 export const summaryCards = [
