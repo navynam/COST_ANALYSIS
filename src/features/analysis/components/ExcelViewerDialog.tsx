@@ -215,9 +215,9 @@ const readExcelFile = async (file: File): Promise<ExcelWorkbook> => {
         
         const sheets: ExcelSheet[] = [];
         
-        workbook.SheetNames.forEach((sheetName) => {
+        workbook.SheetNames.forEach((sheetName: string) => {
           const worksheet = workbook.Sheets[sheetName];
-          const jsonData = XLSX.utils.sheet_to_json(worksheet, { 
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, {
             header: 1,
             defval: '',
             raw: false
@@ -254,9 +254,9 @@ const readExcelFromUrl = async (url: string): Promise<ExcelWorkbook> => {
     
     const sheets: ExcelSheet[] = [];
     
-    workbook.SheetNames.forEach((sheetName) => {
+    workbook.SheetNames.forEach((sheetName: string) => {
       const worksheet = workbook.Sheets[sheetName];
-      const jsonData = XLSX.utils.sheet_to_json(worksheet, { 
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, {
         header: 1,
         defval: '',
         raw: false

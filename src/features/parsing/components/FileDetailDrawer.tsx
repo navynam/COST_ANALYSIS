@@ -11,9 +11,10 @@ interface FileDetailDrawerProps {
   file: FileItem | null;
   onClose: () => void;
   onVerify: () => void;
+  onAnalysis?: () => void;
 }
 
-const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVerify }) => {
+const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVerify, onAnalysis }) => {
   // 상태별 설정 (파싱 카드와 동일)
   const getStatusConfig = (status: string) => {
     switch (status) {
@@ -275,133 +276,118 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
               </Box>
             )}
 
-            {/* ✅ 추출 완료 상태 (파싱 카드와 동일) */}
+            {/* ✅ 추출 완료 상태 — 3개 섹션 독립 분리 */}
             {(file.status === 'verifying' || file.status === 'verified' || file.status === 'analyzing' || file.status === 'analyzed') && (
-              <Box sx={{ p: 2.5, bgcolor: '#f0fdf4', borderRadius: '12px', border: '1px solid #dcfce7' }}>
-                <Typography sx={{ 
-                  fontSize: 14, 
-                  color: '#15803d', 
-                  fontWeight: 700,
-                  mb: 2,
-                  textAlign: 'center'
-                }}>
-                  ✨ 추출 완료
-                </Typography>
-                
-                {/* 📊 추출 결과 요약 */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-                  <Box sx={{ textAlign: 'center', flex: 1 }}>
-                    <Typography sx={{ 
-                      fontSize: 20, 
-                      fontWeight: 800, 
-                      color: '#0064ff',
-                      lineHeight: 1
-                    }}>
-                      {file.parsedItems || 156}
-                    </Typography>
-                    <Typography sx={{ 
-                      fontSize: 12, 
-                      color: '#15803d',
-                      fontWeight: 500
-                    }}>
-                      파싱 항목
-                    </Typography>
-                  </Box>
-                  
-                  <Box sx={{ textAlign: 'center', flex: 1 }}>
-                    <Typography sx={{ 
-                      fontSize: 20, 
-                      fontWeight: 800, 
-                      color: '#00c896',
-                      lineHeight: 1
-                    }}>
-                      {(file.parsedItems && file.anomalies) ? 
-                        Math.round(((file.parsedItems - file.anomalies) / file.parsedItems) * 100) : 
-                        94
-                      }%
-                    </Typography>
-                    <Typography sx={{ 
-                      fontSize: 12, 
-                      color: '#15803d',
-                      fontWeight: 500
-                    }}>
-                      신뢰도
-                    </Typography>
-                  </Box>
-                  
-                  <Box sx={{ textAlign: 'center', flex: 1 }}>
-                    <Typography sx={{ 
-                      fontSize: 20, 
-                      fontWeight: 800, 
-                      color: file.anomalies && file.anomalies > 0 ? '#ff5a5a' : '#8b95a1',
-                      lineHeight: 1
-                    }}>
-                      {file.anomalies || 3}
-                    </Typography>
-                    <Typography sx={{ 
-                      fontSize: 12, 
-                      color: '#15803d',
-                      fontWeight: 500
-                    }}>
-                      이상치
-                    </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+
+                {/* ── 섹션 1: 추출 완료 요약 ── */}
+                <Box sx={{ p: 2.5, bgcolor: '#f0fdf4', borderRadius: '12px', border: '1px solid #bbf7d0' }}>
+                  <Typography sx={{
+                    fontSize: 13,
+                    color: '#15803d',
+                    fontWeight: 700,
+                    mb: 2,
+                    textAlign: 'center',
+                    letterSpacing: '-0.2px'
+                  }}>
+                    ✨ 추출 완료
+                  </Typography>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
+                    <Box sx={{ textAlign: 'center', flex: 1 }}>
+                      <Typography sx={{ fontSize: 22, fontWeight: 800, color: '#0064ff', lineHeight: 1 }}>
+                        {file.parsedItems || 156}
+                      </Typography>
+                      <Typography sx={{ fontSize: 11, color: '#6b7280', fontWeight: 500, mt: 0.5 }}>
+                        파싱 항목
+                      </Typography>
+                    </Box>
+                    <Box sx={{ width: '1px', bgcolor: '#dcfce7' }} />
+                    <Box sx={{ textAlign: 'center', flex: 1 }}>
+                      <Typography sx={{ fontSize: 22, fontWeight: 800, color: '#00c896', lineHeight: 1 }}>
+                        {(file.parsedItems && file.anomalies)
+                          ? Math.round(((file.parsedItems - file.anomalies) / file.parsedItems) * 100)
+                          : 94}%
+                      </Typography>
+                      <Typography sx={{ fontSize: 11, color: '#6b7280', fontWeight: 500, mt: 0.5 }}>
+                        신뢰도
+                      </Typography>
+                    </Box>
+                    <Box sx={{ width: '1px', bgcolor: '#dcfce7' }} />
+                    <Box sx={{ textAlign: 'center', flex: 1 }}>
+                      <Typography sx={{
+                        fontSize: 22,
+                        fontWeight: 800,
+                        color: file.anomalies && file.anomalies > 0 ? '#ff5a5a' : '#8b95a1',
+                        lineHeight: 1
+                      }}>
+                        {file.anomalies || 3}
+                      </Typography>
+                      <Typography sx={{ fontSize: 11, color: '#6b7280', fontWeight: 500, mt: 0.5 }}>
+                        이상치
+                      </Typography>
+                    </Box>
                   </Box>
                 </Box>
 
-                {/* 📋 추출된 카테고리 */}
-                <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid #dcfce7' }}>
-                  <Typography sx={{ 
-                    fontSize: 12, 
-                    color: '#15803d',
-                    fontWeight: 600,
-                    mb: 1
+                {/* ── 섹션 2: 추출된 카테고리 ── */}
+                <Box sx={{ p: 2.5, bgcolor: '#ffffff', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+                  <Typography sx={{
+                    fontSize: 12,
+                    color: '#374151',
+                    fontWeight: 700,
+                    mb: 1.5,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5
                   }}>
-                    추출된 카테고리
+                    🏷️ 추출된 카테고리
                   </Typography>
-                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
-                    <Chip 
-                      label="재료비 (4건)" 
-                      size="small" 
-                      sx={{ 
-                        fontSize: 10, 
-                        height: 20,
-                        bgcolor: '#dbeafe', 
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    <Chip
+                      label="재료비 (4건)"
+                      size="small"
+                      sx={{
+                        fontSize: 11,
+                        height: 24,
+                        bgcolor: '#dbeafe',
                         color: '#1d4ed8',
                         fontWeight: 600,
-                        '& .MuiChip-label': { px: 0.75 }
-                      }} 
+                        '& .MuiChip-label': { px: 1 }
+                      }}
                     />
-                    <Chip 
-                      label="가공비 (3건)" 
-                      size="small" 
-                      sx={{ 
-                        fontSize: 10, 
-                        height: 20,
-                        bgcolor: '#fef3c7', 
+                    <Chip
+                      label="가공비 (3건)"
+                      size="small"
+                      sx={{
+                        fontSize: 11,
+                        height: 24,
+                        bgcolor: '#fef3c7',
                         color: '#d97706',
                         fontWeight: 600,
-                        '& .MuiChip-label': { px: 0.75 }
-                      }} 
+                        '& .MuiChip-label': { px: 1 }
+                      }}
                     />
-                    <Chip 
-                      label="경비 (2건)" 
-                      size="small" 
-                      sx={{ 
-                        fontSize: 10, 
-                        height: 20,
-                        bgcolor: '#dcfce7', 
+                    <Chip
+                      label="경비 (2건)"
+                      size="small"
+                      sx={{
+                        fontSize: 11,
+                        height: 24,
+                        bgcolor: '#dcfce7',
                         color: '#059669',
                         fontWeight: 600,
-                        '& .MuiChip-label': { px: 0.75 }
-                      }} 
+                        '& .MuiChip-label': { px: 1 }
+                      }}
                     />
                   </Box>
-                  
-                  {/* 📄 파일 정보 - 시각적 디자인 */}
-                  <Typography sx={{ 
-                    fontSize: 12, 
-                    color: '#15803d',
-                    fontWeight: 600,
+                </Box>
+
+                {/* ── 섹션 3: 파일 정보 ── */}
+                <Box sx={{ p: 2.5, bgcolor: '#ffffff', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+                  <Typography sx={{
+                    fontSize: 12,
+                    color: '#374151',
+                    fontWeight: 700,
                     mb: 1.5,
                     display: 'flex',
                     alignItems: 'center',
@@ -409,174 +395,100 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                   }}>
                     📄 파일 정보
                   </Typography>
-                  
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    {/* 파일명 - 메인 카드 */}
-                    <Box sx={{ 
+                    {/* 파일명 */}
+                    <Box sx={{
                       p: 1.5,
-                      bgcolor: '#fff9e6',
+                      bgcolor: '#fffbeb',
                       borderRadius: '8px',
-                      border: '1px solid #ffd740',
-                      borderLeft: '4px solid #f57c00'
+                      border: '1px solid #fde68a',
+                      borderLeft: '4px solid #f59e0b'
                     }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                        <Typography sx={{ fontSize: 9, color: '#f57c00' }}>📁</Typography>
-                        <Typography sx={{ 
-                          fontSize: 10, 
-                          color: '#f57c00',
-                          fontWeight: 600,
-                          textTransform: 'uppercase'
-                        }}>
-                          파일명
-                        </Typography>
-                      </Box>
-                      <Typography sx={{ 
-                        fontSize: 13, 
-                        fontWeight: 700,
-                        color: '#1a1a1a'
-                      }}>
+                      <Typography sx={{ fontSize: 10, color: '#92400e', fontWeight: 600, mb: 0.5 }}>
+                        📁 파일명
+                      </Typography>
+                      <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#1a1a1a', wordBreak: 'break-all' }}>
                         {file?.name || 'DOOR_TRIM.xlsx'}
                       </Typography>
                     </Box>
 
-                    {/* 주문/품번 정보 - 2열 */}
+                    {/* C.O. NO. / 품번 */}
                     <Box sx={{ display: 'flex', gap: 1 }}>
-                      <Box sx={{ 
-                        flex: 1,
-                        p: 1.2,
-                        bgcolor: '#e3f2fd',
-                        borderRadius: '6px',
-                        border: '1px solid #90caf9'
+                      <Box sx={{
+                        flex: 1, p: 1.2,
+                        bgcolor: '#eff6ff',
+                        borderRadius: '8px',
+                        border: '1px solid #bfdbfe'
                       }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
-                          <Typography sx={{ fontSize: 9 }}>🏷️</Typography>
-                          <Typography sx={{ 
-                            fontSize: 9, 
-                            color: '#1565c0',
-                            fontWeight: 600
-                          }}>
-                            C.O. NO.
-                          </Typography>
-                        </Box>
-                        <Typography sx={{ 
-                          fontSize: 11, 
-                          fontWeight: 600,
-                          color: '#0d47a1'
-                        }}>
+                        <Typography sx={{ fontSize: 10, color: '#1e40af', fontWeight: 600, mb: 0.5 }}>
+                          🏷️ C.O. NO.
+                        </Typography>
+                        <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#1e3a8a' }}>
                           CO-2024-001
                         </Typography>
                       </Box>
-                      
-                      <Box sx={{ 
-                        flex: 1,
-                        p: 1.2,
-                        bgcolor: '#f3e5f5',
-                        borderRadius: '6px',
-                        border: '1px solid #ce93d8'
+                      <Box sx={{
+                        flex: 1, p: 1.2,
+                        bgcolor: '#faf5ff',
+                        borderRadius: '8px',
+                        border: '1px solid #e9d5ff'
                       }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
-                          <Typography sx={{ fontSize: 9 }}>🔢</Typography>
-                          <Typography sx={{ 
-                            fontSize: 9, 
-                            color: '#7b1fa2',
-                            fontWeight: 600
-                          }}>
-                            품번
-                          </Typography>
-                        </Box>
-                        <Typography sx={{ 
-                          fontSize: 11, 
-                          fontWeight: 600,
-                          color: '#4a148c'
-                        }}>
+                        <Typography sx={{ fontSize: 10, color: '#6b21a8', fontWeight: 600, mb: 0.5 }}>
+                          🔢 품번
+                        </Typography>
+                        <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#4c1d95' }}>
                           HL-2024-001
                         </Typography>
                       </Box>
                     </Box>
 
-                    {/* 품명 - 풀 너비 */}
-                    <Box sx={{ 
+                    {/* 품명 */}
+                    <Box sx={{
                       p: 1.5,
-                      bgcolor: '#e8f5e8',
+                      bgcolor: '#f0fdf4',
                       borderRadius: '8px',
-                      border: '1px solid #a5d6a7'
+                      border: '1px solid #bbf7d0'
                     }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                        <Typography sx={{ fontSize: 9 }}>📦</Typography>
-                        <Typography sx={{ 
-                          fontSize: 10, 
-                          color: '#2e7d32',
-                          fontWeight: 600,
-                          textTransform: 'uppercase'
-                        }}>
-                          품명
-                        </Typography>
-                      </Box>
-                      <Typography sx={{ 
-                        fontSize: 12, 
-                        fontWeight: 700,
-                        color: '#1b5e20'
-                      }}>
+                      <Typography sx={{ fontSize: 10, color: '#166534', fontWeight: 600, mb: 0.5 }}>
+                        📦 품명
+                      </Typography>
+                      <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#14532d' }}>
                         HEAD LINING ASSY
                       </Typography>
                     </Box>
 
-                    {/* 협력사/담당자 - 2열 */}
+                    {/* 협력사 / 담당자 */}
                     <Box sx={{ display: 'flex', gap: 1 }}>
-                      <Box sx={{ 
-                        flex: 1,
-                        p: 1.2,
-                        bgcolor: '#fff3e0',
-                        borderRadius: '6px',
-                        border: '1px solid #ffcc80'
+                      <Box sx={{
+                        flex: 1, p: 1.2,
+                        bgcolor: '#fff7ed',
+                        borderRadius: '8px',
+                        border: '1px solid #fed7aa'
                       }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
-                          <Typography sx={{ fontSize: 9 }}>🏢</Typography>
-                          <Typography sx={{ 
-                            fontSize: 9, 
-                            color: '#ef6c00',
-                            fontWeight: 600
-                          }}>
-                            협력사
-                          </Typography>
-                        </Box>
-                        <Typography sx={{ 
-                          fontSize: 11, 
-                          fontWeight: 600,
-                          color: '#e65100'
-                        }}>
+                        <Typography sx={{ fontSize: 10, color: '#9a3412', fontWeight: 600, mb: 0.5 }}>
+                          🏢 협력사
+                        </Typography>
+                        <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#7c2d12' }}>
                           대리(주)
                         </Typography>
                       </Box>
-                      
-                      <Box sx={{ 
-                        flex: 1,
-                        p: 1.2,
-                        bgcolor: '#fce4ec',
-                        borderRadius: '6px',
-                        border: '1px solid #f8bbd9'
+                      <Box sx={{
+                        flex: 1, p: 1.2,
+                        bgcolor: '#fdf2f8',
+                        borderRadius: '8px',
+                        border: '1px solid #f9a8d4'
                       }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
-                          <Typography sx={{ fontSize: 9 }}>👤</Typography>
-                          <Typography sx={{ 
-                            fontSize: 9, 
-                            color: '#c2185b',
-                            fontWeight: 600
-                          }}>
-                            담당자
-                          </Typography>
-                        </Box>
-                        <Typography sx={{ 
-                          fontSize: 11, 
-                          fontWeight: 600,
-                          color: '#880e4f'
-                        }}>
+                        <Typography sx={{ fontSize: 10, color: '#9d174d', fontWeight: 600, mb: 0.5 }}>
+                          👤 담당자
+                        </Typography>
+                        <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#831843' }}>
                           원장수
                         </Typography>
                       </Box>
                     </Box>
                   </Box>
                 </Box>
+
               </Box>
             )}
 
@@ -616,27 +528,51 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
             bgcolor: 'white',
             borderTop: '1px solid #f2f4f6'
           }}>
-            {(file.status === 'verifying' || file.status === 'verified' || file.status === 'analyzing' || file.status === 'analyzed') && (
-              <Button 
-                fullWidth 
-                variant="contained" 
+            {(file.status === 'verifying' || file.status === 'verified' || file.status === 'analyzing') && (
+              <Button
+                fullWidth
+                variant="contained"
                 onClick={() => { onClose(); onVerify(); }}
-                sx={{ 
-                  fontSize: 16, 
+                sx={{
+                  fontSize: 16,
                   fontWeight: 700,
-                  textTransform: 'none', 
+                  textTransform: 'none',
                   bgcolor: '#0064ff',
-                  borderRadius: '12px', 
+                  borderRadius: '12px',
                   py: 1.5,
                   boxShadow: 'none',
                   letterSpacing: '-0.3px',
-                  '&:hover': { 
+                  '&:hover': {
                     bgcolor: '#0056d3',
                     boxShadow: 'none'
-                  } 
+                  }
                 }}
               >
                 검증하기
+              </Button>
+            )}
+
+            {file.status === 'analyzed' && (
+              <Button
+                fullWidth
+                variant="contained"
+                onClick={() => { onClose(); onAnalysis ? onAnalysis() : onVerify(); }}
+                sx={{
+                  fontSize: 16,
+                  fontWeight: 700,
+                  textTransform: 'none',
+                  bgcolor: '#34c759',
+                  borderRadius: '12px',
+                  py: 1.5,
+                  boxShadow: 'none',
+                  letterSpacing: '-0.3px',
+                  '&:hover': {
+                    bgcolor: '#28a745',
+                    boxShadow: 'none'
+                  }
+                }}
+              >
+                분석하기
               </Button>
             )}
             

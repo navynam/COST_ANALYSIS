@@ -49,7 +49,7 @@ import {
   TextField, ClickAwayListener, Dialog, DialogTitle, DialogContent, 
   DialogActions, Select, MenuItem, FormControl, InputLabel, Alert, IconButton
 } from '@mui/material';
-import { NavigateNext, NavigateBefore, NoteAdd as NoteAddIcon, Close as CloseIcon } from '@mui/icons-material';
+import { NavigateNext, NavigateBefore, NoteAdd as NoteAddIcon, Close as CloseIcon, Save as SaveIcon } from '@mui/icons-material';
 import { C } from '../../shared/constants/colors';
 import { costGroups, summaryRows } from './data/costGroups';
 import { listData } from './data/listData';
@@ -59,10 +59,13 @@ import MiniConfidence from './components/MiniConfidence';
 import ListViewRow from './components/ListView';
 import RelationView from './components/RelationView';
 import ExcelViewerDialog from './components/ExcelViewerDialog';
+import GoldenSetView from './components/GoldenSetView';
 import { useAnalysisPage } from './hooks/useAnalysisPage';
 
 const tthSx = { fontSize: 11, fontWeight: 600, color: '#86868b', py: 1, px: 1.5, borderBottom: '1px solid #e5e5e7', bgcolor: '#fafafa' };
+const tthNumSx = { ...tthSx, textAlign: 'right' as const };
 const tdSx = { fontSize: 12, py: 1.25, px: 1.5, borderBottom: '1px solid #f0f0f0' };
+const tdNumSx = { ...tdSx, textAlign: 'right' as const };
 const btnOutlineSx = { textTransform: 'none' as const, fontSize: 12, borderRadius: '6px', borderColor: '#e5e5e7', color: '#1d1d1f' };
 
 const AnalysisPage: React.FC = () => {
@@ -82,6 +85,7 @@ const AnalysisPage: React.FC = () => {
     totalNotesCount,
     updateTotalNotesCount,
     startEdit, isOverhead, handleCellClick, handleAmountClick,
+    commitEdit, getModifiedCount, handleSaveAllChanges,
   } = useAnalysisPage();
 
   // 📝 노트작성 관련 핸들러
@@ -119,34 +123,169 @@ const AnalysisPage: React.FC = () => {
           <Typography sx={{ fontSize: 13, color: C.gray }}>분석 &gt;</Typography>
           <Typography sx={{ fontSize: 16, fontWeight: 700 }}>HEAD_LINING_원가계산서</Typography>
         </Box>
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button variant="outlined" size="small" startIcon={<NoteAddIcon />} onClick={() => setNoteDialogOpen(true)}
-            sx={{ ...btnOutlineSx, borderColor: C.border, color: C.dark }}>
-            📝 노트작성 ({totalNotesCount})
-          </Button>
-          <Button variant="outlined" size="small" onClick={() => setOriginalViewOpen(true)}
-            sx={{ ...btnOutlineSx, borderColor: C.border, color: C.dark }}>
-            📄 원본보기
-          </Button>
-          <Button variant="outlined" size="small" startIcon={<NavigateBefore />} onClick={() => navigate('/parsing_card')}
-            sx={{ ...btnOutlineSx, borderColor: C.border, color: C.dark }}>
-            목록으로
-          </Button>
-          <Button variant="outlined" size="small" startIcon={<NavigateBefore />} onClick={() => navigate('/verification')}
-            sx={{ ...btnOutlineSx, borderColor: C.border, color: C.dark }}>
-            검증으로
-          </Button>
-          <Button variant="contained" size="small" onClick={() => {
-              // TODO: 실제 API 연동 시 파일 상태를 'analyzed'로 변경
-              console.log('✅ 분석완료: 파일 상태 → analyzed');
-              alert('✅ 분석이 완료되었습니다. 상태가 "분석완료"로 변경되었습니다.');
-            }} sx={{ ...btnOutlineSx, bgcolor: C.blue, color: '#fff', borderColor: C.blue, '&:hover': { bgcolor: '#0077ED' } }}>
-            완료 &amp; 저장
-          </Button>
-          <Button variant="contained" endIcon={<NavigateNext />} onClick={() => navigate('/comparison')}
-            sx={{ ...btnOutlineSx, bgcolor: C.green, color: '#fff', borderColor: C.green, '&:hover': { bgcolor: '#2e7d32' } }}>
-            비교로 이동
-          </Button>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+
+          {/* ── 현재 페이지 기능 버튼 ── */}
+          <Box sx={{ display: 'flex', gap: 1, pr: 1.5, borderRight: '1px solid #e5e5e7' }}>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => setOriginalViewOpen(true)}
+              sx={{
+                textTransform: 'none',
+                fontSize: 12,
+                fontWeight: 600,
+                borderRadius: '8px',
+                borderColor: '#e5e5e7',
+                color: '#6b7280',
+                bgcolor: '#fafafa',
+                px: 1.5,
+                '&:hover': { borderColor: '#d1d5db', bgcolor: '#f3f4f6', color: '#374151' }
+              }}
+            >
+              📄 원본보기
+            </Button>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<NoteAddIcon sx={{ fontSize: 14 }} />}
+              onClick={() => setNoteDialogOpen(true)}
+              sx={{
+                textTransform: 'none',
+                fontSize: 12,
+                fontWeight: 600,
+                borderRadius: '8px',
+                borderColor: '#e5e5e7',
+                color: '#6b7280',
+                bgcolor: '#fafafa',
+                px: 1.5,
+                '&:hover': { borderColor: '#d1d5db', bgcolor: '#f3f4f6', color: '#374151' }
+              }}
+            >
+              노트작성 {totalNotesCount > 0 && (
+                <Box component="span" sx={{
+                  ml: 0.5, px: 0.75, py: 0.1,
+                  bgcolor: '#0064ff', color: '#fff',
+                  borderRadius: '10px', fontSize: 10, fontWeight: 700, lineHeight: 1.6,
+                }}>
+                  {totalNotesCount}
+                </Box>
+              )}
+            </Button>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<SaveIcon sx={{ fontSize: 14 }} />}
+              onClick={handleSaveAllChanges}
+              disabled={getModifiedCount() === 0}
+              sx={{
+                textTransform: 'none',
+                fontSize: 12,
+                fontWeight: 600,
+                borderRadius: '8px',
+                borderColor: '#e5e5e7',
+                color: '#6b7280',
+                bgcolor: '#fafafa',
+                px: 1.5,
+                '&:hover': { borderColor: '#d1d5db', bgcolor: '#f3f4f6', color: '#374151' },
+                '&.Mui-disabled': { borderColor: '#e5e5e7', color: '#c0c4cc', bgcolor: '#fafafa' }
+              }}
+            >
+              저장{getModifiedCount() > 0 && (
+                <Box component="span" sx={{
+                  ml: 0.5, px: 0.75, py: 0.1,
+                  bgcolor: '#ff9500', color: '#fff',
+                  borderRadius: '10px', fontSize: 10, fontWeight: 700, lineHeight: 1.6,
+                }}>
+                  {getModifiedCount()}
+                </Box>
+              )}
+            </Button>
+          </Box>
+
+          {/* ── 단계 이동 버튼 ── */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+            {/* 이전 단계로 */}
+            <Button
+              variant="text"
+              size="small"
+              startIcon={<NavigateBefore sx={{ fontSize: 16 }} />}
+              onClick={() => navigate('/parsing_card')}
+              sx={{
+                textTransform: 'none',
+                fontSize: 12,
+                fontWeight: 600,
+                borderRadius: '8px',
+                color: '#8b95a1',
+                px: 1.2,
+                minWidth: 0,
+                '&:hover': { bgcolor: '#f3f4f6', color: '#374151' }
+              }}
+            >
+              목록
+            </Button>
+            <Button
+              variant="text"
+              size="small"
+              startIcon={<NavigateBefore sx={{ fontSize: 16 }} />}
+              onClick={() => navigate('/verification')}
+              sx={{
+                textTransform: 'none',
+                fontSize: 12,
+                fontWeight: 600,
+                borderRadius: '8px',
+                color: '#8b95a1',
+                px: 1.2,
+                minWidth: 0,
+                '&:hover': { bgcolor: '#f3f4f6', color: '#374151' }
+              }}
+            >
+              검증
+            </Button>
+
+            {/* 현재 단계 완료 */}
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => {
+                console.log('✅ 분석완료: 파일 상태 → analyzed');
+                alert('✅ 분석이 완료되었습니다. 상태가 "분석완료"로 변경되었습니다.');
+              }}
+              sx={{
+                textTransform: 'none',
+                fontSize: 12,
+                fontWeight: 700,
+                borderRadius: '8px',
+                bgcolor: '#0064ff',
+                boxShadow: 'none',
+                px: 2,
+                '&:hover': { bgcolor: '#0056d3', boxShadow: 'none' }
+              }}
+            >
+              분석 완료
+            </Button>
+
+            {/* 다음 단계로 */}
+            <Button
+              variant="contained"
+              size="small"
+              endIcon={<NavigateNext sx={{ fontSize: 16 }} />}
+              onClick={() => navigate('/comparison')}
+              sx={{
+                textTransform: 'none',
+                fontSize: 12,
+                fontWeight: 700,
+                borderRadius: '8px',
+                bgcolor: '#34c759',
+                boxShadow: 'none',
+                px: 2,
+                '&:hover': { bgcolor: '#28a745', boxShadow: 'none' }
+              }}
+            >
+              비교
+            </Button>
+          </Box>
+
         </Box>
       </Box>
 
@@ -172,7 +311,7 @@ const AnalysisPage: React.FC = () => {
       <Box sx={{ borderBottom: `1px solid ${C.border}`, px: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Tabs value={activeTab} onChange={(_, v) => setActiveTab(v)}
           sx={{ minHeight: 40, '& .MuiTab-root': { minHeight: 40, fontSize: 13, fontWeight: 600, textTransform: 'none', px: 2.5 }, '& .Mui-selected': { color: C.blue }, '& .MuiTabs-indicator': { bgcolor: C.blue, height: 2.5 } }}>
-          {['표준', '리스트', '관계도'].map(label => <Tab key={label} label={label} />)}
+          {['표준', '리스트', '관계도', '골든셋'].map(label => <Tab key={label} label={label} />)}
         </Tabs>
         
         {/* Status 정보들 오른쪽 정렬 */}
@@ -224,10 +363,10 @@ const AnalysisPage: React.FC = () => {
                       <TableCell sx={tthSx}>{group.id === 'processing' ? '공정명' : '품명'}</TableCell>
                       {!isOverhead(group.id) && <TableCell sx={tthSx}>규격</TableCell>}
                       {!isOverhead(group.id) && <TableCell sx={{ ...tthSx, width: 50 }}>단위</TableCell>}
-                      {!isOverhead(group.id) && <TableCell sx={{ ...tthSx, width: 50 }}>수량</TableCell>}
-                      {!isOverhead(group.id) && <TableCell sx={{ ...tthSx, width: 90 }}>단가</TableCell>}
-                      <TableCell sx={{ ...tthSx, width: 90 }}>금액</TableCell>
-                      <TableCell sx={{ ...tthSx, width: 60 }}>비율</TableCell>
+                      {!isOverhead(group.id) && <TableCell sx={{ ...tthNumSx, width: 50 }}>수량</TableCell>}
+                      {!isOverhead(group.id) && <TableCell sx={{ ...tthNumSx, width: 90 }}>단가</TableCell>}
+                      <TableCell sx={{ ...tthNumSx, width: 90 }}>금액</TableCell>
+                      <TableCell sx={{ ...tthNumSx, width: 60 }}>비율</TableCell>
                       <TableCell sx={{ ...tthSx, width: 70 }}>신뢰도</TableCell>
                       <TableCell sx={{ ...tthSx, width: 60 }}>상태</TableCell>
                     </TableRow>
@@ -253,36 +392,44 @@ const AnalysisPage: React.FC = () => {
                           </TableCell>
                           {!isOverhead(group.id) && <TableCell sx={tdSx}>{row.spec}</TableCell>}
                           {!isOverhead(group.id) && <TableCell sx={tdSx}>{row.unit}</TableCell>}
-                          {!isOverhead(group.id) && <TableCell sx={tdSx}>{row.qty}</TableCell>}
+                          {!isOverhead(group.id) && <TableCell sx={tdNumSx}>{row.qty}</TableCell>}
                           {!isOverhead(group.id) && (
-                            <TableCell sx={{ ...tdSx, cursor: row.editable ? 'pointer' : 'default', '&:hover': row.editable ? { bgcolor: '#e8f4fd', borderRadius: '4px' } : {} }}
+                            <TableCell sx={{ ...tdNumSx, cursor: row.editable ? 'pointer' : 'default', '&:hover': row.editable ? { bgcolor: '#e8f4fd', borderRadius: '4px' } : {} }}
                               onClick={() => row.editable && startEdit(group.id, ri, 'unitPrice', row.unitPrice)}>
                               {editCell?.groupId === group.id && editCell.rowIdx === ri && editCell.field === 'unitPrice' ? (
-                                <ClickAwayListener onClickAway={() => setEditCell(null)}>
+                                <ClickAwayListener onClickAway={commitEdit}>
                                   <TextField size="small" value={editValue} onChange={e => setEditValue(e.target.value)} autoFocus
+                                    onKeyDown={e => { if (e.key === 'Enter') commitEdit(); if (e.key === 'Escape') setEditCell(null); }}
                                     sx={{ '& input': { fontSize: 12, p: '4px 8px' } }} />
                                 </ClickAwayListener>
                               ) : row.unitPrice}
                             </TableCell>
                           )}
-                          <TableCell sx={{ ...tdSx, fontWeight: 600, ...(isAnomaly && { color: C.red }), cursor: 'pointer', '&:hover': { bgcolor: '#e8f4fd', borderRadius: '4px' } }}
+                          <TableCell sx={{ ...tdNumSx, fontWeight: 600, ...(isAnomaly && { color: C.red }), cursor: 'pointer', '&:hover': { bgcolor: '#e8f4fd', borderRadius: '4px' } }}
                             onClick={(e) => {
                               if (row.editable) startEdit(group.id, ri, 'amount', row.amount);
                               else handleAmountClick(e, row, group.title);
                             }}>
                             {editCell?.groupId === group.id && editCell.rowIdx === ri && editCell.field === 'amount' ? (
-                              <ClickAwayListener onClickAway={() => setEditCell(null)}>
+                              <ClickAwayListener onClickAway={commitEdit}>
                                 <TextField size="small" value={editValue} onChange={e => setEditValue(e.target.value)} autoFocus
+                                  onKeyDown={e => { if (e.key === 'Enter') commitEdit(); if (e.key === 'Escape') setEditCell(null); }}
                                   sx={{ '& input': { fontSize: 12, p: '4px 8px' } }} />
                               </ClickAwayListener>
                             ) : (
                               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                                 {row.amount}
-                                <Typography component="span" sx={{ fontSize: 10, color: C.gray, ml: 0.5 }}>💡</Typography>
+                                <Typography
+                                  component="span"
+                                  sx={{ fontSize: 10, color: C.gray, ml: 0.5, cursor: 'pointer', '&:hover': { color: C.blue } }}
+                                  onClick={(e) => { e.stopPropagation(); handleAmountClick(e, row, group.title); }}
+                                >
+                                  💡
+                                </Typography>
                               </Box>
                             )}
                           </TableCell>
-                          <TableCell sx={tdSx}>{row.ratio}</TableCell>
+                          <TableCell sx={tdNumSx}>{row.ratio}</TableCell>
                           <TableCell sx={tdSx}><MiniConfidence value={row.confidence} /></TableCell>
                           <TableCell sx={tdSx}>
                             {isAnomaly ? (
@@ -317,8 +464,8 @@ const AnalysisPage: React.FC = () => {
                 <TableHead>
                   <TableRow sx={{ bgcolor: '#fafafa' }}>
                     <TableCell sx={tthSx}>구분</TableCell>
-                    <TableCell sx={{ ...tthSx, width: 120 }}>금액</TableCell>
-                    <TableCell sx={{ ...tthSx, width: 80 }}>비율</TableCell>
+                    <TableCell sx={{ ...tthNumSx, width: 120 }}>금액</TableCell>
+                    <TableCell sx={{ ...tthNumSx, width: 80 }}>비율</TableCell>
                     <TableCell sx={{ ...tthSx, width: 200 }}>구성</TableCell>
                     <TableCell sx={{ ...tthSx, width: 80 }}>이상치</TableCell>
                   </TableRow>
@@ -327,8 +474,8 @@ const AnalysisPage: React.FC = () => {
                   {summaryRows.map(sr => (
                     <TableRow key={sr.label}>
                       <TableCell sx={{ ...tdSx, fontWeight: 600 }}>{sr.label}</TableCell>
-                      <TableCell sx={{ ...tdSx, fontWeight: 600 }}>{sr.amount}</TableCell>
-                      <TableCell sx={tdSx}>{sr.pct}</TableCell>
+                      <TableCell sx={{ ...tdNumSx, fontWeight: 600 }}>{sr.amount}</TableCell>
+                      <TableCell sx={tdNumSx}>{sr.pct}</TableCell>
                       <TableCell sx={tdSx}>
                         <Box sx={{ display: 'flex', height: 8, bgcolor: '#e5e5e7', borderRadius: 4, overflow: 'hidden' }}>
                           <Box sx={{ width: `${sr.barWidth}%`, bgcolor: sr.barColor, height: '100%' }} />
@@ -403,6 +550,9 @@ const AnalysisPage: React.FC = () => {
             </Box>
           </Paper>
         )}
+
+        {/* ── 골든셋 뷰 ── */}
+        {activeTab === 3 && <GoldenSetView />}
 
         {/* 원본보기 다이얼로그 */}
         <ExcelViewerDialog 

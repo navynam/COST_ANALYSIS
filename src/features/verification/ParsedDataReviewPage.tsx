@@ -1416,59 +1416,136 @@ const ParsedDataReviewPage: React.FC = () => {
           <Typography sx={{ fontSize: 13, color: '#86868b' }}>검증 &gt;</Typography>
           <Typography sx={{ fontSize: 16, fontWeight: 700 }}>{fileName || 'HEAD_LINING_원가계산서'}</Typography>
         </Box>
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<NavigateBefore />}
-            onClick={() => navigate('/parsing')}
-            sx={{ textTransform: 'none', fontSize: 12, borderRadius: '6px', borderColor: '#e5e5e7', color: '#1d1d1f' }}
-          >
-            목록으로
-          </Button>
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<NoteAddIcon />}
-            onClick={() => setNoteDialogOpen(true)}
-            sx={{ textTransform: 'none', fontSize: 12, borderRadius: '6px', borderColor: '#e5e5e7', color: '#1d1d1f' }}
-          >
-            노트작성 ({savedNotes.filter((n: any) => n && n.fileId === currentFileId && n.content && n.content.trim()).length})
-          </Button>
-          <Button
-            variant="contained"
-            size="small"
-            startIcon={<SaveIcon />}
-            onClick={handleSaveAllChanges}
-            disabled={getModifiedItemsCount() === 0}
-            sx={{ textTransform: 'none', fontSize: 12, borderRadius: '6px', bgcolor: '#0071e3', color: '#fff', '&:hover': { bgcolor: '#0077ED' } }}
-          >
-            전체 저장 ({getModifiedItemsCount()}개)
-          </Button>
-          <Button
-            variant="contained"
-            size="small"
-            onClick={() => {
-              // TODO: 실제 API 연동 시 파일 상태를 'verified'로 변경
-              console.log('✅ 검증완료: 파일 상태 → verified');
-              alert('✅ 검증이 완료되었습니다.');
-            }}
-            sx={{ textTransform: 'none', fontSize: 12, borderRadius: '6px', bgcolor: '#4caf50', color: '#fff', '&:hover': { bgcolor: '#388e3c' } }}
-          >
-            ✅ 검증완료
-          </Button>
-          <Button
-            variant="contained"
-            size="small"
-            onClick={() => {
-              // TODO: 실제 API 연동 시 파일 상태를 'analyzing'으로 변경
-              console.log('📊 분석으로 이동: 파일 상태 → analyzing');
-              navigate('/analysis');
-            }}
-            sx={{ textTransform: 'none', fontSize: 12, borderRadius: '6px', bgcolor: '#9c27b0', color: '#fff', '&:hover': { bgcolor: '#7b1fa2' } }}
-          >
-            분석으로 이동 →
-          </Button>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+
+          {/* ── 현재 페이지 기능 버튼 ── */}
+          <Box sx={{ display: 'flex', gap: 1, pr: 1.5, borderRight: '1px solid #e5e5e7' }}>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<NoteAddIcon sx={{ fontSize: 14 }} />}
+              onClick={() => setNoteDialogOpen(true)}
+              sx={{
+                textTransform: 'none',
+                fontSize: 12,
+                fontWeight: 600,
+                borderRadius: '8px',
+                borderColor: '#e5e5e7',
+                color: '#6b7280',
+                bgcolor: '#fafafa',
+                px: 1.5,
+                '&:hover': { borderColor: '#d1d5db', bgcolor: '#f3f4f6', color: '#374151' }
+              }}
+            >
+              노트작성{' '}
+              {savedNotes.filter((n: any) => n && n.fileId === currentFileId && n.content && n.content.trim()).length > 0 && (
+                <Box component="span" sx={{
+                  ml: 0.5, px: 0.75, py: 0.1,
+                  bgcolor: '#0064ff', color: '#fff',
+                  borderRadius: '10px', fontSize: 10, fontWeight: 700, lineHeight: 1.6,
+                }}>
+                  {savedNotes.filter((n: any) => n && n.fileId === currentFileId && n.content && n.content.trim()).length}
+                </Box>
+              )}
+            </Button>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<SaveIcon sx={{ fontSize: 14 }} />}
+              onClick={handleSaveAllChanges}
+              disabled={getModifiedItemsCount() === 0}
+              sx={{
+                textTransform: 'none',
+                fontSize: 12,
+                fontWeight: 600,
+                borderRadius: '8px',
+                borderColor: '#e5e5e7',
+                color: '#6b7280',
+                bgcolor: '#fafafa',
+                px: 1.5,
+                '&:hover': { borderColor: '#d1d5db', bgcolor: '#f3f4f6', color: '#374151' },
+                '&.Mui-disabled': { borderColor: '#e5e5e7', color: '#c0c4cc', bgcolor: '#fafafa' }
+              }}
+            >
+              저장{getModifiedItemsCount() > 0 && (
+                <Box component="span" sx={{
+                  ml: 0.5, px: 0.75, py: 0.1,
+                  bgcolor: '#ff9500', color: '#fff',
+                  borderRadius: '10px', fontSize: 10, fontWeight: 700, lineHeight: 1.6,
+                }}>
+                  {getModifiedItemsCount()}
+                </Box>
+              )}
+            </Button>
+          </Box>
+
+          {/* ── 단계 이동 버튼 ── */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+            {/* 이전 단계로 */}
+            <Button
+              variant="text"
+              size="small"
+              startIcon={<NavigateBefore sx={{ fontSize: 16 }} />}
+              onClick={() => navigate('/parsing_card')}
+              sx={{
+                textTransform: 'none',
+                fontSize: 12,
+                fontWeight: 600,
+                borderRadius: '8px',
+                color: '#8b95a1',
+                px: 1.2,
+                minWidth: 0,
+                '&:hover': { bgcolor: '#f3f4f6', color: '#374151' }
+              }}
+            >
+              목록
+            </Button>
+
+            {/* 현재 단계 완료 */}
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => {
+                console.log('✅ 검증완료: 파일 상태 → verified');
+                alert('✅ 검증이 완료되었습니다.');
+              }}
+              sx={{
+                textTransform: 'none',
+                fontSize: 12,
+                fontWeight: 700,
+                borderRadius: '8px',
+                bgcolor: '#0064ff',
+                boxShadow: 'none',
+                px: 2,
+                '&:hover': { bgcolor: '#0056d3', boxShadow: 'none' }
+              }}
+            >
+              검증 완료
+            </Button>
+
+            {/* 다음 단계로 */}
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => {
+                console.log('📊 분석으로 이동: 파일 상태 → analyzing');
+                navigate('/analysis');
+              }}
+              sx={{
+                textTransform: 'none',
+                fontSize: 12,
+                fontWeight: 700,
+                borderRadius: '8px',
+                bgcolor: '#34c759',
+                boxShadow: 'none',
+                px: 2,
+                '&:hover': { bgcolor: '#28a745', boxShadow: 'none' }
+              }}
+            >
+              분석 →
+            </Button>
+          </Box>
+
         </Box>
       </Box>
 

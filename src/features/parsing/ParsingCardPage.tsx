@@ -1038,6 +1038,7 @@ ${currentFile?.status === 'extracting' ? `
         file={drawerFile}
         onClose={() => setDrawerFile(null)}
         onVerify={() => navigate('/verification')}
+        onAnalysis={() => navigate('/analysis')}
       />
 
       {/* 📝 노트 작성 다이얼로그 */}

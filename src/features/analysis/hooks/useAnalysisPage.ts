@@ -8,6 +8,27 @@ export const useAnalysisPage = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [editCell, setEditCell] = useState<{ groupId: string; rowIdx: number; field: 'unitPrice' | 'amount' } | null>(null);
   const [editValue, setEditValue] = useState('');
+
+  // 수정된 셀 추적: key = "groupId-rowIdx-field", value = 새 값
+  const [modifiedCells, setModifiedCells] = useState<Record<string, string>>({});
+
+  const commitEdit = () => {
+    if (editCell && editValue.trim() !== '') {
+      const key = `${editCell.groupId}-${editCell.rowIdx}-${editCell.field}`;
+      setModifiedCells(prev => ({ ...prev, [key]: editValue.trim() }));
+    }
+    setEditCell(null);
+  };
+
+  const getModifiedCount = () => Object.keys(modifiedCells).length;
+
+  const handleSaveAllChanges = () => {
+    const count = getModifiedCount();
+    if (count === 0) return;
+    // TODO: 실제 API 연동 시 modifiedCells 데이터를 서버에 전송
+    setModifiedCells({});
+    alert(`✅ ${count}개 항목이 저장되었습니다.`);
+  };
   const [anomalyAnchor, setAnomalyAnchor] = useState<{ el: HTMLElement; reason: string } | null>(null);
   const [originalViewOpen, setOriginalViewOpen] = useState(false);
   const [highlightedCell, setHighlightedCell] = useState<{ row: number; col: number } | null>(null);
@@ -99,5 +120,6 @@ export const useAnalysisPage = () => {
     totalNotesCount,
     updateTotalNotesCount,
     startEdit, isOverhead, handleCellClick, handleAmountClick,
+    modifiedCells, commitEdit, getModifiedCount, handleSaveAllChanges,
   };
 };
