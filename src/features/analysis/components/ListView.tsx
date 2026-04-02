@@ -8,8 +8,7 @@ import type { ListItem, CostRow } from '../types';
 import MiniConfidence from './MiniConfidence';
 import StatusBadge from './StatusBadge';
 import { useListViewRow } from '../hooks/useListViewRow';
-
-const tdSx = { fontSize: 12, py: 1.25, px: 1.5, borderBottom: '1px solid #f0f0f0' };
+import { tableCellSx as tdSx } from '../../../shared/styles';
 
 interface ListViewRowProps {
   item: ListItem;

@@ -61,12 +61,13 @@ import RelationView from './components/RelationView';
 import ExcelViewerDialog from './components/ExcelViewerDialog';
 import GoldenSetView from './components/GoldenSetView';
 import { useAnalysisPage } from './hooks/useAnalysisPage';
-
-const tthSx = { fontSize: 11, fontWeight: 600, color: '#86868b', py: 1, px: 1.5, borderBottom: '1px solid #e5e5e7', bgcolor: '#fafafa' };
-const tthNumSx = { ...tthSx, textAlign: 'right' as const };
-const tdSx = { fontSize: 12, py: 1.25, px: 1.5, borderBottom: '1px solid #f0f0f0' };
-const tdNumSx = { ...tdSx, textAlign: 'right' as const };
-const btnOutlineSx = { textTransform: 'none' as const, fontSize: 12, borderRadius: '6px', borderColor: '#e5e5e7', color: '#1d1d1f' };
+import {
+  tableHeaderSx as tthSx,
+  tableHeaderNumSx as tthNumSx,
+  tableCellSx as tdSx,
+  tableCellNumSx as tdNumSx,
+  btnOutlineSx,
+} from '../../shared/styles';
 
 const AnalysisPage: React.FC = () => {
   const {
