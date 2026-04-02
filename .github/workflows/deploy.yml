@@ -1,0 +1,76 @@
+name: CI/CD — Build & Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# GitHub Pages 배포에 필요한 권한
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 동시 배포 방지 (진행 중인 배포를 취소하지 않고 대기)
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  # ────────────────────────────────────────────
+  # Job 1: 빌드 & 테스트
+  # ────────────────────────────────────────────
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: TypeScript type check
+        run: npx tsc --noEmit
+
+      - name: Build
+        run: npm run build
+        env:
+          # AI_COST_ANALYSIS 레포 기준 PUBLIC_URL
+          PUBLIC_URL: /AI_COST_ANALYSIS
+          CI: false   # CRA warning을 error로 처리하지 않음
+
+      - name: Upload build artifact
+        # PR이 아닌 main push일 때만 artifact 업로드
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./build
+
+  # ────────────────────────────────────────────
+  # Job 2: GitHub Pages 배포 (main push 전용)
+  # ────────────────────────────────────────────
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+
+    # main 브랜치 push 시에만 실행
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
