@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.js": "/AI_COST_ANALYSIS/static/js/main.a8b2545a.js",
-    "index.html": "/AI_COST_ANALYSIS/index.html",
-    "main.a8b2545a.js.map": "/AI_COST_ANALYSIS/static/js/main.a8b2545a.js.map"
+    "main.js": "/COST_ANALYSIS/static/js/main.a8b2545a.js",
+    "index.html": "/COST_ANALYSIS/index.html",
+    "main.a8b2545a.js.map": "/COST_ANALYSIS/static/js/main.a8b2545a.js.map"
   },
   "entrypoints": [
     "static/js/main.a8b2545a.js"
