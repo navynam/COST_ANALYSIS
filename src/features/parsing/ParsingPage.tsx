@@ -65,7 +65,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import { C } from '../../shared/constants/colors';
-import FileUploadArea from './components/FileUploadArea';
 import FileTable from './components/FileTable';
 import FileDetailDrawer from './components/FileDetailDrawer';
 import SearchFilterDialog from './components/SearchFilterDialog';
@@ -208,14 +207,54 @@ ${currentFile?.status === 'extracting' ? `
         <Typography sx={{ fontSize: 13, color: C.gray, mb: 2 }}>파일을 업로드하면 AI가 자동으로 데이터를 추출합니다</Typography>
       </Box>
 
-      <FileUploadArea
-        dragOver={dragOver} uploadQueue={uploadQueue}
-        onDragOver={e => { e.preventDefault(); setDragOver(true); }}
-        onDragLeave={() => setDragOver(false)}
-        onDrop={e => { e.preventDefault(); setDragOver(false); if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); }}
-        onFileSelect={handleFiles}
-        onRemoveQueue={i => setUploadQueue(prev => prev.filter((_, j) => j !== i))}
-      />
+      {/* 드래그앤드롭 업로드 영역 */}
+      <Box sx={{ mx: 3, mb: 2 }}>
+        <Box
+          sx={{
+            p: 4, border: '2px dashed', borderRadius: '12px',
+            borderColor: dragOver ? C.blue : '#d2d2d7',
+            bgcolor: dragOver ? '#e8f4fd' : '#fff',
+            textAlign: 'center', cursor: 'pointer', transition: 'all 0.3s',
+            '&:hover': { borderColor: C.blue, bgcolor: '#f8fbff' },
+          }}
+          onDragOver={(e: React.DragEvent) => { e.preventDefault(); setDragOver(true); }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={(e: React.DragEvent) => { e.preventDefault(); setDragOver(false); if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); }}
+          onClick={() => (document.getElementById('parsing-file-input') as HTMLInputElement)?.click()}
+        >
+          <input
+            id="parsing-file-input" type="file" hidden multiple accept=".xlsx,.xls,.jpg,.jpeg,.png"
+            onChange={e => { if (e.target.files?.length) handleFiles(e.target.files); (e.target as HTMLInputElement).value = ''; }}
+          />
+          <Box sx={{ fontSize: 40, mb: 1.5 }}>📁</Box>
+          <Typography sx={{ fontSize: 14, color: C.gray, mb: 1 }}>
+            파일을 드래그하거나 <strong style={{ color: C.blue }}>클릭하여 업로드</strong>
+          </Typography>
+          <Typography sx={{ fontSize: 11, color: '#a1a1a6' }}>
+            지원 형식: xls, xlsx, 이미지(jpg, png) · 최대 50MB · 다중 파일 가능
+          </Typography>
+        </Box>
+
+        {/* 업로드 큐 */}
+        {uploadQueue.length > 0 && (
+          <Box sx={{ mt: 1 }}>
+            {uploadQueue.map((q, i) => (
+              <Box key={i} sx={{ bgcolor: '#fff', border: `1px solid ${C.border}`, borderRadius: '8px', p: '10px 16px', mb: 1, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <span>📄</span>
+                <Typography sx={{ flex: 1, fontSize: 13, fontWeight: 500 }}>{q.file.name}</Typography>
+                <Box sx={{ width: 120, height: 4, bgcolor: '#e5e5e7', borderRadius: 2, overflow: 'hidden' }}>
+                  <Box sx={{ width: `${q.progress}%`, height: '100%', bgcolor: C.blue, borderRadius: 2, transition: 'width 0.3s' }} />
+                </Box>
+                <Typography sx={{ fontSize: 11, color: C.gray, minWidth: 30 }}>{q.progress}%</Typography>
+                <IconButton size="small" onClick={() => setUploadQueue(prev => prev.filter((_, j) => j !== i))}
+                  sx={{ width: 24, height: 24, bgcolor: '#e5e5e7', '&:hover': { bgcolor: '#f8d7da', color: C.red } }}>
+                  <CloseIcon sx={{ fontSize: 12 }} />
+                </IconButton>
+              </Box>
+            ))}
+          </Box>
+        )}
+      </Box>
 
       {/* 검색 툴바 */}
       <Box sx={{ display: 'flex', gap: 1.25, px: 3, mb: 2 }}>

@@ -48,8 +48,8 @@ import {
   Paper,
   IconButton
 } from '@mui/material';
-import { 
-  Search, 
+import {
+  Search,
   FilterList,
   CheckCircle,
   Schedule,
@@ -58,7 +58,12 @@ import {
   NoteAdd as NoteAddIcon,
   Send as SendIcon,
   AutoAwesome as AIIcon,
-  Close as CloseIcon
+  Close as CloseIcon,
+  UploadFile,
+  GridView,
+  HourglassEmpty,
+  PendingActions,
+  TaskAlt,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -147,7 +152,7 @@ const FileCard: React.FC<{
   return (
     <Card 
       sx={{ 
-        height: '380px', // 더 컴팩트한 고정 높이
+        height: '360px',
         display: 'flex',
         flexDirection: 'column',
         transition: 'all 0.2s ease',
@@ -728,8 +733,19 @@ const FileCard: React.FC<{
   );
 };
 
+const statusIconMap: Record<string, React.ReactNode> = {
+  all:       <GridView sx={{ fontSize: 14 }} />,
+  extracting: <HourglassEmpty sx={{ fontSize: 14 }} />,
+  verifying: <PendingActions sx={{ fontSize: 14 }} />,
+  verified:  <CheckCircle sx={{ fontSize: 14 }} />,
+  analyzing: <Analytics sx={{ fontSize: 14 }} />,
+  analyzed:  <TaskAlt sx={{ fontSize: 14 }} />,
+  failed:    <Error sx={{ fontSize: 14 }} />,
+};
+
 const ParsingCardPage: React.FC = () => {
   const navigate = useNavigate();
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
   const {
     filter, setFilter,
     searchQuery, setSearchQuery,
@@ -857,132 +873,145 @@ ${currentFile?.status === 'extracting' ? `
   }, []);
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: C.bg }}>
-      {/* 🎨 기존 파싱 페이지와 동일한 헤더 (배경 없음) */}
-      <Box sx={{ px: 3, pt: 2.5 }}>
-        <Typography sx={{ fontSize: 20, fontWeight: 700, mb: 0.5, color: C.dark }}>견적서 파싱</Typography>
-        <Typography sx={{ fontSize: 13, color: C.gray, mb: 2 }}>파일을 업로드하면 AI가 자동으로 데이터를 추출합니다</Typography>
-      </Box>
+    <Box
+      sx={{
+        bgcolor: C.bg, position: 'relative',
+        display: 'flex', flexDirection: 'column',
+        height: 'calc(100vh - 112px)',  // 전체 뷰포트 - AppBar(64) - MainLayout p:3 상하(48)
+        overflow: 'hidden',
+      }}
+      onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+      onDragLeave={() => setDragOver(false)}
+      onDrop={e => { e.preventDefault(); setDragOver(false); if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); }}
+    >
+      {/* 드래그 오버레이 */}
+      {dragOver && (
+        <Box sx={{
+          position: 'fixed', inset: 0, zIndex: 999,
+          bgcolor: 'rgba(0,100,255,0.06)',
+          border: '3px dashed #0064ff',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          pointerEvents: 'none',
+        }}>
+          <Typography sx={{ fontSize: 20, fontWeight: 700, color: '#0064ff' }}>
+            파일을 놓으면 업로드됩니다
+          </Typography>
+        </Box>
+      )}
 
-      {/* 🔄 업로드 영역 */}
-        <FileUploadArea
-          dragOver={dragOver} 
-          uploadQueue={uploadQueue}
-          onDragOver={e => { e.preventDefault(); setDragOver(true); }}
-          onDragLeave={() => setDragOver(false)}
-          onDrop={e => { 
-            e.preventDefault(); 
-            setDragOver(false); 
-            if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); 
-          }}
-          onFileSelect={handleFiles}
-          onRemoveQueue={i => setUploadQueue(prev => prev.filter((_, j) => j !== i))}
-        />
+      {/* ── 상단 컨트롤 패널 (고정 영역) ── */}
+      <Box sx={{ flexShrink: 0, mx: 3, mt: 1.5, mb: 1.5, bgcolor: 'white', borderRadius: '12px', border: '1px solid #f2f4f6', overflow: 'hidden' }}>
 
-      {/* 🔍 Toss 스타일 검색 */}
-      <Box sx={{ px: 4, mb: 3 }}>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <TextField 
-            fullWidth 
-            placeholder="파일명 검색" 
-            value={searchQuery} 
-            onChange={e => setSearchQuery(e.target.value)}
-            InputProps={{ 
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search sx={{ fontSize: 20, color: '#8b95a1' }} />
-                </InputAdornment>
-              ), 
-              sx: { 
-                fontSize: 16, 
-                borderRadius: '12px',
-                bgcolor: 'white',
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: '#f2f4f6' },
-                  '&:hover fieldset': { borderColor: '#0064ff' },
-                  '&.Mui-focused fieldset': { borderColor: '#0064ff', borderWidth: 2 }
-                }
-              } 
-            }} 
+        {/* 툴바: 타이틀 | 업로드 버튼 | 검색 | 필터 */}
+        <Box sx={{ px: 2, py: 1.5, display: 'flex', alignItems: 'center', gap: 1.5, borderBottom: '1px solid #f2f4f6' }}>
+          <Typography sx={{ fontSize: 17, fontWeight: 700, color: C.dark, whiteSpace: 'nowrap', mr: 0.5 }}>
+            견적서 파싱
+          </Typography>
+
+          <input
+            ref={fileInputRef} type="file" hidden multiple accept=".xlsx,.xls,.jpg,.jpeg,.png"
+            onChange={e => { if (e.target.files?.length) handleFiles(e.target.files); e.target.value = ''; }}
           />
-          <Button 
-            variant={isSearchActive ? 'contained' : 'outlined'}
-            onClick={() => setSearchDialogOpen(true)}
-            sx={{ 
-              px: 3,
-              py: 1.5,
-              fontSize: 15,
-              fontWeight: 600,
-              borderRadius: '12px',
-              textTransform: 'none',
-              whiteSpace: 'nowrap',
-              ...(isSearchActive ? {
-                bgcolor: '#0064ff',
-                boxShadow: 'none',
-                '&:hover': { bgcolor: '#0056d3' }
-              } : {
-                borderColor: '#f2f4f6',
-                color: '#4e5968',
-                bgcolor: 'white',
-                '&:hover': { 
-                  borderColor: '#0064ff',
-                  bgcolor: 'white'
-                }
-              })
+          <Button
+            variant="contained"
+            startIcon={<UploadFile sx={{ fontSize: 17 }} />}
+            onClick={() => fileInputRef.current?.click()}
+            sx={{
+              whiteSpace: 'nowrap', fontSize: 13, fontWeight: 600,
+              borderRadius: '10px', py: 0.875, px: 3,
+              minWidth: '150px',
+              bgcolor: '#0064ff', boxShadow: 'none', textTransform: 'none',
+              '&:hover': { bgcolor: '#0056d3', boxShadow: 'none' },
             }}
           >
-            <FilterList sx={{ fontSize: 18, mr: 0.5 }} />
-            필터
+            파일 업로드
+          </Button>
+
+          <TextField
+            fullWidth size="small"
+            placeholder="파일명 검색"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search sx={{ fontSize: 18, color: '#8b95a1' }} />
+                </InputAdornment>
+              ),
+              sx: { borderRadius: '10px', bgcolor: '#f9fafb', fontSize: 14 },
+            }}
+          />
+
+          <Button
+            variant={isSearchActive ? 'contained' : 'outlined'}
+            onClick={() => setSearchDialogOpen(true)}
+            sx={{
+              whiteSpace: 'nowrap', fontSize: 13, fontWeight: 600,
+              borderRadius: '10px', py: 0.875, px: 2, textTransform: 'none',
+              ...(isSearchActive
+                ? { bgcolor: '#0064ff', boxShadow: 'none', '&:hover': { bgcolor: '#0056d3', boxShadow: 'none' } }
+                : { borderColor: '#e5e8eb', color: '#4e5968', bgcolor: 'white', '&:hover': { borderColor: '#0064ff', bgcolor: 'white' } }
+              ),
+            }}
+          >
+            <FilterList sx={{ fontSize: 16, mr: 0.5 }} />필터
           </Button>
         </Box>
-      </Box>
 
-      {/* 📊 Toss 스타일 상태 카드 */}
-      <Box sx={{ px: 4, mb: 4 }}>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          {statusCards.map((sc, index) => (
-            <Box 
-              key={sc.key} 
+        {/* 업로드 큐 (파일 선택 시 표시) */}
+        {uploadQueue.length > 0 && (
+          <Box sx={{ px: 2, py: 1, borderBottom: '1px solid #f2f4f6' }}>
+            {uploadQueue.map((q, i) => (
+              <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: i < uploadQueue.length - 1 ? 0.75 : 0 }}>
+                <Typography sx={{ fontSize: 13 }}>📄</Typography>
+                <Typography sx={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#191f28', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {q.file.name}
+                </Typography>
+                <Box sx={{ width: 100, height: 3, bgcolor: '#e5e8eb', borderRadius: 2, overflow: 'hidden' }}>
+                  <Box sx={{ width: `${q.progress}%`, height: '100%', bgcolor: C.blue, borderRadius: 2, transition: 'width 0.3s' }} />
+                </Box>
+                <Typography sx={{ fontSize: 11, color: C.gray, minWidth: 30, textAlign: 'right' }}>{q.progress}%</Typography>
+                <IconButton size="small" onClick={() => setUploadQueue(prev => prev.filter((_, j) => j !== i))}
+                  sx={{ width: 20, height: 20, bgcolor: '#e5e5e7', '&:hover': { bgcolor: '#f8d7da', color: C.red } }}>
+                  <CloseIcon sx={{ fontSize: 10 }} />
+                </IconButton>
+              </Box>
+            ))}
+          </Box>
+        )}
+
+        {/* 상태 필터 (아이콘 칩) */}
+        <Box sx={{ px: 2, py: 1, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+          {statusCards.map(sc => (
+            <Box
+              key={sc.key}
               onClick={() => setFilter(sc.key)}
-              sx={{ 
-                flex: 1, 
-                bgcolor: 'white',
-                border: filter === sc.key ? `2px solid ${sc.colorKey}` : '1px solid #f2f4f6',
-                borderRadius: '16px', 
-                p: 3, 
-                cursor: 'pointer', 
-                textAlign: 'center', 
-                transition: 'all 0.2s ease',
-                '&:hover': { 
-                  borderColor: sc.colorKey,
-                  transform: 'translateY(-1px)'
-                }
+              sx={{
+                display: 'inline-flex', alignItems: 'center', gap: 0.75,
+                px: 1.5, py: 0.625, borderRadius: '20px',
+                bgcolor: filter === sc.key ? `${sc.colorKey}18` : '#f9fafb',
+                border: `1.5px solid ${filter === sc.key ? sc.colorKey : 'transparent'}`,
+                cursor: 'pointer', transition: 'all 0.15s',
+                '&:hover': { bgcolor: `${sc.colorKey}12`, borderColor: sc.colorKey },
               }}
             >
-              <Typography sx={{ 
-                fontSize: 36, 
-                fontWeight: 800, 
-                color: sc.colorKey, 
-                mb: 0.5,
-                lineHeight: 1,
-                letterSpacing: '-1px'
-              }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', color: sc.colorKey }}>
+                {statusIconMap[sc.key]}
+              </Box>
+              <Typography sx={{ fontSize: 13, fontWeight: 700, color: sc.colorKey, lineHeight: 1 }}>
                 {counts[sc.key]}
               </Typography>
-              <Typography sx={{ 
-                fontSize: 14, 
-                color: '#8b95a1',
-                fontWeight: 500
-              }}>
+              <Typography sx={{ fontSize: 11, color: '#4e5968', fontWeight: 500, lineHeight: 1 }}>
                 {sc.label}
               </Typography>
             </Box>
           ))}
         </Box>
+
       </Box>
 
-      {/* 📁 Toss 스타일 파일 그리드 */}
-      <Box sx={{ px: 4, pb: 6 }}>
+      {/* 📁 파일 그리드 (스크롤 영역) */}
+      <Box sx={{ flex: 1, overflowY: 'auto', px: 3, pt: 1, pb: 3 }}>
         {filteredAndSorted.length === 0 ? (
           <Box sx={{ 
             textAlign: 'center', 
