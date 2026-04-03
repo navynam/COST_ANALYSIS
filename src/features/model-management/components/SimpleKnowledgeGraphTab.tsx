@@ -29,7 +29,6 @@ import {
   MenuItem,
   Checkbox,
   FormControlLabel,
-  Collapse,
 } from '@mui/material';
 import {
   AccountTree,
@@ -84,9 +83,42 @@ const SimpleKnowledgeGraphTab: React.FC<SimpleKnowledgeGraphTabProps> = ({
   const [draggedNode, setDraggedNode] = useState<GraphNode | null>(null);
   const [nodePositions, setNodePositions] = useState<Map<string, {x: number, y: number}>>(new Map());
   const [groupDragMode, setGroupDragMode] = useState<boolean>(true); // 그룹 드래그 모드 (기본 켜짐)
+
+  // 📥 SVG 내보내기
+  const handleExportSVG = () => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const serializer = new XMLSerializer();
+    const svgStr = serializer.serializeToString(svg);
+    const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `지식그래프_${new Date().toISOString().slice(0, 10)}.svg`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+  const [svgWidth, setSvgWidth] = useState(800);
   const svgRef = useRef<SVGSVGElement>(null);
+  const svgContainerRef = useRef<HTMLDivElement>(null);
   
   // 🔧 모델 관리 데이터는 props로 받음 (실시간 동기화 보장)
+
+  // 📐 컨테이너 너비 추적 (SVG viewBox 동기화)
+  useEffect(() => {
+    const container = svgContainerRef.current;
+    if (!container) return;
+    const update = () => {
+      const w = container.clientWidth;
+      if (w > 0) setSvgWidth(w);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(container);
+    return () => ro.disconnect();
+  }, []);
 
   // ✨ 컴포넌트 마운트 시 로그만 출력
   useEffect(() => {
@@ -214,9 +246,9 @@ const SimpleKnowledgeGraphTab: React.FC<SimpleKnowledgeGraphTabProps> = ({
             node2.y += moveY;
             
             // 경계 체크
-            node1.x = Math.max(50, Math.min(750, node1.x));
+            node1.x = Math.max(50, Math.min(svgWidth - 50, node1.x));
             node1.y = Math.max(50, Math.min(550, node1.y));
-            node2.x = Math.max(50, Math.min(750, node2.x));
+            node2.x = Math.max(50, Math.min(svgWidth - 50, node2.x));
             node2.y = Math.max(50, Math.min(550, node2.y));
           }
         }
@@ -242,7 +274,7 @@ const SimpleKnowledgeGraphTab: React.FC<SimpleKnowledgeGraphTabProps> = ({
 
   // 🗂️ 모델 관리 데이터 기반 그래프 생성
   const { nodes, links } = useMemo(() => {
-    const width = 800;
+    const width = svgWidth;
     const height = 600;
     const centerX = width / 2;
     const centerY = height / 2;
@@ -340,7 +372,7 @@ const SimpleKnowledgeGraphTab: React.FC<SimpleKnowledgeGraphTabProps> = ({
               const vy = formulaNode.y + vRadius * Math.sin(vAngle);
               
               // 경계 체크 (변수도 화면 안에 배치)
-              const clampedVx = Math.max(50, Math.min(750, vx));
+              const clampedVx = Math.max(50, Math.min(svgWidth - 50, vx));
               const clampedVy = Math.max(50, Math.min(550, vy));
 
               const variableNode: GraphNode = {
@@ -425,7 +457,7 @@ const SimpleKnowledgeGraphTab: React.FC<SimpleKnowledgeGraphTabProps> = ({
     });
 
     return { nodes: nodeData, links: linkData };
-  }, [formulas, layoutMode, levelFilter, showVariables, nodePositions]);
+  }, [formulas, layoutMode, levelFilter, showVariables, nodePositions, svgWidth]);
 
   // 🎨 노드 크기 계산 (타입별 차등화)
   const getNodeRadius = (node: GraphNode) => {
@@ -512,21 +544,55 @@ const SimpleKnowledgeGraphTab: React.FC<SimpleKnowledgeGraphTabProps> = ({
   // 📊 SVG 렌더링
   const renderGraph = () => {
     return (
-      <svg 
+      <svg
         ref={svgRef}
-        width="100%" 
-        height="600" 
-        viewBox="0 0 800 600"
-        style={{ border: '1px solid #e0e0e0', borderRadius: 8 }}
+        width="100%"
+        height="100%"
+        viewBox={`0 0 ${svgWidth} 600`}
+        style={{ display: 'block' }}
       >
-        {/* 배경 그라데이션 */}
         <defs>
-          <radialGradient id="bgGradient" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#f8f9fa" />
-            <stop offset="100%" stopColor="#e9ecef" />
-          </radialGradient>
+          {/* 도트 그리드 패턴 */}
+          <pattern id="dotGrid" width="24" height="24" patternUnits="userSpaceOnUse">
+            <circle cx="12" cy="12" r="1" fill="#cbd5e1" fillOpacity="0.6" />
+          </pattern>
+          {/* 노드 그림자 */}
+          <filter id="nodeShadow" x="-40%" y="-40%" width="180%" height="180%">
+            <feDropShadow dx="0" dy="2" stdDeviation="4" floodColor="#0f172a" floodOpacity="0.12"/>
+          </filter>
+          {/* 선택 글로우 */}
+          <filter id="selectedGlow" x="-40%" y="-40%" width="180%" height="180%">
+            <feDropShadow dx="0" dy="0" stdDeviation="7" floodColor="#f59e0b" floodOpacity="0.7"/>
+          </filter>
+          {/* 검색 하이라이트 글로우 */}
+          <filter id="highlightGlow" x="-40%" y="-40%" width="180%" height="180%">
+            <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#ef4444" floodOpacity="0.6"/>
+          </filter>
+          {/* 드래그 글로우 */}
+          <filter id="dragGlow" x="-40%" y="-40%" width="180%" height="180%">
+            <feDropShadow dx="0" dy="0" stdDeviation="8" floodColor="#0ea5e9" floodOpacity="0.7"/>
+          </filter>
+          {/* 노드 그라디언트 */}
+          <linearGradient id="coreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#3b82f6"/>
+            <stop offset="100%" stopColor="#1e40af"/>
+          </linearGradient>
+          <linearGradient id="subGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#10b981"/>
+            <stop offset="100%" stopColor="#065f46"/>
+          </linearGradient>
+          <linearGradient id="rateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#f59e0b"/>
+            <stop offset="100%" stopColor="#b45309"/>
+          </linearGradient>
+          <linearGradient id="varGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#f1f5f9"/>
+            <stop offset="100%" stopColor="#e2e8f0"/>
+          </linearGradient>
         </defs>
-        <rect width="100%" height="100%" fill="url(#bgGradient)" />
+        {/* 배경 */}
+        <rect width="100%" height="100%" fill="#f8fafc" />
+        <rect width="100%" height="100%" fill="url(#dotGrid)" />
 
         {/* 🔗 링크 (엣지) 렌더링 */}
         <g>
@@ -543,36 +609,26 @@ const SimpleKnowledgeGraphTab: React.FC<SimpleKnowledgeGraphTabProps> = ({
             const targetX = targetPos ? targetPos.x : targetNode.x;
             const targetY = targetPos ? targetPos.y : targetNode.y;
 
+            const cpX = (sourceX + targetX) / 2;
+            const cpY = (sourceY + targetY) / 2 - Math.abs(targetX - sourceX) * 0.12;
             return (
-              <line
+              <path
                 key={index}
-                x1={sourceX}
-                y1={sourceY}
-                x2={targetX}
-                y2={targetY}
-                stroke="#999"
-                strokeWidth={link.weight}
-                strokeOpacity={0.6}
+                d={`M ${sourceX} ${sourceY} Q ${cpX} ${cpY} ${targetX} ${targetY}`}
+                fill="none"
+                stroke="#94a3b8"
+                strokeWidth={Math.max(1, link.weight * 0.7)}
+                strokeOpacity={0.55}
                 markerEnd="url(#arrowhead)"
               />
             );
           })}
         </g>
 
-        {/* 화살표 마커 정의 */}
+        {/* 화살표 마커 */}
         <defs>
-          <marker
-            id="arrowhead"
-            markerWidth="10"
-            markerHeight="7"
-            refX="9"
-            refY="3.5"
-            orient="auto"
-          >
-            <polygon
-              points="0 0, 10 3.5, 0 7"
-              fill="#666"
-            />
+          <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#94a3b8" fillOpacity="0.85" />
           </marker>
         </defs>
 
@@ -628,19 +684,23 @@ const SimpleKnowledgeGraphTab: React.FC<SimpleKnowledgeGraphTabProps> = ({
                   cx={currentX}
                   cy={currentY}
                   r={radius}
-                  fill={nodeColor}
+                  fill={
+                    isSearchResult && !isHighlighted ? nodeColor :
+                    node.type === 'core' ? 'url(#coreGrad)' :
+                    node.type === 'sub'  ? 'url(#subGrad)'  :
+                    node.type === 'rate' ? 'url(#rateGrad)' :
+                    isHighlighted ? '#fecaca' : 'url(#varGrad)'
+                  }
                   fillOpacity={opacity}
                   stroke={strokeColor}
                   strokeWidth={strokeWidth}
-                  style={{ 
-                    cursor: draggedNode?.id === node.id ? 'grabbing' : 'grab',
-                    filter: 
-                      isDraggedGroup ? 'drop-shadow(0 0 12px rgba(0, 180, 216, 0.8))' :
-                      isSelected ? 'drop-shadow(0 0 10px rgba(255, 149, 0, 0.5))' :
-                      isHighlighted ? 'drop-shadow(0 0 8px rgba(255, 107, 107, 0.5))' :
-                      'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
-                    opacity: isDraggedGroup ? 0.9 : 1
-                  }}
+                  filter={
+                    isDraggedGroup ? 'url(#dragGlow)' :
+                    isSelected     ? 'url(#selectedGlow)' :
+                    isHighlighted  ? 'url(#highlightGlow)' :
+                    node.type !== 'variable' ? 'url(#nodeShadow)' : 'none'
+                  }
+                  style={{ cursor: draggedNode?.id === node.id ? 'grabbing' : 'grab' }}
                   onClick={() => setSelectedNode(node)}
                   onMouseDown={(e) => handleMouseDown(e, node)}
                 />
@@ -730,10 +790,11 @@ const SimpleKnowledgeGraphTab: React.FC<SimpleKnowledgeGraphTabProps> = ({
   };
 
   return (
-    <Box sx={{ 
-      height: '100%', 
-      display: 'flex', 
+    <Box sx={{
+      height: '100%',
+      display: 'flex',
       flexDirection: 'column',
+      minHeight: 0,
       // CSS 애니메이션 정의
       '@keyframes pulse': {
         '0%': { transform: 'scale(1)' },
@@ -746,241 +807,113 @@ const SimpleKnowledgeGraphTab: React.FC<SimpleKnowledgeGraphTabProps> = ({
         '100%': { opacity: 1 }
       }
     }}>
-      {/* 📊 상단 컨트롤 패널 */}
-      <Paper sx={{ p: 2, mb: 2, borderRadius: 2 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <AccountTree sx={{ color: '#003875' }} />
-            <Typography variant="h6" fontWeight={700}>
-              🧠 지식그래프 - 원가 모델 구조
-            </Typography>
-          </Box>
-          
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button variant="outlined" size="small" startIcon={<Download />}>
-              SVG 내보내기
-            </Button>
-          </Box>
+      {/* 🎛️ 컴팩트 툴바 */}
+      <Box sx={{
+        flexShrink: 0, display: 'flex', alignItems: 'center', gap: 1.5,
+        px: 2, py: 1.25, bgcolor: 'white',
+        borderRadius: '12px', border: '1px solid #e5e7eb', mb: 1.5,
+        flexWrap: 'wrap',
+      }}>
+        {/* 타이틀 */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mr: 0.5 }}>
+          <AccountTree sx={{ fontSize: 18, color: '#3b82f6' }} />
+          <Typography sx={{ fontSize: 14, fontWeight: 700, color: '#1e293b', whiteSpace: 'nowrap' }}>
+            원가 모델 구조
+          </Typography>
         </Box>
 
-        {/* 🔍 검색 및 필터 영역 */}
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap', mb: 2 }}>
-          {/* 검색창 */}
-          <TextField
-            size="small"
-            placeholder="수식명, 변수, 표현식 검색..."
-            value={searchText}
-            onChange={(e) => handleSearch(e.target.value)}
-            sx={{ minWidth: 250 }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search fontSize="small" />
-                </InputAdornment>
-              ),
-              endAdornment: searchText && (
-                <InputAdornment position="end">
-                  <IconButton size="small" onClick={clearSearch}>
-                    <Clear fontSize="small" />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
+        <Divider orientation="vertical" flexItem sx={{ mx: 0.25 }} />
 
-          {/* 레벨 필터 */}
-          <FormControl size="small" sx={{ minWidth: 120 }}>
-            <InputLabel>레벨 필터</InputLabel>
-            <Select
-              value={levelFilter}
-              label="레벨 필터"
-              onChange={(e) => setLevelFilter(e.target.value as any)}
-            >
-              <MenuItem value="all">전체</MenuItem>
-              <MenuItem value="core">핵심 수식</MenuItem>
-              <MenuItem value="sub">하위 수식</MenuItem>
-              <MenuItem value="rate">비율 수식</MenuItem>
-              <MenuItem value="variable">변수만</MenuItem>
-            </Select>
-          </FormControl>
+        {/* 검색 */}
+        <TextField
+          size="small"
+          placeholder="수식·변수 검색..."
+          value={searchText}
+          onChange={(e) => handleSearch(e.target.value)}
+          sx={{ width: 200, '& .MuiOutlinedInput-root': { borderRadius: '8px', fontSize: 13 } }}
+          InputProps={{
+            startAdornment: <InputAdornment position="start"><Search sx={{ fontSize: 16, color: '#94a3b8' }} /></InputAdornment>,
+            endAdornment: searchText && (
+              <InputAdornment position="end">
+                <IconButton size="small" onClick={clearSearch}><Clear sx={{ fontSize: 14 }} /></IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
 
-          {/* 변수 표시 토글 */}
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={showVariables}
-                onChange={(e) => setShowVariables(e.target.checked)}
-                size="small"
-              />
-            }
-            label="변수 표시"
-            sx={{ fontSize: 12 }}
-          />
-
-          {/* 그룹 드래그 모드 토글 */}
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={groupDragMode}
-                onChange={(e) => setGroupDragMode(e.target.checked)}
-                size="small"
-              />
-            }
-            label="연결된 노드 함께 이동"
-            sx={{ fontSize: 12 }}
-          />
-
-          {/* 필터 패널 토글 */}
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<FilterList />}
-            onClick={() => setShowFilterPanel(!showFilterPanel)}
+        {/* 레벨 필터 */}
+        <FormControl size="small" sx={{ minWidth: 100 }}>
+          <Select
+            value={levelFilter}
+            onChange={(e) => setLevelFilter(e.target.value as any)}
+            sx={{ fontSize: 13, borderRadius: '8px' }}
           >
-            고급 필터
-          </Button>
+            <MenuItem value="all" sx={{ fontSize: 13 }}>전체</MenuItem>
+            <MenuItem value="core" sx={{ fontSize: 13 }}>핵심 수식</MenuItem>
+            <MenuItem value="sub" sx={{ fontSize: 13 }}>하위 수식</MenuItem>
+            <MenuItem value="rate" sx={{ fontSize: 13 }}>비율 수식</MenuItem>
+            <MenuItem value="variable" sx={{ fontSize: 13 }}>변수만</MenuItem>
+          </Select>
+        </FormControl>
 
-          {/* 검색 결과 정보 */}
-          {searchText && (
-            <Chip
-              label={`검색 결과: ${highlightedNodes.size}개`}
-              size="small"
-              color={highlightedNodes.size > 0 ? "success" : "default"}
-              onDelete={clearSearch}
-            />
-          )}
-          
-          {/* 🔄 노드 위치 리셋 */}
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<RestoreSharp />}
-            onClick={resetPositions}
-            disabled={nodePositions.size === 0}
-          >
+        {/* 레이아웃 토글 */}
+        <ToggleButtonGroup
+          value={layoutMode} exclusive size="small"
+          onChange={(_, v) => v && setLayoutMode(v)}
+          sx={{ '& .MuiToggleButton-root': { px: 1.25, py: 0.5, fontSize: 12, borderRadius: '8px !important' } }}
+        >
+          <ToggleButton value="circular"><Refresh sx={{ fontSize: 14, mr: 0.5 }} />원형</ToggleButton>
+          <ToggleButton value="hierarchy"><Timeline sx={{ fontSize: 14, mr: 0.5 }} />계층</ToggleButton>
+          <ToggleButton value="force"><ViewInAr sx={{ fontSize: 14, mr: 0.5 }} />Force</ToggleButton>
+        </ToggleButtonGroup>
+
+        <Divider orientation="vertical" flexItem sx={{ mx: 0.25 }} />
+
+        {/* 체크박스 토글 */}
+        <FormControlLabel
+          control={<Checkbox checked={showVariables} onChange={(e) => setShowVariables(e.target.checked)} size="small" />}
+          label={<Typography sx={{ fontSize: 12 }}>변수</Typography>}
+          sx={{ mr: 0 }}
+        />
+        <FormControlLabel
+          control={<Checkbox checked={groupDragMode} onChange={(e) => setGroupDragMode(e.target.checked)} size="small" />}
+          label={<Typography sx={{ fontSize: 12 }}>그룹이동</Typography>}
+          sx={{ mr: 0 }}
+        />
+
+        {/* 상태 칩 */}
+        {searchText && (
+          <Chip label={`${highlightedNodes.size}개 검색됨`} size="small"
+            color={highlightedNodes.size > 0 ? 'success' : 'default'} onDelete={clearSearch} />
+        )}
+        {draggedNode && (
+          <Chip label={groupDragMode ? `그룹 이동: ${draggedNode.name}` : `드래그: ${draggedNode.name}`}
+            size="small" color={groupDragMode ? 'info' : 'warning'} sx={{ animation: 'pulse 1s infinite' }} />
+        )}
+
+        {/* 우측 액션 */}
+        <Box sx={{ ml: 'auto', display: 'flex', gap: 0.75 }}>
+          <Button size="small" startIcon={<RestoreSharp sx={{ fontSize: 14 }} />}
+            onClick={resetPositions} disabled={nodePositions.size === 0}
+            sx={{ fontSize: 12, textTransform: 'none', borderRadius: '8px' }}>
             위치 리셋
           </Button>
-          
-          {/* 🔄 데이터 새로고침 정보 */}
-          <Chip
-            label={`데이터 로드: ${new Date().toLocaleTimeString()}`}
-            size="small"
-            variant="outlined"
-            color="primary"
-          />
+          <Button size="small" variant="outlined" startIcon={<Download sx={{ fontSize: 14 }} />}
+            onClick={handleExportSVG}
+            sx={{ fontSize: 12, textTransform: 'none', borderRadius: '8px' }}>
+            내보내기
+          </Button>
         </Box>
-
-        {/* 🔧 고급 필터 패널 */}
-        <Collapse in={showFilterPanel}>
-          <Paper sx={{ p: 2, mb: 2, bgcolor: '#f8f9fa' }}>
-            <Typography variant="subtitle2" sx={{ mb: 1.5 }}>고급 필터 및 레이아웃</Typography>
-            
-            <Box sx={{ display: 'flex', gap: 3, alignItems: 'center', flexWrap: 'wrap' }}>
-              {/* 🎛️ 레이아웃 모드 */}
-              <Box>
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-                  레이아웃
-                </Typography>
-                <ToggleButtonGroup
-                  value={layoutMode}
-                  exclusive
-                  onChange={(_, newMode) => newMode && setLayoutMode(newMode)}
-                  size="small"
-                >
-                  <ToggleButton value="circular">
-                    <Refresh fontSize="small" />
-                    <Typography sx={{ ml: 0.5, fontSize: 11 }}>원형</Typography>
-                  </ToggleButton>
-                  <ToggleButton value="hierarchy">
-                    <Timeline fontSize="small" />
-                    <Typography sx={{ ml: 0.5, fontSize: 11 }}>계층</Typography>
-                  </ToggleButton>
-                  <ToggleButton value="force">
-                    <ViewInAr fontSize="small" />
-                    <Typography sx={{ ml: 0.5, fontSize: 11 }}>Force</Typography>
-                  </ToggleButton>
-                </ToggleButtonGroup>
-              </Box>
-
-              <Divider orientation="vertical" flexItem />
-
-              {/* 📊 레벨별 통계 */}
-              <Box>
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-                  레벨별 통계
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 1 }}>
-                  <Chip label={`핵심: ${levelStats.core}`} size="small" sx={{ bgcolor: '#003875', color: 'white' }} />
-                  <Chip label={`하위: ${levelStats.sub}`} size="small" sx={{ bgcolor: '#2e7d32', color: 'white' }} />
-                  <Chip label={`비율: ${levelStats.rate}`} size="small" sx={{ bgcolor: '#e65100', color: 'white' }} />
-                  <Chip label={`변수: ${levelStats.variables}`} size="small" sx={{ bgcolor: '#95a5a6', color: 'white' }} />
-                </Box>
-              </Box>
-            </Box>
-          </Paper>
-        </Collapse>
-
-        {/* 📊 현재 표시 정보 */}
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap', mb: 1 }}>
-          <Typography variant="caption" color="text.secondary">
-            현재 표시:
-          </Typography>
-          <Chip 
-            label={`전체 수식: ${formulas.length}개`} 
-            size="small" 
-            color="primary"
-          />
-          <Chip 
-            label={`노드: ${nodes.length}개 (자동 간격 조정)`} 
-            size="small" 
-            variant="outlined" 
-          />
-          <Chip 
-            label={`관계: ${links.length}개`} 
-            size="small" 
-            variant="outlined" 
-          />
-          {levelFilter !== 'all' && (
-            <Chip
-              label={`필터: ${levelFilter}`}
-              size="small"
-              color="secondary"
-              onDelete={() => setLevelFilter('all')}
-            />
-          )}
-          {formulas.length > 0 && (
-            <Chip
-              label={`최신: ${formulas[formulas.length - 1]?.name}`}
-              size="small"
-              color="success"
-            />
-          )}
-          {draggedNode && (
-            <Chip
-              label={groupDragMode ? 
-                `🔗 그룹 드래그: ${draggedNode.name} + ${getConnectedNodes(draggedNode.id).length}개` :
-                `📍 드래그: ${draggedNode.name}`
-              }
-              size="small"
-              color={groupDragMode ? "info" : "warning"}
-              sx={{ animation: 'pulse 1s infinite' }}
-            />
-          )}
-          {nodePositions.size > 0 && (
-            <Chip
-              label={`이동된 노드: ${nodePositions.size}개`}
-              size="small"
-              variant="outlined"
-              color="info"
-            />
-          )}
-        </Box>
-      </Paper>
+      </Box>
 
       {/* 📊 메인 그래프 영역 */}
-      <Box sx={{ display: 'flex', flex: 1, gap: 2 }}>
+      <Box sx={{ display: 'flex', flex: 1, gap: 2, minHeight: 0 }}>
         {/* 🧠 지식그래프 */}
-        <Paper sx={{ flex: 1, p: 2, borderRadius: 2 }}>
+        <Paper ref={svgContainerRef} sx={{
+          flex: 1, p: 0, borderRadius: '12px', overflow: 'hidden',
+          border: '1px solid #e5e7eb', boxShadow: '0 4px 24px rgba(15,23,42,0.07)',
+          display: 'flex', flexDirection: 'column',
+        }}>
           {renderGraph()}
         </Paper>
 
@@ -1076,49 +1009,32 @@ const SimpleKnowledgeGraphTab: React.FC<SimpleKnowledgeGraphTabProps> = ({
       </Box>
 
       {/* 📊 하단 범례 */}
-      <Paper sx={{ p: 2, mt: 2, borderRadius: 2 }}>
-        <Typography variant="subtitle2" sx={{ mb: 1 }}>범례 및 사용법</Typography>
-        <Box sx={{ display: 'flex', gap: 3, alignItems: 'center', flexWrap: 'wrap' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <Box sx={{ width: 12, height: 12, bgcolor: '#003875', borderRadius: '50%' }} />
-            <Typography variant="caption">핵심 수식</Typography>
+      <Box sx={{
+        flexShrink: 0, display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap',
+        px: 2, py: 1, mt: 1.5, bgcolor: 'white',
+        borderRadius: '12px', border: '1px solid #e5e7eb',
+      }}>
+        {[
+          { color: '#3b82f6', label: '핵심 수식' },
+          { color: '#10b981', label: '하위 수식' },
+          { color: '#f59e0b', label: '비율 수식' },
+          { color: '#94a3b8', label: '변수' },
+          ...(searchText ? [{ color: '#ef4444', label: '검색 결과' }] : []),
+          ...(draggedNode && groupDragMode ? [{ color: '#0ea5e9', label: '그룹 이동' }] : []),
+        ].map(({ color, label }) => (
+          <Box key={label} sx={{ display: 'flex', alignItems: 'center', gap: 0.6 }}>
+            <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: color }} />
+            <Typography sx={{ fontSize: 11, color: '#64748b' }}>{label}</Typography>
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <Box sx={{ width: 12, height: 12, bgcolor: '#2e7d32', borderRadius: '50%' }} />
-            <Typography variant="caption">하위 수식</Typography>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <Box sx={{ width: 12, height: 12, bgcolor: '#e65100', borderRadius: '50%' }} />
-            <Typography variant="caption">비율 수식</Typography>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <Box sx={{ width: 12, height: 12, bgcolor: '#95a5a6', borderRadius: '50%' }} />
-            <Typography variant="caption">변수</Typography>
-          </Box>
-          
-          {searchText && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Box sx={{ width: 12, height: 12, bgcolor: '#ff6b6b', borderRadius: '50%' }} />
-              <Typography variant="caption">검색 결과</Typography>
-            </Box>
-          )}
-          
-          {draggedNode && groupDragMode && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Box sx={{ width: 12, height: 12, bgcolor: '#00b4d8', borderRadius: '50%' }} />
-              <Typography variant="caption">그룹 이동</Typography>
-            </Box>
-          )}
-          
-
-          
-          <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
-          
-          <Typography variant="caption" color="text.secondary">
-            💡 자동 간격 조정으로 겹침 방지 | 드래그: 연결된 노드 함께 이동 | 검색/필터링 | 클릭: 상세 정보 | 위치 리셋 | ⭐: 핵심 수식
-          </Typography>
-        </Box>
-      </Paper>
+        ))}
+        <Divider orientation="vertical" flexItem sx={{ mx: 0.5 }} />
+        <Typography sx={{ fontSize: 11, color: '#94a3b8' }}>
+          노드: {nodes.length} · 관계: {links.length} · 수식: {formulas.length}
+        </Typography>
+        <Typography sx={{ fontSize: 11, color: '#94a3b8', ml: 'auto' }}>
+          클릭: 상세 정보 | 드래그: 노드 이동 | ⭐ 핵심 수식
+        </Typography>
+      </Box>
     </Box>
   );
 };

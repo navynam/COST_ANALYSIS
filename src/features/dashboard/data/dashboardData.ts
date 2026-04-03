@@ -1,3 +1,5 @@
+import { initialFiles } from '../../parsing/data/mockData';
+
 export const summaryData = {
   totalEstimates: 47,
   verificationRate: 80.9,
@@ -11,36 +13,118 @@ export const verificationStatus = [
   { name: '오류', value: 12, color: '#f44336' },
 ];
 
-export const recentItems = [
-  { id: 1, filename: 'HEAD_LINING_원가계산서.xlsx', company: '대한(주)', status: '검증', items: 24, materialCost: 45200, processCost: 23100, overheadCost: 8500, totalCost: 76800, date: '2026-02-21', anomalies: 2 },
-  { id: 2, filename: 'DOOR_TRIM_견적서.xlsx', company: '현대부품(주)', status: '검증', items: 18, materialCost: 38500, processCost: 19200, overheadCost: 6300, totalCost: 64000, date: '2026-02-19', anomalies: 0 },
-  { id: 3, filename: 'CONSOLE_BOX_원가명세.xlsx', company: '모비스파츠', status: '추출', items: 0, materialCost: 0, processCost: 0, overheadCost: 0, totalCost: 0, date: '2026-02-19', anomalies: 0 },
-  { id: 4, filename: 'BUMPER_ASSY_Q4견적.xlsx', company: '현대플라스틱', status: '분석', items: 32, materialCost: 52300, processCost: 28400, overheadCost: 9200, totalCost: 89900, date: '2026-02-15', anomalies: 0 },
-  { id: 5, filename: 'SEAT_COVER_원가분석.xlsx', company: '현대시트', status: '실패', items: 0, materialCost: 0, processCost: 0, overheadCost: 0, totalCost: 0, date: '2026-02-16', anomalies: 0 },
-  { id: 6, filename: 'AIRBAG_MODULE_견적.xlsx', company: '현대모비스', status: '추출', items: 0, materialCost: 0, processCost: 0, overheadCost: 0, totalCost: 0, date: '2026-02-14', anomalies: 0 },
-  { id: 7, filename: 'LAMP_ASSY_분석.xlsx', company: '현대IHL', status: '분석', items: 28, materialCost: 41200, processCost: 22300, overheadCost: 7800, totalCost: 71300, date: '2026-02-13', anomalies: 1 },
+export const actionAlerts = [
+  {
+    id: 1,
+    icon: '🚨',
+    priority: '긴급',
+    priorityColor: 'error' as const,
+    title: '이상치 감지 — 즉시 검토 필요',
+    filename: 'HEAD_LINING_원가계산서.xlsx',
+    company: '대한(주)',
+    description: '재료비 항목 2건에서 시장가 대비 33% 초과 이상치 발생',
+    action: '분석 검토',
+    route: '/analysis',
+    time: '10분 전',
+    category: 'anomaly',
+  },
+  {
+    id: 2,
+    icon: '⏭️',
+    priority: '주의',
+    priorityColor: 'warning' as const,
+    title: '분석 대기 — 검증 완료 파일',
+    filename: 'DOOR_TRIM_견적서.xlsx',
+    company: '현대부품(주)',
+    description: '검증이 완료되었습니다. 원가 분석을 시작하세요.',
+    action: '분석 시작',
+    route: '/analysis',
+    time: '1시간 전',
+    category: 'next-step',
+  },
+  {
+    id: 3,
+    icon: '📤',
+    priority: '정보',
+    priorityColor: 'info' as const,
+    title: 'ERP 등록 대기 — 분석 완료',
+    filename: 'BUMPER_ASSY_Q4견적.xlsx',
+    company: '현대플라스틱',
+    description: '원가 분석이 완료되었습니다. ERP 시스템에 데이터를 등록하세요.',
+    action: 'ERP 등록',
+    route: '/parsing_card',
+    time: '어제',
+    category: 'erp-ready',
+  },
+  {
+    id: 4,
+    icon: '⏰',
+    priority: '주의',
+    priorityColor: 'warning' as const,
+    title: '처리 지연 — 파싱 오류 발생',
+    filename: 'SEAT_COVER_원가분석.xlsx',
+    company: '현대시트',
+    description: '파일 파싱 중 오류가 발생하여 3일째 대기 중입니다.',
+    action: '재처리',
+    route: '/parsing_card',
+    time: '3일 전',
+    category: 'delayed',
+  },
+  {
+    id: 5,
+    icon: '🔍',
+    priority: '정보',
+    priorityColor: 'info' as const,
+    title: '자동 검증 진행 중',
+    filename: 'CONSOLE_BOX_원가명세.xlsx',
+    company: '모비스파츠',
+    description: '파싱 완료 후 자동 검증 프로세스가 진행 중입니다.',
+    action: '상태 확인',
+    route: '/parsing_card',
+    time: '30분 전',
+    category: 'in-progress',
+  },
+  {
+    id: 6,
+    icon: '💡',
+    priority: '정보',
+    priorityColor: 'info' as const,
+    title: '인사이트 리포트 준비 완료',
+    filename: 'DOOR_TRIM_견적서.xlsx',
+    company: '현대부품(주)',
+    description: '원가 절감 포인트 3건이 발견되었습니다. 인사이트를 확인하세요.',
+    action: '인사이트 보기',
+    route: '/analysis',
+    time: '2시간 전',
+    category: 'insight',
+  },
 ];
 
 export const statusColorMap: Record<string, 'success' | 'warning' | 'error' | 'info'> = {
-  '검증': 'success', '추출': 'info', '분석': 'warning', '실패': 'error',
+  '추출중': 'info', '검증중': 'info', '검증완료': 'success',
+  '분석중': 'warning', '분석완료': 'success', '실패': 'error',
 };
 
-const getWorkStatusCounts = () => {
-  const counts = { '추출': 0, '검증': 0, '분석': 0, '실패': 0 };
-  recentItems.forEach(item => {
-    if (counts.hasOwnProperty(item.status)) {
-      counts[item.status as keyof typeof counts]++;
-    }
-  });
-  return counts;
+const getCounts = () => {
+  const c: Record<string, number> = {
+    extracting: 0, verifying: 0, verified: 0,
+    analyzing: 0, analyzed: 0, failed: 0,
+  };
+  initialFiles.forEach(f => { if (f.status in c) c[f.status]++; });
+  return c;
 };
 
-export const workItems = [
-  { status: '추출', label: '추출 대기', count: getWorkStatusCounts()['추출'], icon: '⏳', color: '#ff9500', filter: 'extracting' },
-  { status: '검증', label: '검증 대기', count: getWorkStatusCounts()['검증'], icon: '✅', color: '#34c759', filter: 'complete' },
-  { status: '분석', label: '분석 대기', count: getWorkStatusCounts()['분석'], icon: '📊', color: '#af52de', filter: 'analyzing' },
-  { status: '실패', label: '처리 실패', count: getWorkStatusCounts()['실패'], icon: '❌', color: '#ff3b30', filter: 'failed' },
-];
+export const workItems = (() => {
+  const c = getCounts();
+  return [
+    { status: 'extracting', label: '추출중',   count: c.extracting, icon: '⏳', color: '#ff9800', filter: 'extracting' },
+    { status: 'verifying',  label: '검증중',   count: c.verifying,  icon: '🔍', color: '#2196f3', filter: 'verifying'  },
+    { status: 'verified',   label: '검증완료', count: c.verified,   icon: '✅', color: '#4caf50', filter: 'verified'   },
+    { status: 'analyzing',  label: '분석중',   count: c.analyzing,  icon: '🔬', color: '#9c27b0', filter: 'analyzing'  },
+    { status: 'analyzed',   label: '분석완료', count: c.analyzed,   icon: '📊', color: '#34c759', filter: 'analyzed'   },
+    { status: 'failed',     label: '실패',     count: c.failed,     icon: '❌', color: '#f44336', filter: 'failed'     },
+  ];
+})();
 
 export const summaryCards = [
   { label: '총 견적서', value: `${summaryData.totalEstimates}건`, icon: '📄', color: '#e60012' },

@@ -15,10 +15,11 @@ interface ListViewRowProps {
   depth?: number;
   onCellClick?: (name: string) => void;
   onAmountClick?: (event: React.MouseEvent<HTMLElement>, row: CostRow, groupTitle: string) => void;
+  onAnomalyClick?: (el: HTMLElement, reason: string) => void;
   groupTitle?: string;
 }
 
-const ListViewRow: React.FC<ListViewRowProps> = ({ item, depth = 0, onCellClick, onAmountClick, groupTitle = '' }) => {
+const ListViewRow: React.FC<ListViewRowProps> = ({ item, depth = 0, onCellClick, onAmountClick, onAnomalyClick, groupTitle = '' }) => {
   const { open, setOpen, hasChildren, isAnomaly } = useListViewRow(item);
 
   return (
@@ -79,7 +80,18 @@ const ListViewRow: React.FC<ListViewRowProps> = ({ item, depth = 0, onCellClick,
         </TableCell>
         <TableCell sx={tdSx}>{item.ratio}</TableCell>
         <TableCell sx={tdSx}><MiniConfidence value={item.confidence} /></TableCell>
-        <TableCell sx={tdSx}><StatusBadge status={item.status} /></TableCell>
+        <TableCell sx={tdSx}>
+          {isAnomaly && item.anomalyReason ? (
+            <Box
+              sx={{ display: 'inline-flex', cursor: 'pointer' }}
+              onClick={(e) => onAnomalyClick?.(e.currentTarget, item.anomalyReason!)}
+            >
+              <StatusBadge status={item.status} />
+            </Box>
+          ) : (
+            <StatusBadge status={item.status} />
+          )}
+        </TableCell>
       </TableRow>
       {hasChildren && (
         <TableRow>
@@ -94,6 +106,7 @@ const ListViewRow: React.FC<ListViewRowProps> = ({ item, depth = 0, onCellClick,
                       depth={depth + 1}
                       onCellClick={onCellClick}
                       onAmountClick={onAmountClick}
+                      onAnomalyClick={onAnomalyClick}
                       groupTitle={groupTitle}
                     />
                   ))}

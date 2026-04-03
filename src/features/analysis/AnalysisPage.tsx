@@ -85,9 +85,11 @@ const AnalysisPage: React.FC = () => {
     savedNotes, setSavedNotes,
     totalNotesCount,
     updateTotalNotesCount,
-    startEdit, isOverhead, handleCellClick, handleAmountClick,
+    startEdit, isOverhead, hasExcelData, handleCellClick, handleAmountClick,
     commitEdit, getModifiedCount, handleSaveAllChanges,
   } = useAnalysisPage();
+
+  const [selectedRelationNode, setSelectedRelationNode] = React.useState<any>(null);
 
   // 📝 노트작성 관련 핸들러
   const handleNoteSubmit = () => {
@@ -530,7 +532,7 @@ const AnalysisPage: React.FC = () => {
                   </TableHead>
                   <TableBody>
                     {group.items.map(item => (
-                      <ListViewRow key={item.id} item={item} onCellClick={handleCellClick} onAmountClick={handleAmountClick} groupTitle={group.title} />
+                      <ListViewRow key={item.id} item={item} onCellClick={handleCellClick} onAmountClick={handleAmountClick} onAnomalyClick={(el, reason) => setAnomalyAnchor({ el, reason })} groupTitle={group.title} />
                     ))}
                   </TableBody>
                 </Table>
@@ -541,15 +543,153 @@ const AnalysisPage: React.FC = () => {
 
         {/* ── 관계도 뷰 ── */}
         {activeTab === 2 && (
-          <Paper sx={{ borderRadius: '10px', border: `1px solid ${C.border}`, boxShadow: 'none', overflow: 'hidden' }}>
-            <Box sx={{ px: 2.5, py: 1.75, bgcolor: '#f9f9fb', borderBottom: `1px solid ${C.border}` }}>
-              <Typography sx={{ fontSize: 14, fontWeight: 600 }}>🔗 원가 구조 관계도</Typography>
-              <Typography sx={{ fontSize: 11, color: C.gray }}>노드 간 관계와 이상치를 시각적으로 확인합니다</Typography>
-            </Box>
-            <Box sx={{ p: 3 }}>
-              <RelationView listData={listData} onNodeClick={handleCellClick} />
-            </Box>
-          </Paper>
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
+            <Paper sx={{ flex: 1, borderRadius: '10px', border: `1px solid ${C.border}`, boxShadow: 'none', overflow: 'hidden', minWidth: 0 }}>
+              <Box sx={{ px: 2.5, py: 1.75, bgcolor: '#f9f9fb', borderBottom: `1px solid ${C.border}` }}>
+                <Typography sx={{ fontSize: 14, fontWeight: 600 }}>🔗 원가 구조 관계도</Typography>
+                <Typography sx={{ fontSize: 11, color: C.gray }}>노드 간 관계와 이상치를 시각적으로 확인합니다</Typography>
+              </Box>
+              <Box sx={{ p: 3 }}>
+                <RelationView
+                  listData={listData}
+                  onNodeSelect={(node) => setSelectedRelationNode(node)}
+                />
+              </Box>
+            </Paper>
+
+            {/* ── 우측 상세 패널 ── */}
+            {selectedRelationNode && (
+              <Paper sx={{
+                width: 280, flexShrink: 0, borderRadius: '10px',
+                border: `1px solid ${C.border}`, boxShadow: 'none', overflow: 'hidden',
+                position: 'sticky', top: 16,
+              }}>
+                {/* 패널 헤더 */}
+                <Box sx={{
+                  px: 2, py: 1.5, bgcolor: '#f9f9fb',
+                  borderBottom: `1px solid ${C.border}`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                }}>
+                  <Typography sx={{ fontSize: 13, fontWeight: 700, color: C.dark }}>상세 정보</Typography>
+                  <IconButton size="small" onClick={() => setSelectedRelationNode(null)} sx={{ width: 22, height: 22 }}>
+                    <CloseIcon sx={{ fontSize: 14 }} />
+                  </IconButton>
+                </Box>
+
+                {/* 패널 본문 */}
+                <Box sx={{ p: 2 }}>
+                  {/* 상태 + 이름 */}
+                  <Box sx={{ mb: 2 }}>
+                    <Box sx={{
+                      display: 'inline-block', px: 1, py: 0.25, borderRadius: '4px', mb: 0.75,
+                      bgcolor: selectedRelationNode.status === 'anomaly' ? '#fff0f0' : '#f0fdf4',
+                      border: `1px solid ${selectedRelationNode.status === 'anomaly' ? '#fca5a5' : '#86efac'}`,
+                    }}>
+                      <Typography sx={{
+                        fontSize: 10, fontWeight: 700,
+                        color: selectedRelationNode.status === 'anomaly' ? '#dc2626' : '#16a34a',
+                      }}>
+                        {selectedRelationNode.status === 'anomaly' ? '⚠️ 이상치' : '✅ 정상'}
+                      </Typography>
+                    </Box>
+                    <Typography sx={{ fontSize: 15, fontWeight: 700, color: C.dark, lineHeight: 1.3 }}>
+                      {selectedRelationNode.label}
+                    </Typography>
+                    {selectedRelationNode.sub && (
+                      <Typography sx={{ fontSize: 11, color: C.gray, mt: 0.5 }}>{selectedRelationNode.sub}</Typography>
+                    )}
+                  </Box>
+
+                  {/* 금액 */}
+                  <Box sx={{ mb: 2, p: 1.5, bgcolor: '#f9fafb', borderRadius: '8px' }}>
+                    <Typography sx={{ fontSize: 10, color: C.gray, mb: 0.5 }}>금액</Typography>
+                    <Typography sx={{
+                      fontSize: 20, fontWeight: 800,
+                      color: selectedRelationNode.status === 'anomaly' ? '#dc2626' : C.blue,
+                    }}>
+                      {selectedRelationNode.amount}
+                    </Typography>
+                    {selectedRelationNode.detail && (
+                      <Typography sx={{ fontSize: 11, color: C.gray, mt: 0.25 }}>비율: {selectedRelationNode.detail}</Typography>
+                    )}
+                  </Box>
+
+                  {/* 신뢰도 */}
+                  <Box sx={{ mb: 2 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                      <Typography sx={{ fontSize: 11, color: C.gray }}>신뢰도</Typography>
+                      <Typography sx={{
+                        fontSize: 11, fontWeight: 700,
+                        color: selectedRelationNode.confidence >= 90 ? '#16a34a' : selectedRelationNode.confidence >= 70 ? '#d97706' : '#dc2626',
+                      }}>
+                        {selectedRelationNode.confidence}%
+                      </Typography>
+                    </Box>
+                    <Box sx={{ height: 6, bgcolor: '#e5e7eb', borderRadius: 3, overflow: 'hidden' }}>
+                      <Box sx={{
+                        width: `${selectedRelationNode.confidence}%`, height: '100%', borderRadius: 3,
+                        bgcolor: selectedRelationNode.confidence >= 90 ? '#22c55e' : selectedRelationNode.confidence >= 70 ? '#f59e0b' : '#ef4444',
+                        transition: 'width 0.4s ease',
+                      }} />
+                    </Box>
+                  </Box>
+
+                  {/* 항목 세부 정보 (레벨 2 이상) */}
+                  {selectedRelationNode.level >= 2 && (
+                    <Box sx={{ borderTop: `1px solid ${C.border}`, pt: 1.5, mb: 2 }}>
+                      {selectedRelationNode.spec && (
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.75 }}>
+                          <Typography sx={{ fontSize: 11, color: C.gray }}>규격</Typography>
+                          <Typography sx={{ fontSize: 11, fontWeight: 600, color: C.dark }}>{selectedRelationNode.spec}</Typography>
+                        </Box>
+                      )}
+                      {selectedRelationNode.qty && (
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.75 }}>
+                          <Typography sx={{ fontSize: 11, color: C.gray }}>수량</Typography>
+                          <Typography sx={{ fontSize: 11, fontWeight: 600, color: C.dark }}>{selectedRelationNode.qty} {selectedRelationNode.unit}</Typography>
+                        </Box>
+                      )}
+                      {selectedRelationNode.unitPrice && (
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.75 }}>
+                          <Typography sx={{ fontSize: 11, color: C.gray }}>단가</Typography>
+                          <Typography sx={{ fontSize: 11, fontWeight: 600, color: C.dark }}>₩{selectedRelationNode.unitPrice}</Typography>
+                        </Box>
+                      )}
+                    </Box>
+                  )}
+
+                  {/* AI 판단근거 (이상치인 경우) */}
+                  {selectedRelationNode.status === 'anomaly' && selectedRelationNode.anomalyReason && (
+                    <Box sx={{ mb: 2, p: 1.5, bgcolor: '#fff5f5', borderRadius: '8px', border: '1px solid #fca5a520' }}>
+                      <Typography sx={{ fontSize: 11, fontWeight: 700, color: C.orange, mb: 0.75 }}>
+                        🤖 AI 판단 근거
+                      </Typography>
+                      <Typography sx={{ fontSize: 11, color: '#7f1d1d', lineHeight: 1.6 }}>
+                        {selectedRelationNode.anomalyReason}
+                      </Typography>
+                    </Box>
+                  )}
+
+                  {/* 원본 보기 버튼 */}
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    disabled={!hasExcelData(selectedRelationNode.label)}
+                    onClick={() => handleCellClick(selectedRelationNode.label)}
+                    sx={{
+                      fontSize: 12, fontWeight: 600, textTransform: 'none',
+                      borderRadius: '8px', borderColor: C.blue, color: C.blue,
+                      '&:hover': { bgcolor: 'rgba(0,100,255,0.04)', borderColor: C.blue },
+                      '&.Mui-disabled': { borderColor: '#d1d5db', color: '#9ca3af' },
+                    }}
+                  >
+                    📄 원본 데이터 보기
+                  </Button>
+                </Box>
+              </Paper>
+            )}
+          </Box>
         )}
 
         {/* ── 골든셋 뷰 ── */}

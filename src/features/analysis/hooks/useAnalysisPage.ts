@@ -90,6 +90,11 @@ export const useAnalysisPage = () => {
 
   const isOverhead = (groupId: string) => groupId === 'overhead';
 
+  const hasExcelData = (itemName: string) => {
+    const name = itemName.replace(' ⚠️', '');
+    return excelData.some(row => row.cols.some((col: any) => col.text && col.text.includes(name)));
+  };
+
   const handleCellClick = (itemName: string) => {
     const rowIndex = excelData.findIndex(row =>
       row.cols.some((col: any) => col.text && col.text.includes(itemName.replace(' ⚠️', '')))
@@ -119,7 +124,7 @@ export const useAnalysisPage = () => {
     savedNotes, setSavedNotes,
     totalNotesCount,
     updateTotalNotesCount,
-    startEdit, isOverhead, handleCellClick, handleAmountClick,
+    startEdit, isOverhead, hasExcelData, handleCellClick, handleAmountClick,
     modifiedCells, commitEdit, getModifiedCount, handleSaveAllChanges,
   };
 };

@@ -8,9 +8,10 @@ import { useRelationView } from '../hooks/useRelationView';
 interface RelationViewProps {
   listData: ListGroup[];
   onNodeClick?: (name: string) => void;
+  onNodeSelect?: (node: any) => void;
 }
 
-const RelationView: React.FC<RelationViewProps> = ({ listData, onNodeClick }) => {
+const RelationView: React.FC<RelationViewProps> = ({ listData, onNodeClick, onNodeSelect }) => {
   const {
     expandedNodes, draggedNode, hasDragged,
     allNodes, edges, maxHeight,
@@ -61,6 +62,7 @@ const RelationView: React.FC<RelationViewProps> = ({ listData, onNodeClick }) =>
               if (!isDragging && !hasDragged) {
                 if (node.hasChildren) toggleExpand(node.id);
                 onNodeClick?.(node.label);
+                onNodeSelect?.(node);
               }
             }}
             sx={{

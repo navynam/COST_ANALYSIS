@@ -40,6 +40,7 @@ export interface ListItem {
   ratio: string;
   confidence: number;
   status: 'normal' | 'anomaly';
+  anomalyReason?: string;
   children?: ListItem[];
 }
 

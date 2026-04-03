@@ -234,10 +234,10 @@ const FileCard: React.FC<{
         </Box>
 
         {/* 🔄 동적 콘텐츠 영역 - 최소 여백 */}
-        <Box sx={{ mb: 0.5, flex: 1 }}>
+        <Box sx={{ mb: 0.5, minHeight: 134 }}>
           {/* ⚡ Toss 스타일 진행률 (추출 중) */}
           {file.status === 'extracting' && (
-            <Box sx={{ p: 2.5, bgcolor: '#f9fafb', borderRadius: '12px' }}>
+            <Box sx={{ p: 2.5, bgcolor: '#f9fafb', borderRadius: '12px', minHeight: 134, boxSizing: 'border-box' }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
                 <Typography sx={{ fontSize: 14, color: '#4e5968', fontWeight: 600 }}>
                   데이터 추출 중
@@ -272,7 +272,7 @@ const FileCard: React.FC<{
 
           {/* ✅ Toss 스타일 추출 결과 (완료, 분석중, 검증 단계) - 컴팩트 */}
           {(file.status === 'verifying' || file.status === 'verified' || file.status === 'analyzing' || file.status === 'analyzed') && (
-            <Box sx={{ p: 2, bgcolor: '#f0fdf4', borderRadius: '10px', border: '1px solid #dcfce7' }}>
+            <Box sx={{ p: 2, bgcolor: '#f0fdf4', borderRadius: '10px', border: '1px solid #dcfce7', minHeight: 134, boxSizing: 'border-box' }}>
               <Typography sx={{ 
                 fontSize: 12, 
                 color: '#15803d', 
@@ -389,7 +389,7 @@ const FileCard: React.FC<{
 
           {/* 📋 대기 상태 안내 (추출 전) - 컴팩트 */}
           {file.status === 'pending' && (
-            <Box sx={{ p: 2, bgcolor: '#f9fafb', borderRadius: '10px', border: '1px solid #e5e8eb' }}>
+            <Box sx={{ p: 2, bgcolor: '#f9fafb', borderRadius: '10px', border: '1px solid #e5e8eb', minHeight: 134, boxSizing: 'border-box' }}>
               <Typography sx={{ 
                 fontSize: 12, 
                 color: '#6b7280', 
@@ -414,7 +414,7 @@ const FileCard: React.FC<{
 
           {/* ⚠️ 오류 상태 - 간소화 (오류 사유만) */}
           {file.status === 'failed' && (
-            <Box sx={{ p: 2, bgcolor: '#fff5f5', borderRadius: '10px', border: '1px solid #fee2e2' }}>
+            <Box sx={{ p: 2, bgcolor: '#fff5f5', borderRadius: '10px', border: '1px solid #fee2e2', minHeight: 134, boxSizing: 'border-box' }}>
               <Typography sx={{ 
                 fontSize: 12, 
                 color: '#dc2626',
