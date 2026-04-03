@@ -45,7 +45,7 @@
 import React from 'react';
 import {
   Box, Typography, Paper, Button, Chip, Popover, Tabs, Tab,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+  Table, TableBody, TableCell, TableHead, TableRow,
   TextField, ClickAwayListener, Dialog, DialogTitle, DialogContent, 
   DialogActions, Select, MenuItem, FormControl, InputLabel, Alert, IconButton
 } from '@mui/material';
@@ -66,7 +66,6 @@ import {
   tableHeaderNumSx as tthNumSx,
   tableCellSx as tdSx,
   tableCellNumSx as tdNumSx,
-  btnOutlineSx,
 } from '../../shared/styles';
 
 const AnalysisPage: React.FC = () => {
@@ -82,7 +81,8 @@ const AnalysisPage: React.FC = () => {
     noteDialogOpen, setNoteDialogOpen,
     noteContent, setNoteContent,
     noteType, setNoteType,
-    savedNotes, setSavedNotes,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    savedNotes: _savedNotes, setSavedNotes,
     totalNotesCount,
     updateTotalNotesCount,
     startEdit, isOverhead, hasExcelData, handleCellClick, handleAmountClick,

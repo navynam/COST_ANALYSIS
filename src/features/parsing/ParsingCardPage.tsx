@@ -55,7 +55,6 @@ import {
   Schedule,
   Error,
   Analytics,
-  NoteAdd as NoteAddIcon,
   Send as SendIcon,
   AutoAwesome as AIIcon,
   Close as CloseIcon,
@@ -68,7 +67,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import { C } from '../../shared/constants/colors';
-import FileUploadArea from './components/FileUploadArea';
 import FileDetailDrawer from './components/FileDetailDrawer';
 import SearchFilterDialog from './components/SearchFilterDialog';
 import { useParsingPage } from './hooks/useParsingPage';

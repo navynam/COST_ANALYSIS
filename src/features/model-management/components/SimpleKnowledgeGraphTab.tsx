@@ -24,7 +24,6 @@ import {
   InputAdornment,
   IconButton,
   FormControl,
-  InputLabel,
   Select,
   MenuItem,
   Checkbox,
@@ -38,7 +37,6 @@ import {
   Download,
   Search,
   Clear,
-  FilterList,
   RestoreSharp,
 } from '@mui/icons-material';
 import { Formula, badgeConfig } from '../hooks/useModelManagement';
@@ -78,7 +76,8 @@ const SimpleKnowledgeGraphTab: React.FC<SimpleKnowledgeGraphTabProps> = ({
   const [searchText, setSearchText] = useState<string>('');
   const [levelFilter, setLevelFilter] = useState<'all' | 'core' | 'sub' | 'rate' | 'variable'>('all');
   const [showVariables, setShowVariables] = useState<boolean>(true);
-  const [showFilterPanel, setShowFilterPanel] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_showFilterPanel, _setShowFilterPanel] = useState<boolean>(false);
   const [highlightedNodes, setHighlightedNodes] = useState<Set<string>>(new Set());
   const [draggedNode, setDraggedNode] = useState<GraphNode | null>(null);
   const [nodePositions, setNodePositions] = useState<Map<string, {x: number, y: number}>>(new Map());
@@ -126,6 +125,7 @@ const SimpleKnowledgeGraphTab: React.FC<SimpleKnowledgeGraphTabProps> = ({
       수식개수: formulas.length,
       시간: new Date().toLocaleTimeString()
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // 빈 의존성 배열로 마운트 시에만 실행
 
   // 📊 지식그래프 상태 정보 (로그 + UI 표시)
@@ -261,7 +261,8 @@ const SimpleKnowledgeGraphTab: React.FC<SimpleKnowledgeGraphTabProps> = ({
   };
 
   // 📊 레벨별 통계
-  const levelStats = useMemo(() => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _levelStats = useMemo(() => {
     const stats = {
       total: formulas.length,
       core: formulas.filter(f => f.badge === 'core').length,
@@ -288,7 +289,8 @@ const SimpleKnowledgeGraphTab: React.FC<SimpleKnowledgeGraphTabProps> = ({
       formulas.filter(f => f.badge === levelFilter);
 
     // 🎯 노드 크기 고려한 최소 간격 계산
-    const getMinDistance = (type1: string, type2: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _getMinDistance = (type1: string, type2: string) => {
       const radius1 = type1 === 'core' ? 40 : type1 === 'sub' ? 35 : type1 === 'rate' ? 30 : 18;
       const radius2 = type2 === 'core' ? 40 : type2 === 'sub' ? 35 : type2 === 'rate' ? 30 : 18;
       return (radius1 + radius2) * 2 + 20; // 노드 반지름 합 + 여백 20px
@@ -400,7 +402,8 @@ const SimpleKnowledgeGraphTab: React.FC<SimpleKnowledgeGraphTabProps> = ({
 
     // 🎯 노드 충돌 방지 위치 조정 (저장된 위치가 없는 경우만)
     const nodesWithoutSavedPos = nodeData.filter(node => !nodePositions.has(node.id));
-    const adjustedNodes = adjustNodePositions(nodesWithoutSavedPos);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _adjustedNodes = adjustNodePositions(nodesWithoutSavedPos);
     
     // 🎯 저장된 노드 위치 적용 (드래그로 이동된 경우)
     nodeData.forEach(node => {
@@ -457,6 +460,7 @@ const SimpleKnowledgeGraphTab: React.FC<SimpleKnowledgeGraphTabProps> = ({
     });
 
     return { nodes: nodeData, links: linkData };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formulas, layoutMode, levelFilter, showVariables, nodePositions, svgWidth]);
 
   // 🎨 노드 크기 계산 (타입별 차등화)

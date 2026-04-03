@@ -8,7 +8,7 @@
  * 4. 시각적으로 매력적인 오버레이
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Dialog,
@@ -19,8 +19,6 @@ import {
   Stepper,
   Step,
   StepLabel,
-  Backdrop,
-  Fade,
   Chip,
   LinearProgress
 } from '@mui/material';

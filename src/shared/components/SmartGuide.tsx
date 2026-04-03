@@ -34,7 +34,6 @@ import {
   CheckCircle as CheckIcon,
   ArrowForward as NextIcon,
   Info as InfoIcon,
-  Warning as WarningIcon
 } from '@mui/icons-material';
 
 // 💡 가이드 단계 정의

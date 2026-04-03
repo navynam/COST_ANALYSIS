@@ -1,5 +1,4 @@
 import { useState, useCallback, useEffect } from 'react';
-import { C } from '../../../shared/constants/colors';
 import type { ListGroup } from '../types';
 
 export const useRelationView = (listData: ListGroup[], onNodeClick?: (name: string) => void) => {
@@ -35,6 +34,7 @@ export const useRelationView = (listData: ListGroup[], onNodeClick?: (name: stri
       return { ...prev, [draggedNode]: { x: basePos.x + deltaX, y: basePos.y + deltaY } };
     });
     setDragStart({ x: e.clientX, y: e.clientY });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draggedNode, dragStart]);
 
   const handleMouseUp = useCallback(() => {

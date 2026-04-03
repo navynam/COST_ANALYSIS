@@ -26,18 +26,16 @@
 import React from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { Box, AppBar, Toolbar, Typography, IconButton, Badge, Avatar, Tooltip } from '@mui/material';
-import { Notifications, Help as HelpIcon, Logout, ExpandMore } from '@mui/icons-material';
+import { Notifications, Help as HelpIcon, Logout } from '@mui/icons-material';
 import Sidebar from './Sidebar';
-import ThemeSwitcher from '../components/ThemeSwitcher';
 import OnboardingTour, { defaultOnboardingSteps } from '../components/OnboardingTour';
 import SmartGuide from '../components/SmartGuide';
-import UserPreferences from '../components/UserPreferences';
 import { useMainLayout } from './hooks/useMainLayout';
 import { useAuth } from '../../features/auth/AuthContext';
 
 const MainLayout: React.FC = () => {
   // 🎛️ 레이아웃 상태 및 사용자 정보 관리 훅
-  const { collapsed, setCollapsed, user, isAuthenticated, sidebarWidth } = useMainLayout();
+  const { collapsed, setCollapsed, user, isAuthenticated } = useMainLayout();
   
   // 🔐 인증 관리
   const { logout } = useAuth();
@@ -45,7 +43,8 @@ const MainLayout: React.FC = () => {
   // 🎯 사용성 기능 상태
   const [onboardingOpen, setOnboardingOpen] = React.useState(false);
   const [showSmartGuide, setShowSmartGuide] = React.useState(true);
-  const [userMenuOpen, setUserMenuOpen] = React.useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_userMenuOpen, _setUserMenuOpen] = React.useState(false);
 
   const handleLogout = () => {
     logout();

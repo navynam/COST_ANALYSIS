@@ -53,11 +53,10 @@ import {
   Chip
 } from '@mui/material';
 import { 
-  Search, 
-  Delete, 
-  Download, 
+  Search,
+  Delete,
+  Download,
   FilterList,
-  NoteAdd as NoteAddIcon,
   Send as SendIcon,
   AutoAwesome as AIIcon,
   Close as CloseIcon
