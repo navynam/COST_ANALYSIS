@@ -260,7 +260,7 @@ const GoldenSetView: React.FC = () => {
               ))}
               {/* 재료비 합계 행 */}
               <tr>
-                <td colSpan={30} style={td({ textAlign: 'right', fontWeight: 700, bgcolor: '#dce6f0' }) as any}>
+                <td colSpan={31} style={td({ textAlign: 'right', fontWeight: 700, bgcolor: '#dce6f0' }) as any}>
                   재료비 소계
                 </td>
                 <td style={tdNum({ bgcolor: '#c6e0b4', fontWeight: 700 }) as any}>
@@ -384,7 +384,7 @@ const GoldenSetView: React.FC = () => {
               ))}
               {/* 가공비 합계 행 */}
               <tr>
-                <td colSpan={34} style={td({ textAlign: 'right', fontWeight: 700, bgcolor: '#dce6f0' }) as any}>
+                <td colSpan={39} style={td({ textAlign: 'right', fontWeight: 700, bgcolor: '#dce6f0' }) as any}>
                   가공비 소계
                 </td>
                 <td style={tdNum({ bgcolor: '#c6e0b4', fontWeight: 700 }) as any}>

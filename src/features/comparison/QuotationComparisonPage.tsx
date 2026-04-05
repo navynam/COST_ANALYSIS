@@ -8,22 +8,21 @@ import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Checkbox, FormControlLabel, FormGroup, Stepper, Step, StepLabel,
   Dialog, DialogTitle, DialogContent, TextField, IconButton,
-  Popover, Divider,
+  Popover,
 } from '@mui/material';
-import { NavigateNext, SwapHoriz, Search, Close } from '@mui/icons-material';
+import { SwapHoriz, Search, Close } from '@mui/icons-material';
 import { mockProducts } from './data/mockData';
 import { useQuotationComparison } from './hooks/useQuotationComparison';
 
 const QuotationComparisonPage: React.FC = () => {
   const {
-    navigate,
     selectedProduct, setSelectedProduct,
     selectedQuotations,
     searchOpen, setSearchOpen,
     searchQuery, setSearchQuery,
     quotations, selectionStep,
     toggleQuotation, resetSelection, filteredProducts,
-    showComparison, startComparison,
+    startComparison,
   } = useQuotationComparison();
 
   // 계산식 비교 팝업 상태

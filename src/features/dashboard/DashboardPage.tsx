@@ -34,12 +34,11 @@
  */
 import React from 'react';
 import {
-  Box, Card, CardContent, Typography, Grid, Paper, Table, TableBody,
-  TableCell, TableContainer, TableHead, TableRow, Chip, ToggleButtonGroup, ToggleButton,
+  Box, Card, CardContent, Typography, Grid, Paper, Chip, ToggleButtonGroup, ToggleButton, Button,
 } from '@mui/material';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import {
-  summaryCards, workItems, verificationStatus, recentItems, statusColorMap,
+  summaryCards, workItems, verificationStatus, actionAlerts,
 } from './data/dashboardData';
 import { useDashboardPage } from './hooks/useDashboardPage';
 
@@ -113,81 +112,144 @@ const DashboardPage: React.FC = () => {
 
       {/* 차트 영역 */}
       <Grid container spacing={2} sx={{ mb: 4 }}>
-        <Grid item xs={12} md={7}>
+        <Grid item xs={12} md={6}>
           <Typography variant="subtitle1" fontWeight={600} gutterBottom sx={{ mb: 2 }}>내가 해야할 작업</Typography>
-          <Paper sx={{ p: 2, borderRadius: 2, height: 180 }}>
-            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1.5 }}>
+          <Paper sx={{ p: 2, borderRadius: 2 }}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1.25 }}>
               {workItems.map((item) => (
                 <Card key={item.status}
-                  sx={{ cursor: 'pointer', transition: 'all 0.2s', '&:hover': { transform: 'translateY(-2px)', boxShadow: 4, bgcolor: `${item.color}10` }, border: `2px solid ${item.color}30` }}
-                  onClick={() => navigate('/parsing_card')}>
-                  <CardContent sx={{ textAlign: 'center', py: 1.5, px: 1.5, '&:last-child': { pb: 1.5 } }}>
-                    <Typography fontSize={16} sx={{ mb: 0.3 }}>{item.icon}</Typography>
-                    <Typography variant="h5" fontWeight={700} sx={{ color: item.color, mb: 0.3 }}>{item.count}</Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: 11 }}>{item.label}</Typography>
+                  sx={{
+                    cursor: 'pointer', transition: 'all 0.2s',
+                    '&:hover': { transform: 'translateY(-2px)', boxShadow: 4, bgcolor: `${item.color}10` },
+                    border: `2px solid ${item.color}30`,
+                  }}
+                  onClick={() => navigate(`/parsing_card?filter=${item.filter}`)}>
+                  <CardContent sx={{ textAlign: 'center', py: 1.25, px: 1, '&:last-child': { pb: 1.25 } }}>
+                    <Typography fontSize={18} sx={{ mb: 0.25 }}>{item.icon}</Typography>
+                    <Typography variant="h5" fontWeight={700} sx={{ color: item.color, mb: 0.25 }}>
+                      {item.count}
+                    </Typography>
+                    <Typography sx={{ fontSize: 11, color: 'text.secondary', fontWeight: 500 }}>
+                      {item.label}
+                    </Typography>
                   </CardContent>
                 </Card>
               ))}
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={5}>
+        <Grid item xs={12} md={6}>
           <Typography variant="subtitle1" fontWeight={600} gutterBottom sx={{ mb: 2 }}>최근 검증 현황</Typography>
-          <Paper sx={{ p: 2, borderRadius: 2, height: 250 }}>
-            <ResponsiveContainer width="100%" height={200}>
+          <Paper sx={{ p: 2.5, borderRadius: 2, display: 'flex', alignItems: 'center' }}>
+            {/* 도넛 차트 */}
+            <ResponsiveContainer width="55%" height={190}>
               <PieChart>
-                <Pie data={verificationStatus} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={4} dataKey="value"
-                  label={({ name, value }) => `${name} ${value}%`}>
+                <Pie
+                  data={verificationStatus}
+                  cx="50%" cy="50%"
+                  innerRadius={52} outerRadius={80}
+                  paddingAngle={4}
+                  dataKey="value"
+                  startAngle={90}
+                  endAngle={-270}
+                >
                   {verificationStatus.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                 </Pie>
-                <Tooltip />
+                <Tooltip formatter={(value: number) => [`${value}%`, '']} />
               </PieChart>
             </ResponsiveContainer>
+            {/* 우측 범례 */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pl: 2 }}>
+              {verificationStatus.map((item) => (
+                <Box key={item.name} sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+                  <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: item.color, flexShrink: 0 }} />
+                  <Box>
+                    <Typography variant="body2" color="text.secondary" fontWeight={500} sx={{ lineHeight: 1.2 }}>{item.name}</Typography>
+                    <Typography variant="h6" fontWeight={700} sx={{ color: item.color, lineHeight: 1.2 }}>{item.value}%</Typography>
+                  </Box>
+                </Box>
+              ))}
+            </Box>
           </Paper>
         </Grid>
       </Grid>
 
-      {/* 최근 작업 목록 */}
-      <Typography variant="subtitle1" fontWeight={600} gutterBottom sx={{ mb: 2 }}>최근 작업 목록</Typography>
-      <Paper sx={{ borderRadius: 2 }}>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow sx={{ bgcolor: '#f5f7fa' }}>
-                <TableCell>파일명</TableCell>
-                <TableCell>업체명</TableCell>
-                <TableCell>상태</TableCell>
-                <TableCell align="right">항목수</TableCell>
-                <TableCell align="right">재료비</TableCell>
-                <TableCell align="right">가공비</TableCell>
-                <TableCell align="right">제경비</TableCell>
-                <TableCell align="right">생산원가</TableCell>
-                <TableCell align="right">이상치</TableCell>
-                <TableCell>날짜</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {recentItems.map((row) => (
-                <TableRow key={row.id} hover sx={{ cursor: 'pointer' }} onClick={() => navigate('/parsing')}>
-                  <TableCell>{row.filename}</TableCell>
-                  <TableCell>{row.company}</TableCell>
-                  <TableCell><Chip label={row.status} color={statusColorMap[row.status] || 'default'} size="small" /></TableCell>
-                  <TableCell align="right">{row.items || '-'}</TableCell>
-                  <TableCell align="right">₩{row.materialCost ? (row.materialCost / 1000).toFixed(1) + 'K' : '-'}</TableCell>
-                  <TableCell align="right">₩{row.processCost ? (row.processCost / 1000).toFixed(1) + 'K' : '-'}</TableCell>
-                  <TableCell align="right">₩{row.overheadCost ? (row.overheadCost / 1000).toFixed(1) + 'K' : '-'}</TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 600 }}>₩{row.totalCost ? (row.totalCost / 1000).toFixed(1) + 'K' : '-'}</TableCell>
-                  <TableCell align="right">
-                    {row.anomalies > 0
-                      ? <Chip label={`${row.anomalies}건`} color="warning" size="small" />
-                      : <Chip label="정상" color="success" size="small" />}
-                  </TableCell>
-                  <TableCell>{row.date}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+      {/* 업무 알림 & 액션 센터 */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="subtitle1" fontWeight={600}>업무 알림 & 액션 센터</Typography>
+        <Chip
+          label={`${actionAlerts.filter(a => a.priority === '긴급').length}건 긴급`}
+          color="error"
+          size="small"
+          sx={{ fontWeight: 600 }}
+        />
+      </Box>
+      <Paper sx={{ borderRadius: 2, overflow: 'hidden' }}>
+        {actionAlerts.map((item, idx) => (
+          <Box
+            key={item.id}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2,
+              px: 2.5,
+              py: 1.75,
+              borderBottom: idx < actionAlerts.length - 1 ? '1px solid #f0f0f0' : 'none',
+              borderLeft: `4px solid ${
+                item.priorityColor === 'error' ? '#f44336'
+                  : item.priorityColor === 'warning' ? '#ff9800'
+                  : '#2196f3'
+              }`,
+              '&:hover': { bgcolor: '#fafafa' },
+              transition: 'background 0.15s',
+              cursor: 'pointer',
+            }}
+            onClick={() => navigate(item.route)}
+          >
+            {/* 아이콘 */}
+            <Typography fontSize={22} sx={{ lineHeight: 1, flexShrink: 0 }}>{item.icon}</Typography>
+
+            {/* 본문 */}
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.4 }}>
+                <Chip
+                  label={item.priority}
+                  color={item.priorityColor}
+                  size="small"
+                  sx={{ fontWeight: 700, fontSize: 10, height: 20 }}
+                />
+                <Typography variant="body2" fontWeight={600} noWrap>{item.title}</Typography>
+              </Box>
+              <Typography variant="caption" color="text.secondary" noWrap>
+                {item.filename} · {item.company} &nbsp;—&nbsp; {item.description}
+              </Typography>
+            </Box>
+
+            {/* 우측: 시간 + 액션 버튼 */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexShrink: 0 }}>
+              <Typography variant="caption" color="text.secondary" sx={{ whiteSpace: 'nowrap' }}>
+                {item.time}
+              </Typography>
+              <Button
+                size="small"
+                variant={item.priorityColor === 'error' ? 'contained' : 'outlined'}
+                color={item.priorityColor}
+                sx={{
+                  whiteSpace: 'nowrap',
+                  fontSize: 11,
+                  px: 1.5,
+                  py: 0.4,
+                  minWidth: 72,
+                  textTransform: 'none',
+                  fontWeight: 600,
+                }}
+                onClick={(e) => { e.stopPropagation(); navigate(item.route); }}
+              >
+                {item.action}
+              </Button>
+            </Box>
+          </Box>
+        ))}
       </Paper>
     </Box>
   );

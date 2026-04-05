@@ -3,8 +3,6 @@ import {
   Box, Typography, IconButton, Button, LinearProgress, Drawer, Chip,
 } from '@mui/material';
 import { Close, CheckCircle, Schedule, Error } from '@mui/icons-material';
-import { C } from '../../../shared/constants/colors';
-import { statusConfig } from '../data/mockData';
 import type { FileItem } from '../types';
 
 interface FileDetailDrawerProps {

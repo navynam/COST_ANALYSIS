@@ -12,7 +12,7 @@ export const listData: ListGroup[] = [
           { id: 'extrusion', name: '압출 성형', category: '가공비', spec: '', unit: '회', qty: 1, unitPrice: '6,500', amount: '6,500', ratio: '8.5%', confidence: 94, status: 'normal' },
         ],
       },
-      { id: 'skin', name: 'SKIN (표피재)', category: '원자재', spec: 'PVC 0.8mm', unit: 'M²', qty: 1.2, unitPrice: '18,917', amount: '22,700', ratio: '29.6%', confidence: 75, status: 'anomaly' },
+      { id: 'skin', name: 'SKIN (표피재)', category: '원자재', spec: 'PVC 0.8mm', unit: 'M²', qty: 1.2, unitPrice: '18,917', amount: '22,700', ratio: '29.6%', confidence: 75, status: 'anomaly', anomalyReason: '과거 3개 분기 평균 단가 ₩14,200 대비 +33.2% 높음. 동일 규격(PVC 0.8mm) 시장가 범위: ₩13,500~₩16,800. 현재 단가가 상한을 초과합니다.' },
       { id: 'adhesive', name: 'ADHESIVE (접착제)', category: '원자재', spec: 'WATER BASE', unit: 'KG', qty: 0.5, unitPrice: '4,400', amount: '2,200', ratio: '2.9%', confidence: 98, status: 'normal' },
       { id: 'clip', name: 'CLIP', category: '부자재', spec: 'PA66', unit: 'EA', qty: 12, unitPrice: '75', amount: '900', ratio: '1.2%', confidence: 98, status: 'normal' },
       { id: 'packing', name: 'PACKING (포장재)', category: '부자재', spec: '골판지', unit: 'SET', qty: 1, unitPrice: '900', amount: '900', ratio: '1.2%', confidence: 98, status: 'normal' },
@@ -32,7 +32,7 @@ export const listData: ListGroup[] = [
     items: [
       { id: 'dep', name: '감가상각비', category: '감가상각', spec: '', unit: '', qty: '', unitPrice: '', amount: '3,200', ratio: '4.2%', confidence: 90, status: 'normal' },
       { id: 'elec', name: '전력비', category: '유틸리티', spec: '', unit: '', qty: '', unitPrice: '', amount: '2,800', ratio: '3.6%', confidence: 88, status: 'normal' },
-      { id: 'etc', name: '기타 경비', category: '기타', spec: '', unit: '', qty: '', unitPrice: '', amount: '2,500', ratio: '3.3%', confidence: 72, status: 'anomaly' },
+      { id: 'etc', name: '기타 경비', category: '기타', spec: '', unit: '', qty: '', unitPrice: '', amount: '2,500', ratio: '3.3%', confidence: 72, status: 'anomaly', anomalyReason: '기타 경비가 전체 제경비의 29.4%를 차지하고 있어 일반적 범위(10~20%)를 초과합니다. 세부 내역 확인이 필요합니다.' },
     ],
   },
 ];

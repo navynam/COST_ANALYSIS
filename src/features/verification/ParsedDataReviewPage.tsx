@@ -32,16 +32,12 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  Card,
-  CardContent,
-  Grid,
   TableRow,
   Paper,
   IconButton,
   Tooltip,
   TextField,
   ClickAwayListener,
-  Popover,
   Collapse,
   Dialog,
   DialogTitle,
@@ -58,7 +54,6 @@ import {
   Fullscreen as FullscreenIcon,
   InsertDriveFile as ExcelIcon,
   Save as SaveIcon,
-  Cancel as CancelIcon,
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon,
   NavigateBefore,
@@ -135,7 +130,8 @@ const ParsedDataReviewPage: React.FC = () => {
   const fileName = searchParams.get('fileName') || 'sample_data.xlsx';
 
   // 📄 파일 메타 정보 (실제로는 파싱된 데이터나 API에서 가져와야 함)
-  const [fileMetadata, setFileMetadata] = useState({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [fileMetadata, _setFileMetadata] = useState({
     coNumber: 'CO-2024-001',
     partNumber: 'HL-2024-001',
     partName: 'HEAD LINING ASSY',
@@ -836,7 +832,7 @@ const ParsedDataReviewPage: React.FC = () => {
       console.error('노트 로드 실패:', error);
       setSavedNotes([]);
     }
-  }, [currentFileId]);
+  }, [currentFileId, fileName]);
 
   // 📊 수정된 항목 개수 계산
   const getModifiedItemsCount = (): number => {
@@ -911,7 +907,8 @@ const ParsedDataReviewPage: React.FC = () => {
     setEditValue('');
 
     // 저장 완료 피드백 (임시 하이라이트)
-    const targetCell = editingCell.fieldName;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _targetCell = editingCell.fieldName;
     setTimeout(() => {
       setHighlightedCell('');
     }, 1000);
@@ -958,6 +955,7 @@ const ParsedDataReviewPage: React.FC = () => {
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isResizing]);
 
 
@@ -1219,34 +1217,6 @@ const ParsedDataReviewPage: React.FC = () => {
           </TableHead>
           <TableBody>
             {costGroups.flatMap(group => group.items).map((item) => {
-              let 구분값 = '';
-              let 품명값 = '';
-              let 규격값 = '';
-              let 수량값 = '';
-              let 단가값 = '';
-
-              if (item.category === '재료비') {
-                const materialItem = item as MaterialCostItem;
-                구분값 = String(materialItem.구분.value);
-                품명값 = String(materialItem.품명.value);
-                규격값 = String(materialItem.규격.value);
-                수량값 = `${materialItem.수량.value} ${materialItem.단위.value}`;
-                단가값 = `${Number(materialItem.단가.value).toLocaleString()}원`;
-              } else if (item.category === '가공비') {
-                const processItem = item as ProcessCostItem;
-                구분값 = String(processItem.공정.value);
-                품명값 = String(processItem.공정명.value);
-                규격값 = `${processItem.인원.value}명`;
-                수량값 = `${Number(processItem.임율.value).toLocaleString()}원/시간`;
-                단가값 = `${processItem.적용CT.value}초`;
-              } else if (item.category === '경비') {
-                const overheadItem = item as OverheadCostItem;
-                구분값 = String(overheadItem.기종.value);
-                품명값 = '-';
-                규격값 = `${overheadItem.CT.value}초`;
-                수량값 = `${Number(overheadItem.경비.value).toLocaleString()}원/시간`;
-                단가값 = '-';
-              }
 
               return (
                 <TableRow key={item.id} hover>

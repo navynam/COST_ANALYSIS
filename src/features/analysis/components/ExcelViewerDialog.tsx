@@ -59,15 +59,12 @@ import {
   Tabs,
   Tab,
 } from '@mui/material';
-import { 
-  Close, 
-  Download, 
+import {
+  Close,
   Print,
   Search,
   ZoomIn,
   ZoomOut,
-  Refresh,
-  GridOn,
   TableChart,
   Visibility,
   Edit as EditIcon,
@@ -406,7 +403,8 @@ const ExcelViewerDialog: React.FC<ExcelViewerDialogProps> = ({
   };
 
   // 📐 팝업 크기 조정 함수들
-  const handleSizePreset = (preset: 'small' | 'medium' | 'large' | 'fullscreen') => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _handleSizePreset = (preset: 'small' | 'medium' | 'large' | 'fullscreen') => {
     switch (preset) {
       case 'small':
         setDialogSize({ width: '70vw', height: '60vh' });

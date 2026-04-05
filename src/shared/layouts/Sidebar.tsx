@@ -4,7 +4,7 @@ import {
 } from '@mui/material';
 import {
   Dashboard, Description, CompareArrows, AutoGraph,
-  ModelTraining, History, Settings, ChevronLeft, ChevronRight, Logout,
+  ModelTraining, History, Settings, ChevronLeft, ChevronRight,
   ViewModule
 } from '@mui/icons-material';
 import { useSidebar } from './hooks/useSidebar';
@@ -33,7 +33,8 @@ const SIDEBAR_WIDTH = 240;
 const SIDEBAR_COLLAPSED = 93;
 
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
-  const { navigate, location, handleLogout } = useSidebar();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { navigate, location, handleLogout: _handleLogout } = useSidebar();
 
   return (
     <Box sx={{

@@ -1,5 +1,4 @@
 import { useState, useCallback, useEffect } from 'react';
-import { C } from '../../../shared/constants/colors';
 import type { ListGroup } from '../types';
 
 export const useRelationView = (listData: ListGroup[], onNodeClick?: (name: string) => void) => {
@@ -35,6 +34,7 @@ export const useRelationView = (listData: ListGroup[], onNodeClick?: (name: stri
       return { ...prev, [draggedNode]: { x: basePos.x + deltaX, y: basePos.y + deltaY } };
     });
     setDragStart({ x: e.clientX, y: e.clientY });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draggedNode, dragStart]);
 
   const handleMouseUp = useCallback(() => {
@@ -94,6 +94,7 @@ export const useRelationView = (listData: ListGroup[], onNodeClick?: (name: stri
         x: parentX + (col * spacing) - spacing, y: parentY + 160 + (row * 120),
         w: level === 2 ? 170 : 150, h: level === 2 ? 90 : 80,
         status: item.status, parent: parentId, qty: item.qty, unitPrice: item.unitPrice, unit: item.unit,
+        anomalyReason: item.anomalyReason,
         level, hasChildren: item.children && item.children.length > 0,
       };
       nodes.push(node);
