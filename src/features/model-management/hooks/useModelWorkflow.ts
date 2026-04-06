@@ -181,6 +181,21 @@ export const useModelWorkflow = () => {
     return changeRequests.filter(r => r.formulaId === formulaId && r.status === 'pending').length;
   }, [changeRequests]);
 
+  // 특정 수식에 대한 요청 목록 (팝업용)
+  const getRequestsForFormula = useCallback((formulaId: string) => {
+    return changeRequests.filter(r => r.formulaId === formulaId);
+  }, [changeRequests]);
+
+  // 현재 사용자가 해당 수식에 대기 중인 요청이 있는지
+  const hasPendingByUser = useCallback((formulaId: string) => {
+    return changeRequests.some(r => r.formulaId === formulaId && r.requesterId === currentUser.id && r.status === 'pending');
+  }, [changeRequests, currentUser.id]);
+
+  // 요청 취소 (본인 대기 중 요청만)
+  const cancelRequest = useCallback((requestId: string) => {
+    setChangeRequests(prev => prev.filter(r => !(r.id === requestId && r.requesterId === currentUser.id && r.status === 'pending')));
+  }, [currentUser.id]);
+
   // 통계
   const stats = {
     total: changeRequests.length,
@@ -197,7 +212,10 @@ export const useModelWorkflow = () => {
     submitChangeRequest,
     approveRequest,
     rejectRequest,
+    cancelRequest,
     getPendingCount,
+    getRequestsForFormula,
+    hasPendingByUser,
     stats,
   };
 };

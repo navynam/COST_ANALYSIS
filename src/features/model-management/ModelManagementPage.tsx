@@ -34,8 +34,8 @@ const ModelManagementPage: React.FC = () => {
 
   const {
     currentUser, switchUser, isAdmin,
-    changeRequests, submitChangeRequest, approveRequest, rejectRequest,
-    getPendingCount, stats,
+    changeRequests, submitChangeRequest, approveRequest, rejectRequest, cancelRequest,
+    getPendingCount, getRequestsForFormula, hasPendingByUser, stats,
   } = useModelWorkflow();
 
   // ── 사용자 전환 메뉴 ──
@@ -62,6 +62,11 @@ const ModelManagementPage: React.FC = () => {
   const [addRequestForm, setAddRequestForm] = useState({
     name: '', badge: 'sub' as Formula['badge'], expression: '', description: '', variables: '', reason: '',
   });
+
+  // ── 수식별 변경요청 상세 팝업 ──
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [detailFormulaId, setDetailFormulaId] = useState('');
+  const detailRequests = detailFormulaId ? getRequestsForFormula(detailFormulaId) : [];
 
   // 🔄 새 수식 하이라이트 완료 후 처리
   const handleNewFormulaHighlighted = useCallback(() => {
@@ -265,7 +270,8 @@ const ModelManagementPage: React.FC = () => {
                         icon={<Schedule sx={{ fontSize: 12 }} />}
                         label={`변경요청 ${pendingCnt}건`}
                         size="small"
-                        sx={{ bgcolor: '#fff3e0', color: '#e65100', fontWeight: 600, fontSize: 10, height: 22 }}
+                        onClick={() => { setDetailFormulaId(f.id); setDetailDialogOpen(true); }}
+                        sx={{ bgcolor: '#fff3e0', color: '#e65100', fontWeight: 600, fontSize: 10, height: 22, cursor: 'pointer', '&:hover': { bgcolor: '#ffe0b2' } }}
                       />
                     )}
                   </Box>
@@ -288,11 +294,21 @@ const ModelManagementPage: React.FC = () => {
                           sx={{ color: '#999', fontSize: 12, textTransform: 'none', '&:hover': { color: '#d32f2f' } }}>삭제</Button>
                       </>
                     ) : (
-                      <Button size="small" variant="outlined" startIcon={<Send sx={{ fontSize: 14 }} />}
-                        onClick={() => openRequestDialog(f)}
-                        sx={{ color: '#7b1fa2', borderColor: '#7b1fa2', fontSize: 12, textTransform: 'none', '&:hover': { bgcolor: '#f3e5f5', borderColor: '#7b1fa2' } }}>
-                        수정 요청
-                      </Button>
+                      hasPendingByUser(f.id) ? (
+                        <Chip
+                          icon={<Schedule sx={{ fontSize: 12 }} />}
+                          label="수정 요청 접수됨"
+                          size="small"
+                          onClick={() => { setDetailFormulaId(f.id); setDetailDialogOpen(true); }}
+                          sx={{ bgcolor: '#f3e5f5', color: '#7b1fa2', fontWeight: 600, fontSize: 11, height: 28, cursor: 'pointer', '&:hover': { bgcolor: '#e1bee7' } }}
+                        />
+                      ) : (
+                        <Button size="small" variant="outlined" startIcon={<Send sx={{ fontSize: 14 }} />}
+                          onClick={() => openRequestDialog(f)}
+                          sx={{ color: '#7b1fa2', borderColor: '#7b1fa2', fontSize: 12, textTransform: 'none', '&:hover': { bgcolor: '#f3e5f5', borderColor: '#7b1fa2' } }}>
+                          수정 요청
+                        </Button>
+                      )
                     )}
                   </Box>
                 </Paper>
@@ -421,6 +437,22 @@ const ModelManagementPage: React.FC = () => {
                             onClick={() => { setReviewTarget(cr); setReviewComment(''); setReviewDialogOpen(true); }}
                             sx={{ color: '#c62828', borderColor: '#c62828', fontSize: 12, textTransform: 'none' }}>
                             반려
+                          </Button>
+                        </Box>
+                      )}
+
+                      {/* 본인 요청 취소 버튼 */}
+                      {!isAdmin && cr.requesterId === currentUser.id && cr.status === 'pending' && (
+                        <Box sx={{ mt: 1 }}>
+                          <Button size="small" variant="outlined" startIcon={<Cancel sx={{ fontSize: 14 }} />}
+                            onClick={() => {
+                              if (window.confirm('이 수정 요청을 취소하시겠습니까?')) {
+                                cancelRequest(cr.id);
+                                setToast({ open: true, severity: 'info', message: '수정 요청이 취소되었습니다.' });
+                              }
+                            }}
+                            sx={{ color: '#999', borderColor: '#ccc', fontSize: 12, textTransform: 'none', '&:hover': { color: '#c62828', borderColor: '#c62828' } }}>
+                            요청 취소
                           </Button>
                         </Box>
                       )}
@@ -575,6 +607,95 @@ const ModelManagementPage: React.FC = () => {
             sx={{ bgcolor: '#2e7d32', '&:hover': { bgcolor: '#1b5e20' } }}>
             승인
           </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* ── 수식별 변경요청 상세 팝업 ── */}
+      <Dialog open={detailDialogOpen} onClose={() => setDetailDialogOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Schedule sx={{ fontSize: 20, color: '#e65100' }} />
+          변경 요청 내역
+          {detailRequests.length > 0 && (
+            <Typography sx={{ fontSize: 13, color: 'text.secondary', ml: 1 }}>
+              ({detailRequests[0]?.originalFormula.name})
+            </Typography>
+          )}
+        </DialogTitle>
+        <DialogContent sx={{ pt: '8px !important' }}>
+          {detailRequests.length === 0 ? (
+            <Typography color="text.secondary" sx={{ py: 3, textAlign: 'center' }}>변경 요청이 없습니다.</Typography>
+          ) : (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {detailRequests.map(cr => {
+                const sBadge = statusBadge[cr.status];
+                return (
+                  <Paper key={cr.id} variant="outlined" sx={{ p: 2, borderRadius: 2, bgcolor: cr.status === 'pending' ? '#fffde7' : '#fff' }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Avatar sx={{ width: 24, height: 24, bgcolor: '#7b1fa2', fontSize: 10 }}>{cr.requesterName[0]}</Avatar>
+                        <Typography sx={{ fontSize: 12, fontWeight: 700 }}>{cr.requesterName}</Typography>
+                        <Typography sx={{ fontSize: 10, color: 'text.secondary' }}>{cr.department}</Typography>
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography sx={{ fontSize: 10, color: 'text.secondary' }}>{formatDate(cr.createdAt)}</Typography>
+                        <Chip label={sBadge.label} size="small" sx={{ bgcolor: sBadge.bg, color: sBadge.color, fontWeight: 700, fontSize: 10, height: 20 }} />
+                      </Box>
+                    </Box>
+                    {/* diff */}
+                    <Box sx={{ bgcolor: '#f5f5f5', borderRadius: 1, p: 1.5, mb: 1 }}>
+                      {cr.modifiedFields.expression && (
+                        <>
+                          <Typography sx={{ fontSize: 10, color: '#c62828', fontFamily: 'monospace' }}>- {cr.originalFormula.expression}</Typography>
+                          <Typography sx={{ fontSize: 10, color: '#2e7d32', fontFamily: 'monospace' }}>+ {cr.modifiedFields.expression}</Typography>
+                        </>
+                      )}
+                      {cr.modifiedFields.description && (
+                        <Typography sx={{ fontSize: 10, color: '#2e7d32', mt: 0.5 }}>설명: {cr.modifiedFields.description}</Typography>
+                      )}
+                      {cr.modifiedFields.variables && (
+                        <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mt: 0.5 }}>
+                          {cr.modifiedFields.variables.filter(v => !cr.originalFormula.variables.includes(v)).map(v => (
+                            <Chip key={v} label={`+ ${v}`} size="small" sx={{ fontSize: 9, height: 18, bgcolor: '#e8f5e9', color: '#2e7d32' }} />
+                          ))}
+                        </Box>
+                      )}
+                    </Box>
+                    <Typography sx={{ fontSize: 11, color: 'text.secondary' }}><strong>사유:</strong> {cr.reason}</Typography>
+                    {cr.reviewerComment && (
+                      <Box sx={{ bgcolor: cr.status === 'approved' ? '#e8f5e9' : '#ffebee', borderRadius: 1, px: 1.5, py: 0.5, mt: 1 }}>
+                        <Typography sx={{ fontSize: 10, color: cr.status === 'approved' ? '#2e7d32' : '#c62828' }}>
+                          관리자: {cr.reviewerComment}
+                        </Typography>
+                      </Box>
+                    )}
+                    {cr.status === 'approved' && cr.appliedScope && (
+                      <Chip label={cr.appliedScope === 'global' ? '전체 적용' : '업무별 적용'} size="small"
+                        sx={{ fontSize: 9, height: 18, bgcolor: '#e8f5e9', color: '#2e7d32', mt: 1 }} />
+                    )}
+                    {/* 본인 대기 중 요청 취소 */}
+                    {cr.requesterId === currentUser.id && cr.status === 'pending' && (
+                      <Box sx={{ mt: 1 }}>
+                        <Button size="small" startIcon={<Cancel sx={{ fontSize: 12 }} />}
+                          onClick={() => {
+                            if (window.confirm('이 수정 요청을 취소하시겠습니까?')) {
+                              cancelRequest(cr.id);
+                              setToast({ open: true, severity: 'info', message: '수정 요청이 취소되었습니다.' });
+                              if (detailRequests.length <= 1) setDetailDialogOpen(false);
+                            }
+                          }}
+                          sx={{ color: '#999', fontSize: 11, textTransform: 'none', '&:hover': { color: '#c62828' } }}>
+                          요청 취소
+                        </Button>
+                      </Box>
+                    )}
+                  </Paper>
+                );
+              })}
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setDetailDialogOpen(false)}>닫기</Button>
         </DialogActions>
       </Dialog>
 
