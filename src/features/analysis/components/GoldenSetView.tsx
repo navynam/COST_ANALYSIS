@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { FileDownload as ExcelIcon, Print as PrintIcon } from '@mui/icons-material';
 
 // ── 공통 스타일
 const bd = '1px solid #b0b0b0';
-const bdThick = '2px solid #333';
 
 const th = (extra?: object) => ({
   border: bd, fontSize: 8.5, fontWeight: 700, color: '#1a1a2e',
@@ -62,6 +61,201 @@ const PROC_ROWS = [
 const fmt = (v: any) => (v === '-' || v === '' || v == null) ? '-' : (typeof v === 'number' ? v.toLocaleString() : v);
 
 const GoldenSetView: React.FC = () => {
+  const printAreaRef = useRef<HTMLDivElement>(null);
+
+  const handleExcelDownload = useCallback(() => {
+    // ── 스타일 헬퍼 (인라인) ──
+    const B = 'border:1px solid #333;';
+    const thS = `${B}background:#dce6f0;font-weight:bold;text-align:center;font-size:10pt;padding:3px 5px;white-space:pre-line;vertical-align:middle;`;
+    const tdS = `${B}font-size:10pt;padding:3px 5px;vertical-align:middle;`;
+    const tdR = `${tdS}text-align:right;`;
+    const tdC = `${tdS}text-align:center;`;
+    const thG = `${B}background:#c6e0b4;font-weight:bold;text-align:center;font-size:10pt;padding:3px 5px;vertical-align:middle;`;
+    const tdG = `${tdR}background:#e2efda;font-weight:bold;`;
+    const tdGD = `${tdR}background:#c6e0b4;font-weight:bold;`;
+    const tdSub = `${tdR}background:#dce6f0;font-weight:bold;`;
+    const f = (v: any) => (v === '-' || v === '' || v == null) ? '-' : (typeof v === 'number' ? v.toLocaleString() : v);
+
+    let html = '';
+
+    // ━━━ 1. 타이틀 ━━━
+    html += `<p style="text-align:center;font-size:15pt;font-weight:bold;font-family:'맑은 고딕',sans-serif;border-bottom:2px solid #333;padding-bottom:6px;">원 가 계 산 서</p>`;
+
+    // ━━━ 2. 문서 정보 ━━━
+    html += `<table border="1" cellpadding="3" cellspacing="0" style="border-collapse:collapse;width:100%;">`;
+    [INFO_FIELDS.slice(0, 6), INFO_FIELDS.slice(6)].forEach(row => {
+      html += '<tr>';
+      row.forEach(([label, value]) => {
+        html += `<td style="${thS}width:90px;">${label}</td>`;
+        html += `<td style="${tdS}font-weight:600;">${value}</td>`;
+      });
+      html += '</tr>';
+    });
+    html += '</table><br/>';
+
+    // ━━━ 3. 원가 요약 ━━━
+    html += `<p style="font-size:12pt;font-weight:bold;font-family:'맑은 고딕',sans-serif;">■ 원가 요약</p>`;
+    const sumH1 = ['재료비', 3, '가공비', 3, '제조원가', 0, '재료관리비\n(외관비 포함)', 0, '일반관리비', 0, '이윤', 0, '금형상각비', 2, '연구개발비,\n로열티비', 2, '불량비', 0, '운반비&\n파렛트비', 2, '서열비', 0, '기타비1', 0, '기타비2', 0, '기타비3', 0, '계산단가', 0, '조정단가', 0, '결정단가', 0];
+    const sumH2 = ['LP', 'KD', '계', '노무비', '경비', '계', '금형비(원)', '금형상각비', 'R&D비', 'RYT비', '운반비', '파레트비'];
+    const sumVals = [1076.38, '-', 1076.38, 985.24, 171.85, 1157.09, 2233.47, 17.82, 291.68, 217.32, '-', '-', '-', '-', '-', '-', 30.36, '-', '-', '-', 53.9, 2844.55, '-', 2845];
+    html += `<table border="1" cellpadding="3" cellspacing="0" style="border-collapse:collapse;">`;
+    // 1행
+    html += '<tr>';
+    for (let i = 0; i < sumH1.length; i += 2) {
+      const label = sumH1[i] as string;
+      const span = sumH1[i + 1] as number;
+      if (span > 0) html += `<th colspan="${span}" style="${thS}">${label}</th>`;
+      else html += `<th rowspan="2" style="${thS}">${label}</th>`;
+    }
+    html += '</tr>';
+    // 2행
+    html += '<tr>';
+    sumH2.forEach(h => { html += `<th style="${thS}">${h}</th>`; });
+    html += '</tr>';
+    // 데이터행
+    html += '<tr>';
+    sumVals.forEach((v, i) => {
+      const bg = i === 22 ? 'background:#fff3cd;' : i === 23 ? 'background:#d6e4f0;' : '';
+      const fw = i >= 21 ? 'font-weight:bold;' : '';
+      html += `<td style="${tdR}${bg}${fw}">${f(v)}</td>`;
+    });
+    html += '</tr></table><br/>';
+
+    // ━━━ 4. 재료비 계산내역 ━━━
+    html += `<p style="font-size:12pt;font-weight:bold;font-family:'맑은 고딕',sans-serif;">■ 재료비 계산내역</p>`;
+    html += `<table border="1" cellpadding="3" cellspacing="0" style="border-collapse:collapse;">`;
+    // 헤더 1행
+    const mH1: [string, number, number][] = [
+      ['NO',1,2],['LEVEL',1,2],['Sub 타입\n(사급,직개발\n직구매 등)',1,2],['Sub 품번',1,2],['Sub 품명',1,2],['공법',1,2],
+      ['재료코드',1,2],['재질명',1,2],['투입중량\n[g]',1,2],['NET중량\n[g]',1,2],['재료단가',1,2],['적용일',1,2],
+      ['단위',1,2],['사용량',1,2],['적용률',1,2],['LOSS율\n[%]',1,2],['불량률\n[%]',1,2],
+      ['수입코드',1,2],['수입단가',1,2],['환율',1,2],['투입\n재료비',1,2],
+      ['SCRAP',3,1],['산폐,B/S',2,1],
+      ['추가재료',1,2],['재료비',1,2],['재료비\n리비율',1,2],['R&D율',1,2],['END\nUSG',1,2],
+    ];
+    html += '<tr>';
+    mH1.forEach(([label, cs, rs]) => {
+      const isGreen = label === '재료비합계';
+      html += `<th ${cs > 1 ? `colspan="${cs}"` : ''} ${rs > 1 ? `rowspan="${rs}"` : ''} style="${isGreen ? thG : thS}">${label}</th>`;
+    });
+    html += `<th rowspan="2" style="${thG}">재료비합계</th>`;
+    html += '</tr>';
+    // 헤더 2행
+    html += '<tr>';
+    ['중량', 'SCR단가', '비', '산폐,B/S\n단가(kg)', '비'].forEach(h => { html += `<th style="${thS}">${h}</th>`; });
+    html += '</tr>';
+    // 데이터행
+    MAT_ROWS.forEach(r => {
+      html += '<tr>';
+      [r.no, r.lv].forEach(v => { html += `<td style="${tdC}">${v}</td>`; });
+      html += `<td style="${tdC}">${r.type}</td>`;
+      html += `<td style="${tdS}">${r.partNo}</td>`;
+      html += `<td style="${tdS}">${r.name}</td>`;
+      html += `<td style="${tdC}">${r.method}</td>`;
+      html += `<td style="${tdS}">${r.matCode}</td>`;
+      html += `<td style="${tdS}">${r.mat}</td>`;
+      [r.inputWt, r.netWt, r.price].forEach(v => { html += `<td style="${tdR}">${f(v)}</td>`; });
+      html += `<td style="${tdC}">${f(r.date)}</td>`;
+      html += `<td style="${tdC}">${r.unit}</td>`;
+      [r.qty, r.rate, r.loss, r.defect].forEach(v => { html += `<td style="${tdR}">${f(v)}</td>`; });
+      html += `<td style="${tdC}">${f(r.impCode)}</td>`;
+      [r.impPrice, r.exchRate, r.inputMat, r.scWt, r.scPrice, r.scRatio, r.wastePrice, r.wasteRatio, r.add].forEach(v => { html += `<td style="${tdR}">${f(v)}</td>`; });
+      html += `<td style="${tdR}font-weight:600;">${f(r.cost)}</td>`;
+      [r.cRatio, r.rd, r.usg].forEach(v => { html += `<td style="${tdR}">${f(v)}</td>`; });
+      html += `<td style="${tdG}">${f(r.total)}</td>`;
+      html += '</tr>';
+    });
+    // 소계
+    const matTotal = MAT_ROWS.reduce((s, r) => s + (typeof r.total === 'number' ? r.total : 0), 0);
+    html += `<tr><td colspan="31" style="${tdSub}text-align:right;">재료비 소계</td><td style="${tdGD}">${matTotal.toFixed(2)}</td></tr>`;
+    html += '</table><br/>';
+
+    // ━━━ 5. 가공비 계산내역 ━━━
+    html += `<p style="font-size:12pt;font-weight:bold;font-family:'맑은 고딕',sans-serif;">■ 가공비 계산내역</p>`;
+    html += `<table border="1" cellpadding="3" cellspacing="0" style="border-collapse:collapse;">`;
+    // 헤더 1행
+    html += '<tr>';
+    const pH1: [string, number, number, boolean][] = [
+      ['NO',1,2,false],['LEVEL',1,2,false],['Sub 품번',2,2,false],['Sub 품명',2,2,false],['공법\n(기준일)',1,2,false],
+      ['공정명',1,2,false],['기계명칭',1,2,false],['CYCLE TIME',6,1,false],['비가동\nC/T',1,2,false],
+      ['노무비',3,1,false],['노무비',1,2,false],['구분\n(전/병)',1,2,false],
+      ['기계경비 상세내역',3,1,false],['건물상각비',2,1,false],['전력비',4,1,false],
+      ['수선비율\n(6%12%)',1,2,false],['직접경비',2,1,false],['간접\n경비율',1,2,false],['계',1,2,false],
+      ['가공비',1,2,true],['일반관리\n리비율',1,2,false],['R&D율',1,2,false],['END\nUSG율',1,2,false],['가공비\n합계',1,2,true],
+    ];
+    pH1.forEach(([label, cs, rs, green]) => {
+      html += `<th ${cs > 1 ? `colspan="${cs}"` : ''} ${rs > 1 ? `rowspan="${rs}"` : ''} style="${green ? thG : thS}">${label}</th>`;
+    });
+    html += '</tr>';
+    // 헤더 2행
+    html += '<tr>';
+    ['NET','ET율','CVT','준비시간','LOT량','C/Time','임율','인원','계','기계가액\n(천원)','상각년수','계','전력비\n(Kw)','표준진\n백단가','율','수선비율\n12%','단위당\n기가동비','직접경비\n단위당','단위당\n비가동','단위당\n기가동비']
+      .forEach(h => { html += `<th style="${thS}">${h}</th>`; });
+    html += '</tr>';
+    // 데이터행
+    PROC_ROWS.forEach(r => {
+      html += '<tr>';
+      html += `<td style="${tdC}">${r.no}</td><td style="${tdC}">${r.lv}</td>`;
+      html += `<td colspan="2" style="${tdS}">${r.partNo}</td>`;
+      html += `<td colspan="2" style="${tdS}">${r.name}</td>`;
+      html += `<td style="${tdC}white-space:pre-line;">${r.method}</td>`;
+      html += `<td style="${tdS}">${r.process}</td>`;
+      html += `<td style="${tdC}">${r.machine}</td>`;
+      [r.ctNet, r.etRate, r.cvt, r.prep, r.lot, r.cTime].forEach(v => { html += `<td style="${tdR}">${v}</td>`; });
+      html += `<td style="${tdR}">${f(r.idleCT)}</td>`;
+      [r.rate, r.workers, r.laborCalc].forEach(v => { html += `<td style="${tdR}">${v}</td>`; });
+      html += `<td style="${tdR}font-weight:600;">${f(r.labor)}</td>`;
+      html += `<td style="${tdC}">${f(r.type)}</td>`;
+      [r.machVal, r.deprecYr, r.machCalc, r.pwrKw, r.stdPrice, r.pwrRate, r.repairRate, r.unitDirect, r.unitIdle].forEach(v => { html += `<td style="${tdR}">${f(v)}</td>`; });
+      html += `<td style="${tdR}">${r.machGadon}</td>`;
+      html += `<td style="${tdR}">${f(r.directCostUnit)}</td>`;
+      html += `<td style="${tdR}">${r.directCost}</td>`;
+      html += `<td style="${tdR}">${r.indirectRate}</td>`;
+      html += `<td style="${tdR}">${r.procCost}</td>`;
+      html += `<td style="${tdG}">${r.procCost}</td>`;
+      html += `<td style="${tdR}">${r.mgmt}</td>`;
+      html += `<td style="${tdR}">${r.rd}</td>`;
+      html += `<td style="${tdR}">${r.usg}</td>`;
+      html += `<td style="${tdGD}">${r.total}</td>`;
+      html += '</tr>';
+    });
+    // 소계
+    const procTotal = PROC_ROWS.reduce((s, r) => s + (typeof r.total === 'number' ? r.total : 0), 0);
+    html += `<tr><td colspan="39" style="${tdSub}text-align:right;">가공비 소계</td><td style="${tdGD}">${procTotal.toFixed(2)}</td></tr>`;
+    html += '</table><br/>';
+
+    // ━━━ 6. 서명란 + 결정단가 ━━━
+    html += `<table border="1" cellpadding="3" cellspacing="0" style="border-collapse:collapse;width:280px;">`;
+    html += `<tr><th style="${thS}width:33%;">작성</th><th style="${thS}width:33%;">검토</th><th style="${thS}width:33%;">승인</th></tr>`;
+    html += `<tr><td style="${tdS}height:40px;">&nbsp;</td><td style="${tdS}height:40px;">&nbsp;</td><td style="${tdS}height:40px;">&nbsp;</td></tr>`;
+    html += '</table>';
+    html += `<table border="1" cellpadding="3" cellspacing="0" style="border-collapse:collapse;margin-top:8px;">`;
+    html += '<tr>';
+    [['계산단가', '2,844.55', ''], ['조정단가', '-', ''], ['결정단가', '2,845', 'background:#fff3cd;font-weight:bold;']].forEach(([label, val, extra]) => {
+      html += `<td style="${thS}width:80px;">${label}</td><td style="${tdR}${extra}">${val}</td>`;
+    });
+    html += '</tr></table>';
+
+    // ── 파일 생성 ──
+    const xlsContent = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:spreadsheet" xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="utf-8"/>
+<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+<x:Name>원가계산서</x:Name>
+<x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+</x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+</head><body style="font-family:'맑은 고딕',sans-serif;">${html}</body></html>`;
+
+    const blob = new Blob(['\uFEFF' + xlsContent], { type: 'application/vnd.ms-excel;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `원가계산서_골든셋_${new Date().toISOString().slice(0, 10)}.xls`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, []);
+
   return (
     <Box sx={{ p: 0 }}>
       {/* ── 툴바 ── */}
@@ -80,6 +274,7 @@ const GoldenSetView: React.FC = () => {
             인쇄
           </Button>
           <Button size="small" variant="contained" startIcon={<ExcelIcon sx={{ fontSize: 14 }} />}
+            onClick={handleExcelDownload}
             sx={{ textTransform: 'none', fontSize: 12, fontWeight: 700, borderRadius: '8px', bgcolor: '#217346', boxShadow: 'none', px: 1.5, '&:hover': { bgcolor: '#1a5c38', boxShadow: 'none' } }}>
             Excel 다운로드
           </Button>
@@ -87,15 +282,13 @@ const GoldenSetView: React.FC = () => {
       </Box>
 
       {/* ── 출력 영역 ── */}
-      <Box sx={{ px: 2, pb: 4 }}>
+      <Box ref={printAreaRef} sx={{ px: 2, pb: 4 }}>
 
         {/* ━━━ 1. 문서 제목 ━━━ */}
-        <Box sx={{ border: bdThick, borderRadius: '2px', overflow: 'hidden', mb: '1px' }}>
-          <Box sx={{ bgcolor: '#1a1a2e', py: 1, textAlign: 'center' }}>
-            <Typography sx={{ fontSize: 16, fontWeight: 800, color: '#fff', letterSpacing: 6 }}>
-              원  가  계  산  서
-            </Typography>
-          </Box>
+        <Box sx={{ textAlign: 'center', mb: 2 }}>
+          <Typography sx={{ fontSize: 16, fontWeight: 800, color: '#1a1a2e', letterSpacing: 6, display: 'inline-block', borderBottom: '2px solid #1a1a2e', pb: 1 }}>
+            원  가  계  산  서
+          </Typography>
         </Box>
 
         {/* ━━━ 2. 문서 정보 헤더 ━━━ */}

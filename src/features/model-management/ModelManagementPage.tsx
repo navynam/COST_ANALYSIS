@@ -29,7 +29,7 @@ const ModelManagementPage: React.FC = () => {
     formulas, modalOpen, setModalOpen,
     modalMode, form, setForm, toast, setToast,
     openAdd, openEdit, handleSave, handleDelete,
-    lastAddedFormulaId, clearLastAddedFormula,
+    lastAddedFormulaId, clearLastAddedFormula, applyChanges,
   } = useModelManagement();
 
   const {
@@ -142,8 +142,10 @@ const ModelManagementPage: React.FC = () => {
   const handleApprove = () => {
     if (!reviewTarget) return;
     approveRequest(reviewTarget.id, reviewComment, reviewScope);
+    // 승인된 변경사항을 실제 수식에 반영
+    applyChanges(reviewTarget.formulaId, reviewTarget.modifiedFields);
     setReviewDialogOpen(false);
-    setToast({ open: true, severity: 'success', message: '변경 요청이 승인되었습니다.' });
+    setToast({ open: true, severity: 'success', message: '변경 요청이 승인되어 모델에 반영되었습니다.' });
   };
 
   const handleReject = () => {

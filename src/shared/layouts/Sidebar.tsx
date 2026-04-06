@@ -64,13 +64,9 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
       {/* 로고 + 토글 버튼 */}
       <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 64 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: 1 }}>
-          <Box sx={{
-            width: 36, height: 36, bgcolor: '#e60012', borderRadius: 1,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-            position: 'relative', overflow: 'hidden',
-          }}>
-            <Box sx={{ fontSize: 24, fontWeight: 900, color: '#fff', fontFamily: '"Roboto", sans-serif', textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>M</Box>
-            <Box sx={{ position: 'absolute', bottom: 2, right: 3, width: 4, height: 4, bgcolor: '#fff', borderRadius: '50%', opacity: 0.8 }} />
+          <Box sx={{ width: 36, height: 36, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: '#fff', borderRadius: 1 }}>
+            <img src={`${process.env.PUBLIC_URL}/mobis_logo.png`} alt="Mobis"
+              style={{ width: 28, height: 28, objectFit: 'contain' }} />
           </Box>
           {!collapsed && (
             <Typography variant="subtitle2" fontWeight={700} noWrap

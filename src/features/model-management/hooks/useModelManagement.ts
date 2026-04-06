@@ -125,10 +125,33 @@ export const useModelManagement = () => {
     setLastAddedFormulaId('');
   };
 
+  // 변경 요청 승인 시 수식에 직접 반영
+  const applyChanges = (formulaId: string, modifiedFields: Partial<Formula>) => {
+    // 새 수식 추가 요청인 경우 (id가 'new_'로 시작)
+    if (formulaId.startsWith('new_')) {
+      const newId = `f${Date.now()}`;
+      const newFormula: Formula = {
+        id: newId,
+        name: modifiedFields.name || '새 수식',
+        badge: modifiedFields.badge || 'sub',
+        expression: modifiedFields.expression || '',
+        description: modifiedFields.description || '',
+        variables: modifiedFields.variables || [],
+      };
+      setFormulas(prev => [...prev, newFormula]);
+      setLastAddedFormulaId(newId);
+    } else {
+      // 기존 수식 수정
+      setFormulas(prev => prev.map(f =>
+        f.id === formulaId ? { ...f, ...modifiedFields } : f
+      ));
+    }
+  };
+
   return {
     formulas, modalOpen, setModalOpen,
     modalMode, editTarget, form, setForm, toast, setToast,
     openAdd, openEdit, handleSave, handleDelete,
-    lastAddedFormulaId, clearLastAddedFormula,
+    lastAddedFormulaId, clearLastAddedFormula, applyChanges,
   };
 };
