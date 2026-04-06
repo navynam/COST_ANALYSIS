@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/COST_ANALYSIS/static/js/main.5a40169f.js",
+    "main.js": "/COST_ANALYSIS/static/js/main.7664e8d0.js",
     "index.html": "/COST_ANALYSIS/index.html",
-    "main.5a40169f.js.map": "/COST_ANALYSIS/static/js/main.5a40169f.js.map"
+    "main.7664e8d0.js.map": "/COST_ANALYSIS/static/js/main.7664e8d0.js.map"
   },
   "entrypoints": [
-    "static/js/main.5a40169f.js"
+    "static/js/main.7664e8d0.js"
   ]
 }
