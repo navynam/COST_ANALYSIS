@@ -1,0 +1,219 @@
+/* ModelManagementPage.module.css */
+
+.pageRoot {
+  height: calc(100vh - 112px);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.headerActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.tabContent {
+  flex: 1;
+  overflow: hidden;
+}
+
+.formulaList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+  overflow: auto;
+}
+
+.formulaCard {
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  transition: box-shadow 0.2s;
+}
+
+.formulaCard:hover {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.formulaHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.expressionBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}
+
+.expressionCode {
+  font-family: monospace;
+  font-size: 13px;
+  color: #333;
+  font-weight: 500;
+}
+
+.variableChips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.departmentRow {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.departmentLabel {
+  font-size: 10px;
+  color: #999;
+  margin-right: 4px;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.changeRequestScroll {
+  height: 100%;
+  overflow: auto;
+}
+
+.filterRow {
+  display: flex;
+  gap: 16px;
+}
+
+.filterCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filterCard:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.emptyState {
+  text-align: center;
+  border-radius: 8px;
+}
+
+.requestList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.requestCard {
+  border-radius: 8px;
+}
+
+.requestHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.requestUserInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.requestMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.diffBlock {
+  background-color: #f5f5f5;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.diffRemoved {
+  font-size: 11px;
+  color: #c62828;
+  font-family: monospace;
+}
+
+.diffAdded {
+  font-size: 11px;
+  color: #2e7d32;
+  font-family: monospace;
+}
+
+.userMenuHeader {
+  border-bottom: 1px solid #eee;
+}
+
+.userMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dialogColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.dialogRow {
+  display: flex;
+  gap: 16px;
+}
+
+.deptCheckboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.requestInfoBox {
+  background-color: #f5f5f5;
+  border-radius: 6px;
+}
+
+.requesterInfoBox {
+  background-color: #f3e5f5;
+  border-radius: 4px;
+}
+
+.reviewDiffBox {
+  background-color: #fafafa;
+  border-radius: 6px;
+  border: 1px solid #eee;
+}
+
+.reviewReasonBox {
+  background-color: #fff3e0;
+  border-radius: 4px;
+}
+
+.reviewCommentApproved {
+  background-color: #e8f5e9;
+  border-radius: 4px;
+}
+
+.reviewCommentRejected {
+  background-color: #ffebee;
+  border-radius: 4px;
+}

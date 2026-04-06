@@ -1,0 +1,106 @@
+.container {
+  /* root wrapper - no specific styles needed */
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.headerIcon {
+  color: #003875;
+}
+
+.paper {
+  padding: 0;
+}
+
+.tabs {
+  border-bottom: 1px solid #e0e0e0;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.tabContent {
+  padding: 16px;
+}
+
+.filterRow {
+  margin-bottom: 16px;
+}
+
+.filterSelect {
+  min-width: 120px;
+}
+
+/* ── 작업이력 아이템 ── */
+.historyItem {
+  border-left: 3px solid;
+  margin-bottom: 8px;
+  background-color: #fafafa;
+  border-radius: 0 8px 8px 0;
+  position: relative;
+}
+
+.historyItem.withConnector::before {
+  content: "";
+  position: absolute;
+  left: -2px;
+  top: 100%;
+  width: 2px;
+  height: 8px;
+  background-color: #e0e0e0;
+}
+
+.historyPrimary {
+  font-size: 14px;
+}
+
+.historySecondary {
+  font-size: 12px;
+}
+
+/* ── 알림 탭 ── */
+.readAllRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+/* 알림 아이템 */
+.notificationItem {
+  margin-bottom: 8px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.notificationItem.unread {
+  background-color: rgba(0, 56, 117, 0.03);
+  border-color: rgba(0, 56, 117, 0.1);
+}
+
+.unreadDot {
+  font-size: 8px;
+  color: #1976d2;
+  margin-right: 8px;
+}
+
+.notificationPrimary {
+  font-size: 14px;
+}
+
+.notificationPrimaryUnread {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.notificationSecondary {
+  font-size: 12px;
+}
+
+.notificationTime {
+  white-space: nowrap;
+}

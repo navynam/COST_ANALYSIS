@@ -15,6 +15,7 @@ import {
 import { useModelManagement, badgeConfig, Formula, ALL_DEPARTMENTS } from './hooks/useModelManagement';
 import { useModelWorkflow, userPresets, ChangeRequest } from './hooks/useModelWorkflow';
 import SimpleKnowledgeGraphTab from './components/SimpleKnowledgeGraphTab';
+import styles from './ModelManagementPage.module.css';
 
 // ── 상태 배지 설정 ──
 const statusBadge: Record<string, { label: string; color: string; bg: string }> = {
@@ -162,16 +163,16 @@ const ModelManagementPage: React.FC = () => {
   };
 
   return (
-    <Box sx={{ height: 'calc(100vh - 112px)', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+    <Box className={styles.pageRoot}>
       {/* ── 페이지 헤더 ── */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
+      <Box className={styles.pageHeader} sx={{ mb: 3 }}>
         <Box>
           <Typography variant="h5" fontWeight={700}>원가 모델관리</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
             원가 구조 수식 및 지식그래프를 관리합니다
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
+        <Box className={styles.headerActions}>
           {/* 사용자 전환 */}
           <Chip
             avatar={
@@ -193,7 +194,7 @@ const ModelManagementPage: React.FC = () => {
             sx={{ borderRadius: 2, height: 36, cursor: 'pointer', '&:hover': { bgcolor: '#f5f5f5' } }}
           />
           <Menu anchorEl={userMenuAnchor} open={Boolean(userMenuAnchor)} onClose={() => setUserMenuAnchor(null)}>
-            <Box sx={{ px: 2, py: 1, borderBottom: '1px solid #eee' }}>
+            <Box className={styles.userMenuHeader} sx={{ px: 2, py: 1 }}>
               <Typography variant="caption" color="text.secondary" fontWeight={600}>사용자 전환 (데모)</Typography>
             </Box>
             {userPresets.map(u => (
@@ -203,7 +204,7 @@ const ModelManagementPage: React.FC = () => {
                 onClick={() => { switchUser(u.id); setUserMenuAnchor(null); }}
                 sx={{ fontSize: 13, py: 1 }}
               >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <Box className={styles.userMenuItem}>
                   <Avatar sx={{ width: 28, height: 28, bgcolor: u.role === 'admin' ? '#003875' : '#7b1fa2', fontSize: 12 }}>
                     {u.role === 'admin' ? <AdminPanelSettings sx={{ fontSize: 16 }} /> : <Person sx={{ fontSize: 16 }} />}
                   </Avatar>
@@ -256,16 +257,16 @@ const ModelManagementPage: React.FC = () => {
       </Box>
 
       {/* ── 탭 콘텐츠 ── */}
-      <Box sx={{ flex: 1, overflow: 'hidden' }}>
+      <Box className={styles.tabContent}>
         {currentTab === 0 ? (
           /* ── 모델 관리 탭 ── */
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, height: '100%', overflow: 'auto' }}>
+          <Box className={styles.formulaList}>
             {formulas.map(f => {
               const badge = badgeConfig[f.badge];
               const pendingCnt = getPendingCount(f.id);
               return (
-                <Paper key={f.id} sx={{ p: 3, borderRadius: 2.5, border: '1px solid #e0e0e0', '&:hover': { boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }, transition: 'box-shadow 0.2s' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
+                <Paper key={f.id} className={styles.formulaCard} sx={{ p: 3 }}>
+                  <Box className={styles.formulaHeader} sx={{ mb: 1.5 }}>
                     <Typography variant="subtitle1" fontWeight={700}>{f.name}</Typography>
                     <Chip label={badge.label} size="small" sx={{ bgcolor: badge.bg, color: badge.color, fontWeight: 600, fontSize: 11, height: 22 }} />
                     {pendingCnt > 0 && (
@@ -278,24 +279,24 @@ const ModelManagementPage: React.FC = () => {
                       />
                     )}
                   </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5, bgcolor: '#f8f9fa', borderRadius: 1.5, px: 2, py: 1 }}>
+                  <Box className={styles.expressionBox} sx={{ mb: 1.5, px: 2, py: 1 }}>
                     <Typography sx={{ fontSize: 16 }}>📐</Typography>
-                    <Typography component="code" sx={{ fontFamily: 'monospace', fontSize: 13, color: '#333', fontWeight: 500 }}>{f.expression}</Typography>
+                    <Typography component="code" className={styles.expressionCode}>{f.expression}</Typography>
                   </Box>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>{f.description}</Typography>
-                  <Box sx={{ display: 'flex', gap: 0.8, flexWrap: 'wrap', mb: 1 }}>
+                  <Box className={styles.variableChips} sx={{ mb: 1 }}>
                     {f.variables.map(v => (
                       <Chip key={v} label={v} size="small" variant="outlined" sx={{ fontSize: 11, height: 24, borderColor: '#ccc', color: '#555' }} />
                     ))}
                   </Box>
-                  <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mb: 2, alignItems: 'center' }}>
-                    <Typography sx={{ fontSize: 10, color: '#999', mr: 0.5 }}>적용부서:</Typography>
+                  <Box className={styles.departmentRow} sx={{ mb: 2 }}>
+                    <Typography className={styles.departmentLabel}>적용부서:</Typography>
                     {(f.departments || ['전체']).map(d => (
                       <Chip key={d} label={d} size="small"
                         sx={{ fontSize: 10, height: 20, bgcolor: d === '전체' ? '#e3f2fd' : '#f3e5f5', color: d === '전체' ? '#1565c0' : '#7b1fa2' }} />
                     ))}
                   </Box>
-                  <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Box className={styles.actionButtons}>
                     {isAdmin ? (
                       <>
                         <Button size="small" startIcon={<Edit sx={{ fontSize: 14 }} />} onClick={() => openEdit(f)}
@@ -334,9 +335,9 @@ const ModelManagementPage: React.FC = () => {
           />
         ) : (
           /* ── 변경 요청 탭 ── */
-          <Box sx={{ height: '100%', overflow: 'auto' }}>
+          <Box className={styles.changeRequestScroll}>
             {/* 상단 필터 */}
-            <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+            <Box className={styles.filterRow} sx={{ mb: 3 }}>
               {[
                 { key: 'all' as const, label: '전체', count: stats.total, color: '#546e7a', bg: '#eceff1' },
                 { key: 'pending' as const, label: '대기', count: stats.pending, color: '#e65100', bg: '#fff3e0' },
@@ -360,13 +361,13 @@ const ModelManagementPage: React.FC = () => {
 
             {/* 요청 목록 */}
             {filteredRequests.length === 0 ? (
-              <Paper sx={{ p: 6, textAlign: 'center', borderRadius: 2 }}>
+              <Paper className={styles.emptyState} sx={{ p: 6 }}>
                 <Typography color="text.secondary">
                   {statusFilter === 'all' ? '변경 요청이 없습니다.' : `${statusBadge[statusFilter]?.label || ''} 상태의 요청이 없습니다.`}
                 </Typography>
               </Paper>
             ) : (
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Box className={styles.requestList}>
                 {filteredRequests.map(cr => {
                   const sBadge = statusBadge[cr.status];
                   return (
@@ -376,15 +377,15 @@ const ModelManagementPage: React.FC = () => {
                       bgcolor: cr.status === 'pending' ? '#fffde7' : '#fff',
                     }}>
                       {/* 헤더 */}
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <Box className={styles.requestHeader} sx={{ mb: 1.5 }}>
+                        <Box className={styles.requestUserInfo}>
                           <Avatar sx={{ width: 28, height: 28, bgcolor: '#7b1fa2', fontSize: 11 }}>{cr.requesterName[0]}</Avatar>
                           <Box>
                             <Typography sx={{ fontSize: 13, fontWeight: 700 }}>{cr.requesterName}</Typography>
                             <Typography sx={{ fontSize: 10, color: 'text.secondary' }}>{cr.department} · {cr.taskName}</Typography>
                           </Box>
                         </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box className={styles.requestMeta}>
                           <Typography sx={{ fontSize: 11, color: 'text.secondary' }}>{formatDate(cr.createdAt)}</Typography>
                           <Chip label={sBadge.label} size="small" sx={{ bgcolor: sBadge.bg, color: sBadge.color, fontWeight: 700, fontSize: 11, height: 22 }} />
                         </Box>
@@ -396,11 +397,11 @@ const ModelManagementPage: React.FC = () => {
                       </Typography>
 
                       {/* 변경 내용 diff */}
-                      <Box sx={{ bgcolor: '#f5f5f5', borderRadius: 1.5, p: 1.5, mb: 1.5, fontSize: 12 }}>
+                      <Box className={styles.diffBlock} sx={{ p: 1.5, mb: 1.5 }}>
                         {cr.modifiedFields.expression && (
                           <Box sx={{ mb: 0.5 }}>
-                            <Typography sx={{ fontSize: 11, color: '#c62828', fontFamily: 'monospace' }}>- {cr.originalFormula.expression}</Typography>
-                            <Typography sx={{ fontSize: 11, color: '#2e7d32', fontFamily: 'monospace' }}>+ {cr.modifiedFields.expression}</Typography>
+                            <Typography className={styles.diffRemoved}>- {cr.originalFormula.expression}</Typography>
+                            <Typography className={styles.diffAdded}>+ {cr.modifiedFields.expression}</Typography>
                           </Box>
                         )}
                         {cr.modifiedFields.variables && (
@@ -479,8 +480,8 @@ const ModelManagementPage: React.FC = () => {
       {/* ── 수식 편집 다이얼로그 (관리자) ── */}
       <Dialog open={modalOpen} onClose={() => setModalOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ fontWeight: 700 }}>{modalMode === 'add' ? '새 수식 추가' : '수식 편집'}</DialogTitle>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, pt: '16px !important' }}>
-          <Box sx={{ display: 'flex', gap: 2 }}>
+        <DialogContent className={styles.dialogColumn} sx={{ gap: 2.5, pt: '16px !important' }}>
+          <Box className={styles.dialogRow}>
             <TextField label="수식명" fullWidth value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
             <TextField label="유형" select value={form.badge} sx={{ minWidth: 120 }} onChange={e => setForm(f => ({ ...f, badge: e.target.value as any }))}>
               <MenuItem value="core">핵심</MenuItem>
@@ -493,7 +494,7 @@ const ModelManagementPage: React.FC = () => {
           <TextField label="변수 (쉼표 구분)" fullWidth value={form.variables} placeholder="재료비, 가공비, 제경비" onChange={e => setForm(f => ({ ...f, variables: e.target.value }))} />
           <Divider />
           <Typography variant="subtitle2" fontWeight={600} sx={{ mt: 0.5 }}>적용 부서</Typography>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+          <Box className={styles.deptCheckboxes}>
             {ALL_DEPARTMENTS.map(dept => (
               <FormControlLabel key={dept} sx={{ mr: 0 }}
                 control={
@@ -529,9 +530,9 @@ const ModelManagementPage: React.FC = () => {
           <Send sx={{ fontSize: 20, color: '#7b1fa2' }} />
           수정 요청
         </DialogTitle>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, pt: '16px !important' }}>
+        <DialogContent className={styles.dialogColumn} sx={{ gap: 2.5, pt: '16px !important' }}>
           {requestTarget && (
-            <Box sx={{ bgcolor: '#f5f5f5', borderRadius: 1.5, p: 2 }}>
+            <Box className={styles.requestInfoBox} sx={{ p: 2 }}>
               <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#003875', mb: 0.5 }}>대상 수식: {requestTarget.name}</Typography>
               <Typography sx={{ fontSize: 11, fontFamily: 'monospace', color: '#666' }}>{requestTarget.expression}</Typography>
             </Box>
@@ -556,7 +557,7 @@ const ModelManagementPage: React.FC = () => {
             placeholder="변경이 필요한 이유를 설명해주세요"
             required
           />
-          <Box sx={{ bgcolor: '#f3e5f5', borderRadius: 1, px: 2, py: 1 }}>
+          <Box className={styles.requesterInfoBox} sx={{ px: 2, py: 1 }}>
             <Typography sx={{ fontSize: 11, color: '#7b1fa2' }}>
               요청자: {currentUser.name} ({currentUser.department}) · 적용 업무: {currentUser.taskName}
             </Typography>
@@ -578,11 +579,11 @@ const ModelManagementPage: React.FC = () => {
           <AdminPanelSettings sx={{ fontSize: 20, color: '#003875' }} />
           변경 요청 검토
         </DialogTitle>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '16px !important' }}>
+        <DialogContent className={styles.dialogColumn} sx={{ gap: 2, pt: '16px !important' }}>
           {reviewTarget && (
             <>
               {/* 요청 정보 */}
-              <Box sx={{ bgcolor: '#f5f5f5', borderRadius: 1.5, p: 2 }}>
+              <Box className={styles.requestInfoBox} sx={{ p: 2 }}>
                 <Typography sx={{ fontSize: 12, fontWeight: 700, mb: 0.5 }}>
                   {reviewTarget.requesterName} ({reviewTarget.department})
                 </Typography>
@@ -592,7 +593,7 @@ const ModelManagementPage: React.FC = () => {
               </Box>
 
               {/* diff 표시 */}
-              <Box sx={{ bgcolor: '#fafafa', borderRadius: 1.5, p: 2, border: '1px solid #eee' }}>
+              <Box className={styles.reviewDiffBox} sx={{ p: 2 }}>
                 <Typography sx={{ fontSize: 12, fontWeight: 700, mb: 1, color: '#003875' }}>
                   대상: {reviewTarget.originalFormula.name}
                 </Typography>
@@ -608,7 +609,7 @@ const ModelManagementPage: React.FC = () => {
               </Box>
 
               {/* 요청 사유 */}
-              <Box sx={{ bgcolor: '#fff3e0', borderRadius: 1, px: 2, py: 1.5 }}>
+              <Box className={styles.reviewReasonBox} sx={{ px: 2, py: 1.5 }}>
                 <Typography sx={{ fontSize: 12, fontWeight: 600 }}>요청 사유</Typography>
                 <Typography sx={{ fontSize: 12, color: '#333' }}>{reviewTarget.reason}</Typography>
               </Box>
@@ -618,7 +619,7 @@ const ModelManagementPage: React.FC = () => {
               {/* 적용 부서 선택 */}
               <Box>
                 <Typography sx={{ fontSize: 13, fontWeight: 600, mb: 1 }}>승인 시 적용 부서</Typography>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                <Box className={styles.deptCheckboxes}>
                   {ALL_DEPARTMENTS.map(dept => (
                     <FormControlLabel key={dept} sx={{ mr: 0 }}
                       control={
@@ -760,8 +761,8 @@ const ModelManagementPage: React.FC = () => {
           <Add sx={{ fontSize: 20, color: '#7b1fa2' }} />
           새 수식 추가 요청
         </DialogTitle>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, pt: '16px !important' }}>
-          <Box sx={{ display: 'flex', gap: 2 }}>
+        <DialogContent className={styles.dialogColumn} sx={{ gap: 2.5, pt: '16px !important' }}>
+          <Box className={styles.dialogRow}>
             <TextField label="수식명" fullWidth value={addRequestForm.name}
               onChange={e => setAddRequestForm(f => ({ ...f, name: e.target.value }))} />
             <TextField label="유형" select value={addRequestForm.badge} sx={{ minWidth: 120 }}
@@ -783,7 +784,7 @@ const ModelManagementPage: React.FC = () => {
           <TextField label="요청 사유 (필수)" fullWidth multiline rows={2} value={addRequestForm.reason}
             onChange={e => setAddRequestForm(f => ({ ...f, reason: e.target.value }))}
             placeholder="새 수식이 필요한 이유를 설명해주세요" required />
-          <Box sx={{ bgcolor: '#f3e5f5', borderRadius: 1, px: 2, py: 1 }}>
+          <Box className={styles.requesterInfoBox} sx={{ px: 2, py: 1 }}>
             <Typography sx={{ fontSize: 11, color: '#7b1fa2' }}>
               요청자: {currentUser.name} ({currentUser.department}) · 적용 업무: {currentUser.taskName}
             </Typography>

@@ -1,0 +1,42 @@
+/* SettingsPage.module.css */
+
+.container {
+  max-width: 700px;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.settingsIcon {
+  color: #e60012;
+}
+
+.formColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.themeCards {
+  display: flex;
+  gap: 24px;
+}
+
+.themeCardActive {
+  flex: 1;
+  border: 2px solid;
+}
+
+.themeCardOther {
+  flex: 1;
+  border: 1px solid;
+}
+
+.themeInfoRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

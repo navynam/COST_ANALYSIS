@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 import { Visibility, VisibilityOff, Person, Lock } from '@mui/icons-material';
 import { useLoginPage } from './hooks/useLoginPage';
+import styles from './LoginPage.module.css';
 
 const LoginPage: React.FC = () => {
   const {
@@ -17,22 +18,19 @@ const LoginPage: React.FC = () => {
   } = useLoginPage();
 
   return (
-    <Box sx={{
-      minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: 'linear-gradient(135deg, #667eea 0%, #003875 50%, #0056A6 100%)',
-    }}>
-      <Card sx={{ width: 420, borderRadius: 3, boxShadow: '0 20px 60px rgba(0,0,0,0.3)', overflow: 'visible' }}>
+    <Box className={styles.container}>
+      <Card className={styles.card}>
         <CardContent sx={{ p: 5 }}>
-          <Box sx={{ textAlign: 'center', mb: 4 }}>
-            <Box sx={{ width: 56, height: 56, mx: 'auto', mb: 2, background: 'linear-gradient(135deg, #003875, #0056A6)', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Typography sx={{ color: '#fff', fontWeight: 900, fontSize: 20 }}>M</Typography>
+          <Box className={styles.headerCenter} sx={{ mb: 4 }}>
+            <Box className={styles.logoBox} sx={{ mx: 'auto', mb: 2 }}>
+              <Typography className={styles.logoText}>M</Typography>
             </Box>
             <Typography variant="h5" fontWeight={700} color="#1a1a2e">견적서 분석 시스템</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>구매원가 AI 분석 플랫폼</Typography>
           </Box>
 
           {error && (
-            <Alert severity={locked ? 'error' : 'warning'} sx={{ mb: 2, borderRadius: 2 }}>{error}</Alert>
+            <Alert severity={locked ? 'error' : 'warning'} className={styles.alertBox} sx={{ mb: 2 }}>{error}</Alert>
           )}
 
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -59,7 +57,7 @@ const LoginPage: React.FC = () => {
             </Button>
           </form>
 
-          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+          <Box className={styles.footerLinks}>
             <Link href="#" underline="hover" variant="body2" color="text.secondary">비밀번호 찾기</Link>
             <Typography variant="body2" color="text.disabled">|</Typography>
             <Link href="#" underline="hover" variant="body2" color="text.secondary">비밀번호 변경</Link>

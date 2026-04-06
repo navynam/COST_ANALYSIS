@@ -1,0 +1,46 @@
+/* LoginPage.module.css */
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #003875 50%, #0056A6 100%);
+}
+
+.card {
+  width: 420px;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow: visible;
+}
+
+.headerCenter {
+  text-align: center;
+}
+
+.logoBox {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #003875, #0056A6);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoText {
+  color: #fff;
+  font-weight: 900;
+  font-size: 20px;
+}
+
+.alertBox {
+  border-radius: 8px;
+}
+
+.footerLinks {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}

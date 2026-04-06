@@ -1,42 +1,42 @@
 /**
  * 📄 파싱(업로드) 페이지 - 견적서 처리 1단계
- * 
+ *
  * 🎯 주요 기능:
  * 1. 드래그앤드롭 파일 업로드 (Excel 파일)
  * 2. AI 자동 파싱 진행률 실시간 표시
  * 3. 파일별 상태 관리 (대기/추출중/검증/분석/실패)
  * 4. 파일 목록 테이블 (검색, 정렬, 필터링)
  * 5. 개별 파일 상세 정보 및 액션 (검증하기, 재시도 등)
- * 
+ *
  * 📊 상태별 카드 시스템:
  * - 전체: 모든 파일 개수
  * - 추출: AI 파싱 진행 중 (주황색)
  * - 검증: 파싱 완료, 검증 대기 (초록색)
  * - 분석: 검증 완료, 분석 진행/대기 (보라색)
  * - 실패: 파싱/검증 실패 (빨간색)
- * 
+ *
  * 🔧 사용자 액션:
  * - 파일 업로드: 드래그앤드롭 또는 클릭 업로드
  * - 상태 필터링: 카드 클릭으로 해당 상태 파일들만 표시
  * - 검색: 파일명으로 실시간 검색
  * - 일괄 작업: 체크박스로 선택 후 삭제/다운로드
  * - 개별 작업: "검증하기", "상세보기", "재시도" 버튼
- * 
+ *
  * 🔗 다음 단계 연동:
  * - "검증하기" 버튼 → 검증 페이지 (/verification)
  * - "상세보기" 버튼 → 분석 페이지 (/analysis)
- * 
+ *
  * 💾 상태 관리:
  * - useParsingPage 훅에서 파일 목록, 필터, 검색 등 모든 상태 관리
  * - 실시간 진행률 업데이트 (WebSocket 또는 Polling)
  */
 import React, { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Typography, 
-  TextField, 
-  InputAdornment, 
-  Checkbox, 
+import {
+  Box,
+  Typography,
+  TextField,
+  InputAdornment,
+  Checkbox,
   Button,
   Dialog,
   DialogTitle,
@@ -52,7 +52,7 @@ import {
   IconButton,
   Chip
 } from '@mui/material';
-import { 
+import {
   Search,
   Delete,
   Download,
@@ -68,6 +68,7 @@ import FileTable from './components/FileTable';
 import FileDetailDrawer from './components/FileDetailDrawer';
 import SearchFilterDialog from './components/SearchFilterDialog';
 import { useParsingPage } from './hooks/useParsingPage';
+import styles from './ParsingPage.module.css';
 
 const ParsingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -95,7 +96,7 @@ const ParsingPage: React.FC = () => {
 
   // 📝 파일별 노트 개수 계산
   const getNoteCount = (fileId: string): number => {
-    return savedNotes.filter(note => 
+    return savedNotes.filter(note =>
       note.fileId === fileId && note.content && note.content.trim()
     ).length;
   };
@@ -128,12 +129,12 @@ const ParsingPage: React.FC = () => {
     };
 
     setSavedNotes(prev => [...prev, newNote]);
-    
+
     // localStorage에 저장
     const existingNotes = JSON.parse(localStorage.getItem('parsing-notes') || '[]');
     existingNotes.push(newNote);
     localStorage.setItem('parsing-notes', JSON.stringify(existingNotes));
-    
+
     console.log('📝 파싱 노트 저장 완료:', newNote);
     setNoteContent('');
     setNoteDialogOpen(false);
@@ -143,7 +144,7 @@ const ParsingPage: React.FC = () => {
   // 📝 AI 분석
   const handleAIAnalysis = async () => {
     setIsAnalyzing(true);
-    
+
     setTimeout(() => {
       const currentFile = filteredAndSorted.find(f => f.id.toString() === currentFileId);
       const aiSuggestion = `
@@ -179,7 +180,7 @@ ${currentFile?.status === 'extracting' ? `
 2. ${currentFile?.anomalies && currentFile.anomalies > 0 ? '이상치 항목 우선 검토' : '표준 검증 프로세스 진행'}
 3. 문제 발견시 이 노트에 세부 사항 기록
       `;
-      
+
       setNoteContent(aiSuggestion);
       setIsAnalyzing(false);
     }, 2000);
@@ -189,7 +190,7 @@ ${currentFile?.status === 'extracting' ? `
   useEffect(() => {
     try {
       const savedNotesData = JSON.parse(localStorage.getItem('parsing-notes') || '[]');
-      const validNotes = Array.isArray(savedNotesData) ? savedNotesData.filter(note => 
+      const validNotes = Array.isArray(savedNotesData) ? savedNotesData.filter(note =>
         note && note.id && note.content && note.content.trim().length > 0
       ) : [];
       setSavedNotes(validNotes);
@@ -202,18 +203,17 @@ ${currentFile?.status === 'extracting' ? `
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: C.bg }}>
       <Box sx={{ px: 3, pt: 2.5 }}>
-        <Typography sx={{ fontSize: 20, fontWeight: 700, mb: 0.5, color: C.dark }}>견적서 파싱</Typography>
-        <Typography sx={{ fontSize: 13, color: C.gray, mb: 2 }}>파일을 업로드하면 AI가 자동으로 데이터를 추출합니다</Typography>
+        <Typography className={styles.pageTitle} sx={{ mb: 0.5, color: C.dark }}>견적서 파싱</Typography>
+        <Typography className={styles.pageSubtitle} sx={{ color: C.gray, mb: 2 }}>파일을 업로드하면 AI가 자동으로 데이터를 추출합니다</Typography>
       </Box>
 
       {/* 드래그앤드롭 업로드 영역 */}
       <Box sx={{ mx: 3, mb: 2 }}>
         <Box
+          className={styles.dropZone}
           sx={{
-            p: 4, border: '2px dashed', borderRadius: '12px',
             borderColor: dragOver ? C.blue : '#d2d2d7',
             bgcolor: dragOver ? '#e8f4fd' : '#fff',
-            textAlign: 'center', cursor: 'pointer', transition: 'all 0.3s',
             '&:hover': { borderColor: C.blue, bgcolor: '#f8fbff' },
           }}
           onDragOver={(e: React.DragEvent) => { e.preventDefault(); setDragOver(true); }}
@@ -225,11 +225,11 @@ ${currentFile?.status === 'extracting' ? `
             id="parsing-file-input" type="file" hidden multiple accept=".xlsx,.xls,.jpg,.jpeg,.png"
             onChange={e => { if (e.target.files?.length) handleFiles(e.target.files); (e.target as HTMLInputElement).value = ''; }}
           />
-          <Box sx={{ fontSize: 40, mb: 1.5 }}>📁</Box>
-          <Typography sx={{ fontSize: 14, color: C.gray, mb: 1 }}>
+          <Box className={styles.dropIcon} sx={{ mb: 1.5 }}>📁</Box>
+          <Typography className={styles.dropText} sx={{ color: C.gray, mb: 1 }}>
             파일을 드래그하거나 <strong style={{ color: C.blue }}>클릭하여 업로드</strong>
           </Typography>
-          <Typography sx={{ fontSize: 11, color: '#a1a1a6' }}>
+          <Typography className={styles.dropHint}>
             지원 형식: xls, xlsx, 이미지(jpg, png) · 최대 50MB · 다중 파일 가능
           </Typography>
         </Box>
@@ -238,13 +238,13 @@ ${currentFile?.status === 'extracting' ? `
         {uploadQueue.length > 0 && (
           <Box sx={{ mt: 1 }}>
             {uploadQueue.map((q, i) => (
-              <Box key={i} sx={{ bgcolor: '#fff', border: `1px solid ${C.border}`, borderRadius: '8px', p: '10px 16px', mb: 1, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <Box key={i} className={styles.uploadQueueItem} sx={{ bgcolor: '#fff', border: `1px solid ${C.border}`, p: '10px 16px', mb: 1 }}>
                 <span>📄</span>
-                <Typography sx={{ flex: 1, fontSize: 13, fontWeight: 500 }}>{q.file.name}</Typography>
-                <Box sx={{ width: 120, height: 4, bgcolor: '#e5e5e7', borderRadius: 2, overflow: 'hidden' }}>
-                  <Box sx={{ width: `${q.progress}%`, height: '100%', bgcolor: C.blue, borderRadius: 2, transition: 'width 0.3s' }} />
+                <Typography className={styles.uploadFileName}>{q.file.name}</Typography>
+                <Box className={styles.uploadProgressBar} sx={{ bgcolor: '#e5e5e7' }}>
+                  <Box className={styles.uploadProgressFill} sx={{ width: `${q.progress}%`, bgcolor: C.blue }} />
                 </Box>
-                <Typography sx={{ fontSize: 11, color: C.gray, minWidth: 30 }}>{q.progress}%</Typography>
+                <Typography className={styles.uploadProgressText} sx={{ color: C.gray }}>{q.progress}%</Typography>
                 <IconButton size="small" onClick={() => setUploadQueue(prev => prev.filter((_, j) => j !== i))}
                   sx={{ width: 24, height: 24, bgcolor: '#e5e5e7', '&:hover': { bgcolor: '#f8d7da', color: C.red } }}>
                   <CloseIcon sx={{ fontSize: 12 }} />
@@ -256,30 +256,32 @@ ${currentFile?.status === 'extracting' ? `
       </Box>
 
       {/* 검색 툴바 */}
-      <Box sx={{ display: 'flex', gap: 1.25, px: 3, mb: 2 }}>
+      <Box className={styles.searchToolbar} sx={{ px: 3, mb: 2 }}>
         <TextField size="small" fullWidth placeholder="문서명으로 검색..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
           InputProps={{ startAdornment: <InputAdornment position="start"><Search sx={{ fontSize: 18, color: C.gray }} /></InputAdornment>, sx: { fontSize: 13, bgcolor: '#fff', borderRadius: '8px' } }} />
         <Button variant="outlined" size="small" onClick={() => setSearchDialogOpen(true)}
-          sx={{ whiteSpace: 'nowrap', fontSize: 12, borderColor: isSearchActive ? C.blue : C.border, color: isSearchActive ? C.blue : C.dark, bgcolor: isSearchActive ? '#f0f6ff' : 'transparent' }}>
+          className={styles.filterBtn}
+          sx={{ borderColor: isSearchActive ? C.blue : C.border, color: isSearchActive ? C.blue : C.dark, bgcolor: isSearchActive ? '#f0f6ff' : 'transparent' }}>
           <FilterList sx={{ fontSize: 16, mr: 0.5 }} />상세조회
         </Button>
       </Box>
 
-      <Box sx={{ display: 'flex', gap: 1, px: 3, mb: 1.5, alignItems: 'center' }}>
+      <Box className={styles.selectAllRow} sx={{ px: 3, mb: 1.5 }}>
         <Checkbox size="small" checked={selectedIds.size === filteredAndSorted.length && filteredAndSorted.length > 0}
           onChange={() => { if (selectedIds.size === filteredAndSorted.length) setSelectedIds(new Set()); else setSelectedIds(new Set(filteredAndSorted.map(f => f.id))); }} />
-        <Typography sx={{ fontSize: 12 }}>전체 선택</Typography>
-        <Button size="small" startIcon={<Delete sx={{ fontSize: 14 }} />} sx={{ fontSize: 12, ml: 1 }}>일괄 삭제</Button>
-        <Button size="small" startIcon={<Download sx={{ fontSize: 14 }} />} sx={{ fontSize: 12 }}>일괄 다운로드</Button>
+        <Typography className={styles.selectAllLabel}>전체 선택</Typography>
+        <Button size="small" startIcon={<Delete sx={{ fontSize: 14 }} />} className={styles.bulkBtn} sx={{ ml: 1 }}>일괄 삭제</Button>
+        <Button size="small" startIcon={<Download sx={{ fontSize: 14 }} />} className={styles.bulkBtn}>일괄 다운로드</Button>
       </Box>
 
       {/* 상태 카드 */}
-      <Box sx={{ display: 'flex', gap: 1.5, px: 3, mb: 2 }}>
+      <Box className={styles.statusCardRow} sx={{ px: 3, mb: 2 }}>
         {statusCards.map(sc => (
           <Box key={sc.key} onClick={() => setFilter(sc.key)}
-            sx={{ flex: 1, bgcolor: '#fff', border: `1px solid ${filter === sc.key ? C.blue : C.border}`, borderRadius: '10px', p: 2, cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s', ...(filter === sc.key && { bgcolor: '#f0f6ff' }), '&:hover': { borderColor: C.blue } }}>
-            <Typography sx={{ fontSize: 28, fontWeight: 700, color: sc.colorKey, mb: 0.5 }}>{counts[sc.key]}</Typography>
-            <Typography sx={{ fontSize: 12, color: C.gray }}>{sc.label}</Typography>
+            className={styles.statusCard}
+            sx={{ bgcolor: filter === sc.key ? '#f0f6ff' : '#fff', border: `1px solid ${filter === sc.key ? C.blue : C.border}`, '&:hover': { borderColor: C.blue } }}>
+            <Typography className={styles.statusCardValue} sx={{ color: sc.colorKey, mb: 0.5 }}>{counts[sc.key]}</Typography>
+            <Typography className={styles.statusCardLabel} sx={{ color: C.gray }}>{sc.label}</Typography>
           </Box>
         ))}
       </Box>
@@ -316,10 +318,10 @@ ${currentFile?.status === 'extracting' ? `
       />
 
       {/* 📝 노트 작성 다이얼로그 */}
-      <Dialog 
-        open={noteDialogOpen} 
+      <Dialog
+        open={noteDialogOpen}
         onClose={() => setNoteDialogOpen(false)}
-        maxWidth="md" 
+        maxWidth="md"
         fullWidth
         PaperProps={{
           sx: {
@@ -328,13 +330,8 @@ ${currentFile?.status === 'extracting' ? `
           }
         }}
       >
-        <DialogTitle sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'space-between',
-          pb: 1
-        }}>
-          <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 18 }}>
+        <DialogTitle className={styles.noteDialogTitle} sx={{ pb: 1 }}>
+          <Typography variant="h6" className={styles.noteDialogTitleText}>
             📝 파싱 노트 작성
           </Typography>
           <IconButton onClick={() => setNoteDialogOpen(false)} size="small">
@@ -356,8 +353,8 @@ ${currentFile?.status === 'extracting' ? `
           {/* 노트 유형 선택 */}
           <FormControl fullWidth sx={{ mb: 2 }}>
             <InputLabel>노트 유형</InputLabel>
-            <Select 
-              value={noteType} 
+            <Select
+              value={noteType}
               onChange={(e) => setNoteType(e.target.value)}
               label="노트 유형"
             >
@@ -375,15 +372,10 @@ ${currentFile?.status === 'extracting' ? `
             startIcon={isAnalyzing ? <AIIcon className="animate-spin" /> : <AIIcon />}
             onClick={handleAIAnalysis}
             disabled={isAnalyzing || !currentFileId}
-            sx={{ 
-              mb: 2, 
+            className={styles.aiAnalysisBtn}
+            sx={{
+              mb: 2,
               py: 1.5,
-              textTransform: 'none',
-              fontSize: 15,
-              fontWeight: 600,
-              borderRadius: '12px',
-              borderColor: '#0064ff',
-              color: '#0064ff',
               '&:hover': {
                 borderColor: '#0056d3',
                 bgcolor: 'rgba(0, 100, 255, 0.04)'
@@ -412,49 +404,38 @@ ${currentFile?.status === 'extracting' ? `
           {savedNotes && savedNotes.length > 0 && savedNotes.some((note: any) => note && note.fileId === currentFileId && note.content && note.content.trim()) && currentFileId && (
             <>
               <Divider sx={{ my: 2 }} />
-              
-              <Box sx={{ 
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                mb: 2
-              }}>
+
+              <Box className={styles.noteHistoryHeader} sx={{ mb: 2 }}>
                 <Typography variant="subtitle2" color="text.secondary">
                   📋 이 파일의 노트 히스토리 ({savedNotes.filter((n: any) => n.fileId === currentFileId && n.content && n.content.trim()).length}개)
                 </Typography>
-                
+
                 <Button
                   size="small"
                   variant="outlined"
                   color="error"
                   onClick={() => {
-                    // 현재 파일의 노트만 삭제
                     const updatedNotes = savedNotes.filter((n: any) => n.fileId !== currentFileId);
                     setSavedNotes(updatedNotes);
                     localStorage.setItem('parsing-notes', JSON.stringify(updatedNotes));
                     console.log('🗑️ 파일 노트 히스토리 초기화');
                   }}
-                  sx={{ 
-                    fontSize: '10px',
-                    py: 0.25,
-                    px: 1,
-                    minWidth: 'auto'
-                  }}
+                  className={styles.resetBtn}
+                  sx={{ py: 0.25, px: 1 }}
                 >
                   초기화
                 </Button>
               </Box>
-              
-              <Box sx={{ maxHeight: 250, overflowY: 'auto', pr: 1 }}>
+
+              <Box className={styles.noteHistoryList}>
                 {savedNotes.filter((note: any) => note.fileId === currentFileId && note.content && note.content.trim()).slice().reverse().map((note: any, index: number) => (
-                  <Paper 
-                    key={note.id} 
-                    variant="outlined" 
-                    sx={{ 
-                      p: 2, 
-                      mb: 1.5, 
-                      borderRadius: '8px',
-                      transition: 'all 0.2s ease',
+                  <Paper
+                    key={note.id}
+                    variant="outlined"
+                    className={styles.noteHistoryItem}
+                    sx={{
+                      p: 2,
+                      mb: 1.5,
                       '&:hover': {
                         boxShadow: 2,
                         borderColor: 'primary.main'
@@ -462,56 +443,42 @@ ${currentFile?.status === 'extracting' ? `
                     }}
                   >
                     {/* 노트 헤더 */}
-                    <Box sx={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'space-between', 
-                      mb: 1 
-                    }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        <Chip 
-                          size="small" 
+                    <Box className={styles.noteHeader} sx={{ mb: 1 }}>
+                      <Box className={styles.noteHeaderLeft}>
+                        <Chip
+                          size="small"
                           label={
-                            note.type === 'parsing' ? '🔍 파싱' : 
-                            note.type === 'upload' ? '📤 업로드' : 
+                            note.type === 'parsing' ? '🔍 파싱' :
+                            note.type === 'upload' ? '📤 업로드' :
                             note.type === 'format' ? '📋 형식' :
                             '💡 개선'
-                          } 
+                          }
                           variant="outlined"
                           sx={{
                             fontSize: '10px',
                             height: '20px',
-                            bgcolor: 
-                              note.type === 'parsing' ? '#fff3e0' : 
-                              note.type === 'upload' ? '#e8f5e8' : 
+                            bgcolor:
+                              note.type === 'parsing' ? '#fff3e0' :
+                              note.type === 'upload' ? '#e8f5e8' :
                               note.type === 'format' ? '#e3f2fd' :
                               '#f3e5f5',
-                            color: 
-                              note.type === 'parsing' ? '#e65100' : 
-                              note.type === 'upload' ? '#2e7d32' : 
+                            color:
+                              note.type === 'parsing' ? '#e65100' :
+                              note.type === 'upload' ? '#2e7d32' :
                               note.type === 'format' ? '#1565c0' :
                               '#7b1fa2'
                           }}
                         />
                         {index === 0 && (
-                          <Chip 
-                            size="small" 
-                            label="최신" 
-                            sx={{ 
-                              bgcolor: '#ff5722', 
-                              color: 'white',
-                              fontSize: '9px',
-                              height: '18px'
-                            }}
+                          <Chip
+                            size="small"
+                            label="최신"
+                            className={styles.latestChip}
                           />
                         )}
                       </Box>
-                      
-                      <Typography variant="caption" sx={{ 
-                        color: 'text.secondary',
-                        fontSize: '10px',
-                        fontFamily: 'monospace'
-                      }}>
+
+                      <Typography variant="caption" className={styles.noteTimestamp} sx={{ color: 'text.secondary' }}>
                         {new Date(note.timestamp).toLocaleString('ko-KR', {
                           month: '2-digit',
                           day: '2-digit',
@@ -522,61 +489,30 @@ ${currentFile?.status === 'extracting' ? `
                     </Box>
 
                     {/* 노트 내용 - 스크롤 가능 */}
-                    <Box sx={{
-                      maxHeight: '100px',
-                      overflowY: 'auto',
-                      bgcolor: '#fafafa',
-                      borderRadius: '6px',
-                      p: 1.5,
-                      border: '1px solid #f0f0f0',
-                      '&::-webkit-scrollbar': {
-                        width: '4px',
-                      },
-                      '&::-webkit-scrollbar-track': {
-                        bgcolor: '#f5f5f5',
-                        borderRadius: '2px',
-                      },
-                      '&::-webkit-scrollbar-thumb': {
-                        bgcolor: '#d0d0d0',
-                        borderRadius: '2px',
-                        '&:hover': {
-                          bgcolor: '#b0b0b0',
-                        },
-                      },
-                    }}>
-                      <Typography variant="body2" sx={{ 
-                        fontSize: 12,
-                        lineHeight: 1.5,
-                        color: 'text.primary',
-                        whiteSpace: 'pre-wrap',
-                        fontFamily: 'inherit'
-                      }}>
+                    <Box className={styles.noteContentBox}>
+                      <Typography variant="body2" className={styles.noteContentText} sx={{ color: 'text.primary' }}>
                         {note.content}
                       </Typography>
                     </Box>
 
                     {/* 컨텍스트 정보 (간단히) */}
                     {note.context && (
-                      <Box sx={{ 
-                        mt: 1,
-                        pt: 1,
-                        borderTop: '1px dashed #e0e0e0'
-                      }}>
-                        <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                      <Box className={styles.noteContext} sx={{ mt: 1, pt: 1 }}>
+                        <Box className={styles.noteContextChips}>
                           {note.context.상태 && (
-                            <Chip 
-                              size="small" 
+                            <Chip
+                              size="small"
                               label={`📊 ${note.context.상태}`}
                               variant="outlined"
-                              sx={{ fontSize: '9px', height: '16px' }}
+                              className={styles.contextChip}
                             />
                           )}
                           {note.context.파일크기 && (
-                            <Chip 
-                              size="small" 
+                            <Chip
+                              size="small"
                               label={`📄 ${note.context.파일크기}`}
                               variant="outlined"
-                              sx={{ fontSize: '9px', height: '16px' }}
+                              className={styles.contextChip}
                             />
                           )}
                         </Box>
@@ -593,16 +529,13 @@ ${currentFile?.status === 'extracting' ? `
           <Button onClick={() => setNoteDialogOpen(false)}>
             취소
           </Button>
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             startIcon={<SendIcon />}
             onClick={handleNoteSubmit}
             disabled={!noteContent.trim()}
+            className={styles.noteSubmitBtn}
             sx={{
-              bgcolor: '#0064ff',
-              borderRadius: '8px',
-              textTransform: 'none',
-              fontWeight: 600,
               '&:hover': {
                 bgcolor: '#0056d3'
               }

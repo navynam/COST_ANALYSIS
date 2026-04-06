@@ -64,6 +64,7 @@ import {
 } from '@mui/icons-material';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import ExcelViewerDialog from '../analysis/components/ExcelViewerDialog';
+import styles from './ParsedDataReviewPage.module.css';
 
 // ✅ 셀 데이터 타입 (수정 기능 포함)
 interface CellData {
@@ -963,7 +964,7 @@ const ParsedDataReviewPage: React.FC = () => {
   // ✅ 표준뷰 렌더링 (카테고리별 테이블)
   const StandardView = () => (
     <Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+      <Box className={styles.sectionTitle} sx={{ mb: 3 }}>
         <Typography variant="h6" fontWeight={600} sx={{ color: 'text.primary' }}>
           📊 카테고리별 원가 분석
         </Typography>
@@ -1379,40 +1380,29 @@ const ParsedDataReviewPage: React.FC = () => {
   };
 
   return (
-    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <Box className={styles.pageRoot}>
       {/* 🎯 Header bar - Analysis 스타일 */}
-      <Box sx={{ borderBottom: '1px solid #e5e5e7', px: 3, py: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontSize: 13, color: '#86868b' }}>검증 &gt;</Typography>
-          <Typography sx={{ fontSize: 16, fontWeight: 700 }}>{fileName || 'HEAD_LINING_원가계산서'}</Typography>
+      <Box className={styles.headerBar} sx={{ px: 3, py: 2 }}>
+        <Box className={styles.headerLeft}>
+          <Typography className={styles.breadcrumb}>검증 &gt;</Typography>
+          <Typography className={styles.headerTitle}>{fileName || 'HEAD_LINING_원가계산서'}</Typography>
         </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+        <Box className={styles.headerRight}>
 
           {/* ── 현재 페이지 기능 버튼 ── */}
-          <Box sx={{ display: 'flex', gap: 1, pr: 1.5, borderRight: '1px solid #e5e5e7' }}>
+          <Box className={styles.headerActions} sx={{ pr: 1.5 }}>
             <Button
               variant="outlined"
               size="small"
               startIcon={<NoteAddIcon sx={{ fontSize: 14 }} />}
               onClick={() => setNoteDialogOpen(true)}
-              sx={{
-                textTransform: 'none',
-                fontSize: 12,
-                fontWeight: 600,
-                borderRadius: '8px',
-                borderColor: '#e5e5e7',
-                color: '#6b7280',
-                bgcolor: '#fafafa',
-                px: 1.5,
-                '&:hover': { borderColor: '#d1d5db', bgcolor: '#f3f4f6', color: '#374151' }
-              }}
+              className={styles.actionButton}
+              sx={{ px: 1.5 }}
             >
               노트작성{' '}
               {savedNotes.filter((n: any) => n && n.fileId === currentFileId && n.content && n.content.trim()).length > 0 && (
-                <Box component="span" sx={{
+                <Box component="span" className={`${styles.badge} ${styles.badgeBlue}`} sx={{
                   ml: 0.5, px: 0.75, py: 0.1,
-                  bgcolor: '#0064ff', color: '#fff',
-                  borderRadius: '10px', fontSize: 10, fontWeight: 700, lineHeight: 1.6,
                 }}>
                   {savedNotes.filter((n: any) => n && n.fileId === currentFileId && n.content && n.content.trim()).length}
                 </Box>
@@ -1424,24 +1414,15 @@ const ParsedDataReviewPage: React.FC = () => {
               startIcon={<SaveIcon sx={{ fontSize: 14 }} />}
               onClick={handleSaveAllChanges}
               disabled={getModifiedItemsCount() === 0}
+              className={styles.actionButton}
               sx={{
-                textTransform: 'none',
-                fontSize: 12,
-                fontWeight: 600,
-                borderRadius: '8px',
-                borderColor: '#e5e5e7',
-                color: '#6b7280',
-                bgcolor: '#fafafa',
                 px: 1.5,
-                '&:hover': { borderColor: '#d1d5db', bgcolor: '#f3f4f6', color: '#374151' },
                 '&.Mui-disabled': { borderColor: '#e5e5e7', color: '#c0c4cc', bgcolor: '#fafafa' }
               }}
             >
               저장{getModifiedItemsCount() > 0 && (
-                <Box component="span" sx={{
+                <Box component="span" className={`${styles.badge} ${styles.badgeOrange}`} sx={{
                   ml: 0.5, px: 0.75, py: 0.1,
-                  bgcolor: '#ff9500', color: '#fff',
-                  borderRadius: '10px', fontSize: 10, fontWeight: 700, lineHeight: 1.6,
                 }}>
                   {getModifiedItemsCount()}
                 </Box>
@@ -1450,23 +1431,15 @@ const ParsedDataReviewPage: React.FC = () => {
           </Box>
 
           {/* ── 단계 이동 버튼 ── */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+          <Box className={styles.navButtons}>
             {/* 이전 단계로 */}
             <Button
               variant="text"
               size="small"
               startIcon={<NavigateBefore sx={{ fontSize: 16 }} />}
               onClick={() => navigate('/parsing_card')}
-              sx={{
-                textTransform: 'none',
-                fontSize: 12,
-                fontWeight: 600,
-                borderRadius: '8px',
-                color: '#8b95a1',
-                px: 1.2,
-                minWidth: 0,
-                '&:hover': { bgcolor: '#f3f4f6', color: '#374151' }
-              }}
+              className={styles.navBack}
+              sx={{ px: 1.2 }}
             >
               목록
             </Button>
@@ -1520,22 +1493,22 @@ const ParsedDataReviewPage: React.FC = () => {
       </Box>
 
       {/* Info Cards - Analysis 스타일 */}
-      <Box sx={{ display: 'flex', gap: 2, px: 3, py: 2, bgcolor: '#f5f5f7' }}>
+      <Box className={styles.infoCards} sx={{ px: 3, py: 2 }}>
         {[
           { label: 'E.O. NO.', value: fileMetadata.coNumber || 'EO-2024-1201' },
           { label: '품번 / 품명', value: `${fileMetadata.partNumber || 'HL-2024-001'} · ${fileMetadata.partName || 'HEAD LINING'}` },
           { label: '협력사 / 담당자', value: `${fileMetadata.supplier || '대한(주)'} · ${fileMetadata.manager || '김철수'}` },
         ].map(c => (
-          <Paper key={c.label} sx={{ flex: 1, p: 1.5, borderRadius: '8px', border: '1px solid #e5e5e7', boxShadow: 'none' }}>
-            <Typography sx={{ fontSize: 10, color: '#86868b', mb: 0.25 }}>{c.label}</Typography>
-            <Typography sx={{ fontSize: 13, fontWeight: 600 }}>{c.value}</Typography>
+          <Paper key={c.label} className={styles.infoCard} sx={{ p: 1.5 }}>
+            <Typography className={styles.infoCardLabel} sx={{ mb: 0.25 }}>{c.label}</Typography>
+            <Typography className={styles.infoCardValue}>{c.value}</Typography>
           </Paper>
         ))}
       </Box>
 
       {/* 💡 안내 텍스트 (배경/라인 없음) */}
       <Box sx={{ px: 3, py: 0.75 }}>
-        <Typography sx={{ fontSize: 12, color: '#0071e3', fontWeight: 600 }}>
+        <Typography className={styles.hintText}>
           💡 왼쪽 컬럼 클릭 → 오른쪽 Excel 하이라이트 · 더블클릭으로 셀 재매핑
         </Typography>
       </Box>
@@ -1543,18 +1516,13 @@ const ParsedDataReviewPage: React.FC = () => {
       {/* 🔄 메인 컨텐츠 (리사이즈 가능한 2분할) */}
       <Box
         ref={containerRef}
-        sx={{ flex: 1, display: 'flex', overflow: 'hidden' }}
+        className={styles.mainContent}
       >
 
         {/* 👈 왼쪽: 파싱된 데이터 (Analysis와 동일) */}
-        <Box sx={{
-          width: `${leftWidth}%`,
-          display: 'flex',
-          flexDirection: 'column',
-          borderRight: '1px solid rgba(0, 0, 0, 0.1)'
-        }}>
+        <Box className={`${styles.leftPanel} ${styles.leftPanelBorder}`} sx={{ width: `${leftWidth}%` }}>
           {/* 탭 헤더 */}
-          <Box sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.1)' }}>
+          <Box className={styles.tabBorder}>
             <Tabs
               value={selectedTab}
               onChange={(e, newValue) => setSelectedTab(newValue)}
@@ -1566,7 +1534,7 @@ const ParsedDataReviewPage: React.FC = () => {
           </Box>
 
           {/* 탭 컨텐츠 */}
-          <Box sx={{ flex: 1, overflow: 'auto', p: 3 }}>
+          <Box className={styles.tabContent} sx={{ p: 3 }}>
             {renderTabContent()}
           </Box>
         </Box>
@@ -1584,16 +1552,14 @@ const ParsedDataReviewPage: React.FC = () => {
         />
 
         {/* 👉 오른쪽: Excel 원본 */}
-        <Box sx={{
+        <Box className={styles.rightPanel} sx={{
           width: `${100 - leftWidth}%`,
-          display: 'flex',
-          flexDirection: 'column',
           bgcolor: 'grey.50'
         }}>
           {/* Excel 뷰어 헤더 */}
-          <Box sx={{ p: 2, borderBottom: '1px solid rgba(0, 0, 0, 0.1)', bgcolor: 'white' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box className={styles.excelHeader} sx={{ p: 2 }}>
+            <Box className={styles.excelHeaderRow}>
+              <Box className={styles.excelHeaderLeft}>
                 <ExcelIcon color="success" />
                 <Typography variant="h6" fontWeight={600}>
                   Excel 원본
@@ -1628,17 +1594,12 @@ const ParsedDataReviewPage: React.FC = () => {
 
           {/* Excel 임베디드 뷰어 */}
           <Box sx={{ flex: 1, p: 2 }}>
-            <Paper sx={{
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              bgcolor: 'white',
+            <Paper className={styles.excelPlaceholder} sx={{
               border: selectedItem
                 ? '2px solid #0094FF'
                 : '2px dashed rgba(0, 0, 0, 0.1)'
             }}>
-              <Box sx={{ textAlign: 'center' }}>
+              <Box className={styles.excelPlaceholderInner}>
                 <ExcelIcon sx={{ fontSize: 64, color: 'grey.400', mb: 2 }} />
                 <Typography variant="h6" color="text.secondary" gutterBottom>
                   Excel 미리보기
@@ -1791,12 +1752,7 @@ const ParsedDataReviewPage: React.FC = () => {
             <>
               <Divider sx={{ my: 2 }} />
 
-              <Box sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                mb: 2
-              }}>
+              <Box className={styles.noteHistoryHeader} sx={{ mb: 2 }}>
                 <Typography variant="subtitle2" color="text.secondary">
                   📋 노트 히스토리 ({savedNotes.filter((n: any) => n && n.fileId === currentFileId && n.content && n.content.trim()).length}개)
                 </Typography>
@@ -1898,35 +1854,8 @@ const ParsedDataReviewPage: React.FC = () => {
                     </Box>
 
                     {/* 노트 내용 - 스크롤 가능 */}
-                    <Box sx={{
-                      maxHeight: '100px',
-                      overflowY: 'auto',
-                      bgcolor: '#fafafa',
-                      borderRadius: '6px',
-                      p: 1.5,
-                      border: '1px solid #f0f0f0',
-                      '&::-webkit-scrollbar': {
-                        width: '4px',
-                      },
-                      '&::-webkit-scrollbar-track': {
-                        bgcolor: '#f5f5f5',
-                        borderRadius: '2px',
-                      },
-                      '&::-webkit-scrollbar-thumb': {
-                        bgcolor: '#d0d0d0',
-                        borderRadius: '2px',
-                        '&:hover': {
-                          bgcolor: '#b0b0b0',
-                        },
-                      },
-                    }}>
-                      <Typography variant="body2" sx={{
-                        fontSize: 12,
-                        lineHeight: 1.5,
-                        color: 'text.primary',
-                        whiteSpace: 'pre-wrap',
-                        fontFamily: 'inherit'
-                      }}>
+                    <Box className={styles.noteContentBox} sx={{ p: 1.5 }}>
+                      <Typography variant="body2" className={styles.noteText} sx={{ color: 'text.primary' }}>
                         {note.content}
                       </Typography>
                     </Box>
@@ -1938,7 +1867,7 @@ const ParsedDataReviewPage: React.FC = () => {
                         pt: 1,
                         borderTop: '1px dashed #e0e0e0'
                       }}>
-                        <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                        <Box className={styles.contextChips}>
                           {note.context.총항목수 && (
                             <Chip
                               size="small"
