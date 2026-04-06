@@ -54,6 +54,15 @@ const ModelManagementPage: React.FC = () => {
   const [reviewComment, setReviewComment] = useState('');
   const [reviewScope, setReviewScope] = useState<AppliedScope>('task');
 
+  // ── 변경 요청 필터 ──
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
+
+  // ── 비관리자 새 수식 추가 요청 다이얼로그 ──
+  const [addRequestDialogOpen, setAddRequestDialogOpen] = useState(false);
+  const [addRequestForm, setAddRequestForm] = useState({
+    name: '', badge: 'sub' as Formula['badge'], expression: '', description: '', variables: '', reason: '',
+  });
+
   // 🔄 새 수식 하이라이트 완료 후 처리
   const handleNewFormulaHighlighted = useCallback(() => {
     clearLastAddedFormula();
@@ -89,8 +98,33 @@ const ModelManagementPage: React.FC = () => {
     }
     submitChangeRequest(requestTarget, modifiedFields, requestForm.reason);
     setRequestDialogOpen(false);
-    setToast({ open: true, severity: 'success', message: '수정 요청이 제출되었습니다.' });
+    setToast({ open: true, severity: 'success', message: '수정 요청이 제출되었습니다. 변경 요청 탭에서 확인할 수 있습니다.' });
+    setCurrentTab(2); // 변경 요청 탭으로 이동
   };
+
+  // ── 비관리자 새 수식 추가 요청 제출 ──
+  const handleSubmitAddRequest = () => {
+    if (!addRequestForm.name.trim() || !addRequestForm.expression.trim() || !addRequestForm.reason.trim()) return;
+    const vars = addRequestForm.variables.split(',').map(v => v.trim()).filter(Boolean);
+    const placeholderFormula: Formula = {
+      id: `new_${Date.now()}`, name: addRequestForm.name, badge: addRequestForm.badge,
+      expression: '', description: '', variables: [],
+    };
+    const modifiedFields: Partial<Formula> = {
+      name: addRequestForm.name, badge: addRequestForm.badge,
+      expression: addRequestForm.expression, description: addRequestForm.description, variables: vars,
+    };
+    submitChangeRequest(placeholderFormula, modifiedFields, `[새 수식 추가 요청] ${addRequestForm.reason}`);
+    setAddRequestDialogOpen(false);
+    setAddRequestForm({ name: '', badge: 'sub', expression: '', description: '', variables: '', reason: '' });
+    setToast({ open: true, severity: 'success', message: '새 수식 추가 요청이 제출되었습니다.' });
+    setCurrentTab(2);
+  };
+
+  // ── 필터링된 변경 요청 목록 ──
+  const filteredRequests = statusFilter === 'all'
+    ? changeRequests
+    : changeRequests.filter(r => r.status === statusFilter);
 
   // ── 검토 열기 (관리자) ──
   const openReviewDialog = (cr: ChangeRequest) => {
@@ -176,12 +210,20 @@ const ModelManagementPage: React.FC = () => {
             ))}
           </Menu>
 
-          {/* 새 수식 추가 (관리자만) */}
-          {currentTab === 0 && isAdmin && (
-            <Button variant="contained" startIcon={<Add />} onClick={openAdd}
-              sx={{ bgcolor: '#003875', '&:hover': { bgcolor: '#002a5c' }, borderRadius: 2, px: 3 }}>
-              새 수식 추가
-            </Button>
+          {/* 새 수식 추가 */}
+          {currentTab === 0 && (
+            isAdmin ? (
+              <Button variant="contained" startIcon={<Add />} onClick={openAdd}
+                sx={{ bgcolor: '#003875', '&:hover': { bgcolor: '#002a5c' }, borderRadius: 2, px: 3 }}>
+                새 수식 추가
+              </Button>
+            ) : (
+              <Button variant="contained" startIcon={<Add />}
+                onClick={() => { setAddRequestForm({ name: '', badge: 'sub', expression: '', description: '', variables: '', reason: '' }); setAddRequestDialogOpen(true); }}
+                sx={{ bgcolor: '#7b1fa2', '&:hover': { bgcolor: '#6a1b9a' }, borderRadius: 2, px: 3 }}>
+                새 수식 추가 요청
+              </Button>
+            )
           )}
         </Box>
       </Box>
@@ -267,15 +309,23 @@ const ModelManagementPage: React.FC = () => {
         ) : (
           /* ── 변경 요청 탭 ── */
           <Box sx={{ height: '100%', overflow: 'auto' }}>
-            {/* 상단 통계 */}
+            {/* 상단 필터 */}
             <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
               {[
-                { label: '전체', count: stats.total, color: '#546e7a', bg: '#eceff1' },
-                { label: '대기', count: stats.pending, color: '#e65100', bg: '#fff3e0' },
-                { label: '승인', count: stats.approved, color: '#2e7d32', bg: '#e8f5e9' },
-                { label: '반려', count: stats.rejected, color: '#c62828', bg: '#ffebee' },
+                { key: 'all' as const, label: '전체', count: stats.total, color: '#546e7a', bg: '#eceff1' },
+                { key: 'pending' as const, label: '대기', count: stats.pending, color: '#e65100', bg: '#fff3e0' },
+                { key: 'approved' as const, label: '승인', count: stats.approved, color: '#2e7d32', bg: '#e8f5e9' },
+                { key: 'rejected' as const, label: '반려', count: stats.rejected, color: '#c62828', bg: '#ffebee' },
               ].map(s => (
-                <Paper key={s.label} sx={{ px: 3, py: 1.5, borderRadius: 2, display: 'flex', alignItems: 'center', gap: 1.5, border: `1px solid ${s.bg}` }}>
+                <Paper key={s.key}
+                  onClick={() => setStatusFilter(s.key)}
+                  sx={{
+                    px: 3, py: 1.5, borderRadius: 2, display: 'flex', alignItems: 'center', gap: 1.5,
+                    border: statusFilter === s.key ? `2px solid ${s.color}` : `1px solid ${s.bg}`,
+                    bgcolor: statusFilter === s.key ? s.bg : '#fff',
+                    cursor: 'pointer', transition: 'all 0.2s',
+                    '&:hover': { boxShadow: '0 2px 8px rgba(0,0,0,0.1)' },
+                  }}>
                   <Typography variant="h5" fontWeight={700} sx={{ color: s.color }}>{s.count}</Typography>
                   <Typography variant="body2" sx={{ color: s.color, fontWeight: 600 }}>{s.label}</Typography>
                 </Paper>
@@ -283,13 +333,15 @@ const ModelManagementPage: React.FC = () => {
             </Box>
 
             {/* 요청 목록 */}
-            {changeRequests.length === 0 ? (
+            {filteredRequests.length === 0 ? (
               <Paper sx={{ p: 6, textAlign: 'center', borderRadius: 2 }}>
-                <Typography color="text.secondary">변경 요청이 없습니다.</Typography>
+                <Typography color="text.secondary">
+                  {statusFilter === 'all' ? '변경 요청이 없습니다.' : `${statusBadge[statusFilter]?.label || ''} 상태의 요청이 없습니다.`}
+                </Typography>
               </Paper>
             ) : (
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                {changeRequests.map(cr => {
+                {filteredRequests.map(cr => {
                   const sBadge = statusBadge[cr.status];
                   return (
                     <Paper key={cr.id} sx={{
@@ -522,6 +574,53 @@ const ModelManagementPage: React.FC = () => {
           <Button variant="contained" onClick={handleApprove} startIcon={<CheckCircle sx={{ fontSize: 16 }} />}
             sx={{ bgcolor: '#2e7d32', '&:hover': { bgcolor: '#1b5e20' } }}>
             승인
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* ── 비관리자 새 수식 추가 요청 다이얼로그 ── */}
+      <Dialog open={addRequestDialogOpen} onClose={() => setAddRequestDialogOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Add sx={{ fontSize: 20, color: '#7b1fa2' }} />
+          새 수식 추가 요청
+        </DialogTitle>
+        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, pt: '16px !important' }}>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <TextField label="수식명" fullWidth value={addRequestForm.name}
+              onChange={e => setAddRequestForm(f => ({ ...f, name: e.target.value }))} />
+            <TextField label="유형" select value={addRequestForm.badge} sx={{ minWidth: 120 }}
+              onChange={e => setAddRequestForm(f => ({ ...f, badge: e.target.value as Formula['badge'] }))}>
+              <MenuItem value="core">핵심</MenuItem>
+              <MenuItem value="sub">하위</MenuItem>
+              <MenuItem value="rate">비율</MenuItem>
+            </TextField>
+          </Box>
+          <TextField label="수식" fullWidth value={addRequestForm.expression}
+            placeholder="예: 생산원가 = 재료비 + 가공비 + 제경비"
+            onChange={e => setAddRequestForm(f => ({ ...f, expression: e.target.value }))} />
+          <TextField label="설명" fullWidth multiline rows={2} value={addRequestForm.description}
+            onChange={e => setAddRequestForm(f => ({ ...f, description: e.target.value }))} />
+          <TextField label="변수 (쉼표 구분)" fullWidth value={addRequestForm.variables}
+            placeholder="재료비, 가공비, 제경비"
+            onChange={e => setAddRequestForm(f => ({ ...f, variables: e.target.value }))} />
+          <Divider />
+          <TextField label="요청 사유 (필수)" fullWidth multiline rows={2} value={addRequestForm.reason}
+            onChange={e => setAddRequestForm(f => ({ ...f, reason: e.target.value }))}
+            placeholder="새 수식이 필요한 이유를 설명해주세요" required />
+          <Box sx={{ bgcolor: '#f3e5f5', borderRadius: 1, px: 2, py: 1 }}>
+            <Typography sx={{ fontSize: 11, color: '#7b1fa2' }}>
+              요청자: {currentUser.name} ({currentUser.department}) · 적용 업무: {currentUser.taskName}
+            </Typography>
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setAddRequestDialogOpen(false)}>취소</Button>
+          <Button variant="contained"
+            onClick={handleSubmitAddRequest}
+            disabled={!addRequestForm.name.trim() || !addRequestForm.expression.trim() || !addRequestForm.reason.trim()}
+            sx={{ bgcolor: '#7b1fa2', '&:hover': { bgcolor: '#6a1b9a' } }}
+            startIcon={<Send sx={{ fontSize: 16 }} />}>
+            추가 요청 제출
           </Button>
         </DialogActions>
       </Dialog>
