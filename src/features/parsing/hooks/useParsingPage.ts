@@ -3,6 +3,12 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { C } from '../../../shared/constants/colors';
 import { initialFiles } from '../data/mockData';
 import type { FileItem, FileStatus, UploadQueueItem, SearchFilters, SortField, SortDirection } from '../types';
+import {
+  filterFiles,
+  sortFiles,
+  calculateCounts,
+  isSearchActive as checkSearchActive,
+} from '../services/parsingService';
 
 export const useParsingPage = () => {
   const navigate = useNavigate();
@@ -27,38 +33,11 @@ export const useParsingPage = () => {
   }, [searchParams]);
 
   const filteredAndSorted = (() => {
-    let result = files.filter(f => {
-      if (filter !== 'all' && f.status !== filter) return false;
-      if (searchQuery && !f.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
-      if (searchFilters.documentName && !f.name.toLowerCase().includes(searchFilters.documentName.toLowerCase())) return false;
-      if (searchFilters.uploader && !f.uploader?.toLowerCase().includes(searchFilters.uploader.toLowerCase())) return false;
-      if (searchFilters.department && !f.department?.toLowerCase().includes(searchFilters.department.toLowerCase())) return false;
-      if (searchFilters.dateFrom && f.uploadDate < searchFilters.dateFrom) return false;
-      if (searchFilters.dateTo && f.uploadDate > searchFilters.dateTo) return false;
-      return true;
-    });
-
-    if (sortField) {
-      result = result.sort((a, b) => {
-        const aVal: any = a[sortField] ?? '';
-        const bVal: any = b[sortField] ?? '';
-        if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
-        if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
-        return 0;
-      });
-    }
-    return result;
+    const filtered = filterFiles(files, filter, searchQuery, searchFilters);
+    return sortFiles(filtered, sortField, sortDirection);
   })();
 
-  const counts = {
-    all: files.length,
-    extracting: files.filter(f => f.status === 'extracting').length,
-    verifying: files.filter(f => f.status === 'verifying').length,
-    verified: files.filter(f => f.status === 'verified').length,
-    analyzing: files.filter(f => f.status === 'analyzing').length,
-    analyzed: files.filter(f => f.status === 'analyzed').length,
-    failed: files.filter(f => f.status === 'failed').length,
-  };
+  const counts = calculateCounts(files);
 
   const handleFiles = useCallback((fileList: FileList | File[]) => {
     const items: UploadQueueItem[] = Array.from(fileList).map(f => ({ file: f, progress: 0 }));
@@ -78,7 +57,7 @@ export const useParsingPage = () => {
     else { setSortField(field); setSortDirection('asc'); }
   };
 
-  const isSearchActive = Object.values(searchFilters).some(v => v.trim() !== '');
+  const isSearchActive = checkSearchActive(searchFilters);
 
   const statusCards: { key: 'all' | FileStatus; label: string; colorKey: string }[] = [
     { key: 'all', label: '전체', colorKey: C.dark },

@@ -336,12 +336,6 @@ export const defaultOnboardingSteps: OnboardingStep[] = [
     title: '🔄 4단계: 비교',
     description: '여러 견적서 비교 분석',
     content: '마지막으로 여러 견적서를 비교하여 최적의 선택을 도와드립니다. 가격, 품질, 조건 등을 종합적으로 검토하세요.'
-  },
-  {
-    id: 'theme',
-    title: '🎨 테마 선택',
-    description: '원하는 디자인으로 변경',
-    content: '우상단의 테마 스위처로 현대모비스 테마와 Toss 스타일 테마를 자유롭게 전환할 수 있습니다. 취향에 맞게 선택해보세요!'
   }
 ];
 

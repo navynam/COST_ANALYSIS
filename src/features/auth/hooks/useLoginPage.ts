@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../AuthContext';
 import type { LoginForm } from '../types';
+import { authenticate } from '../services/authService';
 
 export const useLoginPage = () => {
   const navigate = useNavigate();
@@ -15,22 +16,16 @@ export const useLoginPage = () => {
 
   const onSubmit = async (data: LoginForm) => {
     if (locked) return;
-    try {
-      if (data.employeeId && data.password) {
-        setError('');
-        setFailCount(0);
-        login({ id: data.employeeId, name: 'HANY' });
-        navigate('/dashboard');
-      }
-    } catch (err: any) {
-      const newCount = failCount + 1;
-      setFailCount(newCount);
-      if (newCount >= 5) {
-        setLocked(true);
-        setError('로그인 5회 실패로 계정이 잠겼습니다. 관리자에게 문의하세요.');
-      } else {
-        setError(`아이디 또는 비밀번호가 올바르지 않습니다. (${newCount}/5)`);
-      }
+    const result = await authenticate(data.employeeId, data.password, failCount);
+    if (result.success) {
+      setError('');
+      setFailCount(0);
+      login({ id: data.employeeId, name: 'HANY' });
+      navigate('/dashboard');
+    } else {
+      setFailCount(result.failCount);
+      setLocked(result.locked);
+      setError(result.errorMessage);
     }
   };
 

@@ -119,6 +119,58 @@ const SmartGuide: React.FC<SmartGuideProps> = ({
           }
         };
 
+      case '/parsing_card':
+        return {
+          title: '견적서 분석',
+          subtitle: '업로드 → 추출 → 검증 → 분석 → 저장까지의 전체 프로세스를 관리합니다',
+          steps: [
+            {
+              id: 'upload',
+              title: '① 파일 업로드',
+              description: 'Excel 견적서 파일을 업로드하면 자동으로 데이터 추출이 시작됩니다',
+              completed: false,
+              current: true,
+              tip: '💡 상단의 상태 카드에서 "추출중" 건수를 확인할 수 있습니다'
+            },
+            {
+              id: 'extract',
+              title: '② 데이터 추출',
+              description: 'AI가 견적서에서 재료비, 가공비, 제경비 등의 항목을 자동으로 추출합니다',
+              completed: false,
+              tip: '💡 추출이 실패한 경우 "실패" 상태로 표시되며, 재처리할 수 있습니다'
+            },
+            {
+              id: 'verify',
+              title: '③ 추출 데이터 검증',
+              description: '추출된 데이터의 정확성을 검토하고 필요 시 수정합니다 (검증중 → 검증완료)',
+              completed: false,
+              tip: '💡 카드의 "검증" 버튼을 클릭하면 검증 화면으로 이동합니다'
+            },
+            {
+              id: 'analyze',
+              title: '④ 원가 분석',
+              description: '검증 완료된 데이터를 기반으로 원가 분석을 수행합니다 (분석중 → 분석완료)',
+              completed: false,
+              tip: '💡 분석 결과에서 이상치가 발견되면 AI 판단근거를 확인할 수 있습니다'
+            },
+            {
+              id: 'save',
+              title: '⑤ 분석 결과 저장',
+              description: '분석완료된 데이터를 골든셋으로 확정하고 ERP 등록용 자료를 생성합니다',
+              completed: false
+            }
+          ],
+          tips: [
+            '📊 상단 상태 카드: 전체 · 추출중 · 검증중 · 검증완료 · 분석중 · 분석완료 · 실패',
+            '🎯 상태 카드를 클릭하면 해당 상태의 파일만 필터링됩니다',
+            '⚠️ "실패" 상태의 파일은 원본을 확인 후 재업로드하세요'
+          ],
+          nextAction: {
+            label: '분석 페이지로 →',
+            path: '/analysis'
+          }
+        };
+
       case '/verification':
         return {
           title: '✅ 데이터 검증 단계',
@@ -261,13 +313,14 @@ const SmartGuide: React.FC<SmartGuideProps> = ({
     <Fade in timeout={500}>
       <Card
         sx={{
-          position: 'sticky',
-          top: 20,
+          position: 'relative',
+          zIndex: 10,
           mb: 3,
           background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
           border: '1px solid rgba(0, 148, 255, 0.1)',
           borderLeft: '4px solid #0094FF',
-          overflow: 'visible'
+          overflow: 'visible',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
         }}
       >
         {/* 💡 헤더 */}
@@ -278,12 +331,14 @@ const SmartGuide: React.FC<SmartGuideProps> = ({
               <Typography variant="h6" fontWeight={600}>
                 {pageGuide.title}
               </Typography>
-              <Chip
-                label={`${completedSteps}/${totalSteps}`}
-                size="small"
-                color="primary"
-                variant="outlined"
-              />
+              {location.pathname !== '/parsing_card' && (
+                <Chip
+                  label={`${completedSteps}/${totalSteps}`}
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                />
+              )}
             </Box>
             
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -303,29 +358,31 @@ const SmartGuide: React.FC<SmartGuideProps> = ({
             </Box>
           </Box>
 
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: location.pathname === '/parsing_card' ? 2 : 0 }}>
             {pageGuide.subtitle}
           </Typography>
 
           {/* 💡 진행률 */}
-          <Box sx={{ mt: 2 }}>
-            <LinearProgress
-              variant="determinate"
-              value={progress}
-              sx={{
-                height: 6,
-                borderRadius: 3,
-                backgroundColor: 'rgba(0, 148, 255, 0.1)',
-                '& .MuiLinearProgress-bar': {
+          {location.pathname !== '/parsing_card' && (
+            <Box sx={{ mt: 2 }}>
+              <LinearProgress
+                variant="determinate"
+                value={progress}
+                sx={{
+                  height: 6,
                   borderRadius: 3,
-                  background: 'linear-gradient(90deg, #0094FF 0%, #00C851 100%)'
-                }
-              }}
-            />
-            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
-              {Math.round(progress)}% 완료
-            </Typography>
-          </Box>
+                  backgroundColor: 'rgba(0, 148, 255, 0.1)',
+                  '& .MuiLinearProgress-bar': {
+                    borderRadius: 3,
+                    background: 'linear-gradient(90deg, #0094FF 0%, #00C851 100%)'
+                  }
+                }}
+              />
+              <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
+                {Math.round(progress)}% 완료
+              </Typography>
+            </Box>
+          )}
         </Box>
 
         {/* 💡 상세 내용 */}

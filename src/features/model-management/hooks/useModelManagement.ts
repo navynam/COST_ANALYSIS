@@ -1,4 +1,15 @@
 import { useState, useEffect } from 'react';
+import {
+  loadFormulas,
+  saveFormulas,
+  parseVariables,
+  normalizeDepartments,
+  isCoreFormula,
+  generateFormulaId,
+} from '../services/modelService';
+
+// ── 부서 목록 ──
+export const ALL_DEPARTMENTS = ['전체', '원가관리팀', '견적1팀', '견적2팀', '견적3팀', '구매팀', '품질팀'];
 
 export interface Formula {
   id: string;
@@ -7,6 +18,7 @@ export interface Formula {
   expression: string;
   description: string;
   variables: string[];
+  departments?: string[]; // 적용 부서 목록 ('전체' 또는 개별 부서)
 }
 
 export const badgeConfig = {
@@ -15,65 +27,12 @@ export const badgeConfig = {
   rate: { label: '비율', color: '#e65100', bg: '#fff3e0' },
 };
 
-const initialFormulas: Formula[] = [
-  {
-    id: 'f1', name: '생산원가', badge: 'core',
-    expression: '생산원가 = 재료비 + 가공비 + 제경비',
-    description: '제품의 총 생산원가를 산출하는 핵심 수식입니다.',
-    variables: ['재료비', '가공비', '제경비'],
-  },
-  {
-    id: 'f2', name: '재료비 소계', badge: 'sub',
-    expression: '재료비 = Σ(단가 × 수량 × (1 + 로스율))',
-    description: '원자재 및 부자재의 합계를 산출합니다. 로스율을 반영합니다.',
-    variables: ['단가', '수량', '로스율'],
-  },
-  {
-    id: 'f3', name: '가공비 단가', badge: 'sub',
-    expression: '가공비 = (설비감가상각 + 인건비) / 생산수량 × CT',
-    description: '공정별 가공비 단가를 산출합니다. CT는 사이클타임(분)입니다.',
-    variables: ['설비감가상각', '인건비', '생산수량', 'CT'],
-  },
-  {
-    id: 'f4', name: '제경비율', badge: 'rate',
-    expression: '제경비율 = 제경비 / (재료비 + 가공비) × 100',
-    description: '제경비의 비율을 산출합니다. 일반적 범위: 8~15%',
-    variables: ['제경비', '재료비', '가공비'],
-  },
-];
-
-// 🔧 localStorage 키
-const STORAGE_KEY = 'cost-analysis-formulas';
-
-// 📦 localStorage에서 수식 데이터 로드
-const loadFormulas = (): Formula[] => {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      return JSON.parse(saved);
-    }
-  } catch (error) {
-    console.warn('localStorage 로드 실패:', error);
-  }
-  return initialFormulas; // 기본 데이터 반환
-};
-
-// 💾 localStorage에 수식 데이터 저장
-const saveFormulas = (formulas: Formula[]) => {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(formulas));
-    console.log('📦 수식 데이터 저장됨:', formulas.length, '개');
-  } catch (error) {
-    console.warn('localStorage 저장 실패:', error);
-  }
-};
-
 export const useModelManagement = () => {
   const [formulas, setFormulas] = useState<Formula[]>(loadFormulas);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [editTarget, setEditTarget] = useState<Formula | null>(null);
-  const [form, setForm] = useState({ name: '', badge: 'sub' as Formula['badge'], expression: '', description: '', variables: '' });
+  const [form, setForm] = useState({ name: '', badge: 'sub' as Formula['badge'], expression: '', description: '', variables: '', departments: ['전체'] as string[] });
   const [toast, setToast] = useState<{ open: boolean; severity: 'success' | 'error' | 'info'; message: string }>({ open: false, severity: 'info', message: '' });
   const [lastAddedFormulaId, setLastAddedFormulaId] = useState<string>('');
 
@@ -84,7 +43,7 @@ export const useModelManagement = () => {
 
   const openAdd = () => {
     setModalMode('add');
-    setForm({ name: '', badge: 'sub', expression: '', description: '', variables: '' });
+    setForm({ name: '', badge: 'sub', expression: '', description: '', variables: '', departments: ['전체'] });
     setEditTarget(null);
     setModalOpen(true);
   };
@@ -92,26 +51,27 @@ export const useModelManagement = () => {
   const openEdit = (f: Formula) => {
     setModalMode('edit');
     setEditTarget(f);
-    setForm({ name: f.name, badge: f.badge, expression: f.expression, description: f.description, variables: f.variables.join(', ') });
+    setForm({ name: f.name, badge: f.badge, expression: f.expression, description: f.description, variables: f.variables.join(', '), departments: f.departments || ['전체'] });
     setModalOpen(true);
   };
 
   const handleSave = () => {
-    const vars = form.variables.split(',').map(v => v.trim()).filter(Boolean);
+    const vars = parseVariables(form.variables);
+    const depts = normalizeDepartments(form.departments);
     if (modalMode === 'add') {
-      const newId = `f${Date.now()}`;
-      setFormulas(prev => [...prev, { id: newId, name: form.name, badge: form.badge, expression: form.expression, description: form.description, variables: vars }]);
-      setLastAddedFormulaId(newId); // 새로 추가된 수식 ID 저장
+      const newId = generateFormulaId();
+      setFormulas(prev => [...prev, { id: newId, name: form.name, badge: form.badge, expression: form.expression, description: form.description, variables: vars, departments: depts }]);
+      setLastAddedFormulaId(newId);
       setToast({ open: true, severity: 'success', message: '수식이 추가되었습니다.' });
     } else if (editTarget) {
-      setFormulas(prev => prev.map(f => f.id === editTarget.id ? { ...f, name: form.name, badge: form.badge, expression: form.expression, description: form.description, variables: vars } : f));
+      setFormulas(prev => prev.map(f => f.id === editTarget.id ? { ...f, name: form.name, badge: form.badge, expression: form.expression, description: form.description, variables: vars, departments: depts } : f));
       setToast({ open: true, severity: 'success', message: '수식이 수정되었습니다.' });
     }
     setModalOpen(false);
   };
 
   const handleDelete = (f: Formula) => {
-    if (f.badge === 'core') {
+    if (isCoreFormula(f)) {
       setToast({ open: true, severity: 'error', message: '핵심 수식은 삭제할 수 없습니다.' });
       return;
     }
@@ -129,7 +89,7 @@ export const useModelManagement = () => {
   const applyChanges = (formulaId: string, modifiedFields: Partial<Formula>) => {
     // 새 수식 추가 요청인 경우 (id가 'new_'로 시작)
     if (formulaId.startsWith('new_')) {
-      const newId = `f${Date.now()}`;
+      const newId = generateFormulaId();
       const newFormula: Formula = {
         id: newId,
         name: modifiedFields.name || '새 수식',
@@ -137,6 +97,7 @@ export const useModelManagement = () => {
         expression: modifiedFields.expression || '',
         description: modifiedFields.description || '',
         variables: modifiedFields.variables || [],
+        departments: modifiedFields.departments || ['전체'],
       };
       setFormulas(prev => [...prev, newFormula]);
       setLastAddedFormulaId(newId);

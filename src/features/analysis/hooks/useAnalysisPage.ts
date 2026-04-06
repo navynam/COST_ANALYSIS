@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { excelData } from '../data/excelData';
 import type { CostRow } from '../types';
+import {
+  calculateTotalNotesCount,
+  buildCellKey,
+  isOverhead as checkOverhead,
+  hasExcelData as checkHasExcelData,
+  findExcelRowIndex,
+  saveModifiedCells,
+} from '../services/analysisService';
 
 export const useAnalysisPage = () => {
   const navigate = useNavigate();
@@ -14,7 +21,7 @@ export const useAnalysisPage = () => {
 
   const commitEdit = () => {
     if (editCell && editValue.trim() !== '') {
-      const key = `${editCell.groupId}-${editCell.rowIdx}-${editCell.field}`;
+      const key = buildCellKey(editCell.groupId, editCell.rowIdx, editCell.field);
       setModifiedCells(prev => ({ ...prev, [key]: editValue.trim() }));
     }
     setEditCell(null);
@@ -22,10 +29,10 @@ export const useAnalysisPage = () => {
 
   const getModifiedCount = () => Object.keys(modifiedCells).length;
 
-  const handleSaveAllChanges = () => {
+  const handleSaveAllChanges = async () => {
     const count = getModifiedCount();
     if (count === 0) return;
-    // TODO: 실제 API 연동 시 modifiedCells 데이터를 서버에 전송
+    await saveModifiedCells(modifiedCells);
     setModifiedCells({});
     alert(`✅ ${count}개 항목이 저장되었습니다.`);
   };
@@ -44,15 +51,7 @@ export const useAnalysisPage = () => {
   const [totalNotesCount, setTotalNotesCount] = useState(0);
   
   const updateTotalNotesCount = () => {
-    const parsingNotes = JSON.parse(localStorage.getItem('parsing-notes') || '[]');
-    const analysisNotes = JSON.parse(localStorage.getItem('analysis-notes') || '[]');
-    
-    // HEAD_LINING 파일과 관련된 노트만 카운트
-    const headLiningParsingNotes = parsingNotes.filter((note: any) => 
-      note && note.fileName && note.fileName.includes('HEAD_LINING')
-    );
-    
-    setTotalNotesCount(headLiningParsingNotes.length + analysisNotes.length);
+    setTotalNotesCount(calculateTotalNotesCount());
   };
 
   // 컴포넌트 마운트 시 노트 개수 초기화
@@ -88,17 +87,12 @@ export const useAnalysisPage = () => {
     setEditValue(currentValue);
   };
 
-  const isOverhead = (groupId: string) => groupId === 'overhead';
+  const isOverhead = (groupId: string) => checkOverhead(groupId);
 
-  const hasExcelData = (itemName: string) => {
-    const name = itemName.replace(' ⚠️', '');
-    return excelData.some(row => row.cols.some((col: any) => col.text && col.text.includes(name)));
-  };
+  const hasExcelData = (itemName: string) => checkHasExcelData(itemName);
 
   const handleCellClick = (itemName: string) => {
-    const rowIndex = excelData.findIndex(row =>
-      row.cols.some((col: any) => col.text && col.text.includes(itemName.replace(' ⚠️', '')))
-    );
+    const rowIndex = findExcelRowIndex(itemName);
     if (rowIndex !== -1) {
       setHighlightedCell({ row: rowIndex, col: 1 });
       setOriginalViewOpen(true);

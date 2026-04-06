@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   CloudUpload, Description, FactCheck, CompareArrows, Warning, CheckCircle, NotificationsActive,
 } from '@mui/icons-material';
+import { filterHistory, countUnread, markAllAsRead } from '../services/historyService';
 
 export interface HistoryItem {
   id: string;
@@ -49,10 +50,10 @@ export const useHistoryPage = () => {
   const [typeFilter, setTypeFilter] = useState('전체');
   const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
-  const filteredHistory = typeFilter === '전체' ? HISTORY_DATA : HISTORY_DATA.filter(h => h.type === typeFilter);
+  const unreadCount = countUnread(notifications);
+  const filteredHistory = filterHistory(HISTORY_DATA, typeFilter);
 
-  const handleReadAll = () => setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  const handleReadAll = () => setNotifications(prev => markAllAsRead(prev));
 
   return { tab, setTab, typeFilter, setTypeFilter, notifications, unreadCount, filteredHistory, handleReadAll };
 };

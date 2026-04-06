@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { mockProducts, mockQuotations } from '../data/mockData';
+import {
+  filterProducts,
+  getQuotationsForProduct,
+  calculateSelectionStep,
+  toggleQuotationSelection,
+} from '../services/comparisonService';
 
 export const useQuotationComparison = () => {
   const navigate = useNavigate();
@@ -10,18 +15,11 @@ export const useQuotationComparison = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showComparison, setShowComparison] = useState(false); // 수동 비교 제어
 
-  const quotations = selectedProduct ? mockQuotations[selectedProduct] || [] : [];
-  const selectionStep = !selectedProduct ? 0 : !showComparison ? 1 : 2;
+  const quotations = getQuotationsForProduct(selectedProduct);
+  const selectionStep = calculateSelectionStep(selectedProduct, showComparison);
 
   const toggleQuotation = (qId: string) => {
-    setSelectedQuotations(prev => {
-      if (prev.includes(qId)) {
-        return prev.filter(id => id !== qId);
-      } else if (prev.length < 4) {
-        return [...prev, qId];
-      }
-      return prev; // 4개 초과시 추가하지 않음
-    });
+    setSelectedQuotations(prev => toggleQuotationSelection(prev, qId));
   };
 
   const resetSelection = () => {
@@ -34,10 +32,7 @@ export const useQuotationComparison = () => {
     setShowComparison(true);
   };
 
-  const filteredProducts = mockProducts.filter(p => {
-    const q = searchQuery.toLowerCase();
-    return !q || p.id.toLowerCase().includes(q) || p.name.toLowerCase().includes(q);
-  });
+  const filteredProducts = filterProducts(searchQuery);
 
   return {
     navigate,

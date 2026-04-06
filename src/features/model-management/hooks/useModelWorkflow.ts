@@ -4,6 +4,17 @@
  */
 import { useState, useEffect, useCallback } from 'react';
 import { Formula } from './useModelManagement';
+import {
+  loadUser,
+  loadRequests,
+  saveUser,
+  saveRequests,
+  calculateStats,
+  countPendingForFormula,
+  getRequestsForFormula as getRequestsForFormulaFromService,
+  hasPendingByUser as hasPendingByUserFromService,
+  findUserPreset,
+} from '../services/workflowService';
 
 // ── 타입 정의 ──
 export type UserRole = 'admin' | 'user';
@@ -17,7 +28,6 @@ export interface CurrentUser {
 }
 
 export type ChangeRequestStatus = 'pending' | 'approved' | 'rejected';
-export type AppliedScope = 'task' | 'global';
 
 export interface ChangeRequest {
   id: string;
@@ -33,7 +43,7 @@ export interface ChangeRequest {
   createdAt: string;
   reviewedAt?: string;
   reviewerComment?: string;
-  appliedScope?: AppliedScope;
+  approvedDepartments?: string[]; // 승인 시 적용 부서 목록
 }
 
 // ── 데모용 사용자 프리셋 ──
@@ -43,76 +53,6 @@ export const userPresets: CurrentUser[] = [
   { id: 'user2', name: '박검증', role: 'user', department: '견적2팀', taskName: 'DOOR_TRIM 견적검증' },
 ];
 
-// ── 데모용 초기 변경요청 데이터 ──
-const initialRequests: ChangeRequest[] = [
-  {
-    id: 'cr1',
-    formulaId: 'f2',
-    requesterId: 'user1',
-    requesterName: '이분석',
-    department: '견적1팀',
-    taskName: 'HEAD_LINING 원가분석',
-    originalFormula: {
-      id: 'f2', name: '재료비 소계', badge: 'sub',
-      expression: '재료비 = Σ(단가 × 수량 × (1 + 로스율))',
-      description: '원자재 및 부자재의 합계를 산출합니다. 로스율을 반영합니다.',
-      variables: ['단가', '수량', '로스율'],
-    },
-    modifiedFields: {
-      expression: '재료비 = Σ(단가 × 수량 × (1 + 로스율) × 환율보정계수)',
-      description: '원자재 및 부자재의 합계를 산출합니다. 로스율 및 환율 보정을 반영합니다.',
-      variables: ['단가', '수량', '로스율', '환율보정계수'],
-    },
-    status: 'pending',
-    reason: 'HEAD_LINING 수입 원자재에 환율 보정계수 반영이 필요합니다.',
-    createdAt: '2026-04-05T14:30:00',
-  },
-  {
-    id: 'cr2',
-    formulaId: 'f4',
-    requesterId: 'user2',
-    requesterName: '박검증',
-    department: '견적2팀',
-    taskName: 'DOOR_TRIM 견적검증',
-    originalFormula: {
-      id: 'f4', name: '제경비율', badge: 'rate',
-      expression: '제경비율 = 제경비 / (재료비 + 가공비) × 100',
-      description: '제경비의 비율을 산출합니다. 일반적 범위: 8~15%',
-      variables: ['제경비', '재료비', '가공비'],
-    },
-    modifiedFields: {
-      expression: '제경비율 = (제경비 + 물류비) / (재료비 + 가공비) × 100',
-      variables: ['제경비', '물류비', '재료비', '가공비'],
-    },
-    status: 'approved',
-    reason: 'DOOR_TRIM 해외 납품건 물류비를 제경비에 포함해야 합니다.',
-    createdAt: '2026-04-03T09:15:00',
-    reviewedAt: '2026-04-04T11:00:00',
-    reviewerComment: '물류비 포함 타당, 해당 업무에 한해 승인합니다.',
-    appliedScope: 'task',
-  },
-];
-
-// ── localStorage 키 ──
-const STORAGE_KEY_USER = 'cost-analysis-current-user';
-const STORAGE_KEY_REQUESTS = 'cost-analysis-change-requests';
-
-const loadUser = (): CurrentUser => {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY_USER);
-    if (saved) return JSON.parse(saved);
-  } catch { /* ignore */ }
-  return userPresets[0]; // 기본: 관리자
-};
-
-const loadRequests = (): ChangeRequest[] => {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY_REQUESTS);
-    if (saved) return JSON.parse(saved);
-  } catch { /* ignore */ }
-  return initialRequests;
-};
-
 // ── Hook ──
 export const useModelWorkflow = () => {
   const [currentUser, setCurrentUser] = useState<CurrentUser>(loadUser);
@@ -120,16 +60,16 @@ export const useModelWorkflow = () => {
 
   // localStorage 동기화
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
+    saveUser(currentUser);
   }, [currentUser]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY_REQUESTS, JSON.stringify(changeRequests));
+    saveRequests(changeRequests);
   }, [changeRequests]);
 
   // 사용자 전환
   const switchUser = useCallback((userId: string) => {
-    const user = userPresets.find(u => u.id === userId);
+    const user = findUserPreset(userId);
     if (user) setCurrentUser(user);
   }, []);
 
@@ -159,10 +99,10 @@ export const useModelWorkflow = () => {
   }, [currentUser]);
 
   // 승인 (관리자)
-  const approveRequest = useCallback((requestId: string, comment: string, scope: AppliedScope) => {
+  const approveRequest = useCallback((requestId: string, comment: string, departments: string[]) => {
     setChangeRequests(prev => prev.map(r =>
       r.id === requestId
-        ? { ...r, status: 'approved' as const, reviewedAt: new Date().toISOString(), reviewerComment: comment, appliedScope: scope }
+        ? { ...r, status: 'approved' as const, reviewedAt: new Date().toISOString(), reviewerComment: comment, approvedDepartments: departments }
         : r
     ));
   }, []);
@@ -178,17 +118,17 @@ export const useModelWorkflow = () => {
 
   // 특정 수식에 대한 대기 중인 요청 수
   const getPendingCount = useCallback((formulaId: string) => {
-    return changeRequests.filter(r => r.formulaId === formulaId && r.status === 'pending').length;
+    return countPendingForFormula(changeRequests, formulaId);
   }, [changeRequests]);
 
   // 특정 수식에 대한 요청 목록 (팝업용)
   const getRequestsForFormula = useCallback((formulaId: string) => {
-    return changeRequests.filter(r => r.formulaId === formulaId);
+    return getRequestsForFormulaFromService(changeRequests, formulaId);
   }, [changeRequests]);
 
   // 현재 사용자가 해당 수식에 대기 중인 요청이 있는지
   const hasPendingByUser = useCallback((formulaId: string) => {
-    return changeRequests.some(r => r.formulaId === formulaId && r.requesterId === currentUser.id && r.status === 'pending');
+    return hasPendingByUserFromService(changeRequests, formulaId, currentUser.id);
   }, [changeRequests, currentUser.id]);
 
   // 요청 취소 (본인 대기 중 요청만)
@@ -197,12 +137,7 @@ export const useModelWorkflow = () => {
   }, [currentUser.id]);
 
   // 통계
-  const stats = {
-    total: changeRequests.length,
-    pending: changeRequests.filter(r => r.status === 'pending').length,
-    approved: changeRequests.filter(r => r.status === 'approved').length,
-    rejected: changeRequests.filter(r => r.status === 'rejected').length,
-  };
+  const stats = calculateStats(changeRequests);
 
   return {
     currentUser,

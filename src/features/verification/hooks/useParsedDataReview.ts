@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { mockVerificationData } from '../data/mockData';
 import type { VerificationItem } from '../types';
+import { calculateVerificationCounts } from '../services/verificationService';
 
 export const useParsedDataReview = () => {
   const navigate = useNavigate();
@@ -10,9 +10,7 @@ export const useParsedDataReview = () => {
   const [correctedValue, setCorrectedValue] = useState('');
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
 
-  const totalCorrect = mockVerificationData.filter(item => item.status === 'correct').length;
-  const totalWarning = mockVerificationData.filter(item => item.status === 'warning').length;
-  const totalError = mockVerificationData.filter(item => item.status === 'error').length;
+  const { totalCorrect, totalWarning, totalError } = calculateVerificationCounts();
 
   const handleCellHighlight = (cellRef: string) => {
     setHighlightedCell(cellRef);

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { validatePasswordChange } from '../services/settingsService';
 
 export const useSettingsPage = () => {
   const [profile, setProfile] = useState({ name: '관리자', department: '구매본부', phone: '010-1234-5678' });
@@ -10,12 +11,9 @@ export const useSettingsPage = () => {
   const handleSave = () => setSnackbar({ open: true, message: '설정이 저장되었습니다.' });
 
   const handlePasswordChange = () => {
-    if (password.new_ !== password.confirm) {
-      setSnackbar({ open: true, message: '새 비밀번호가 일치하지 않습니다.' });
-      return;
-    }
-    if (password.new_.length < 8) {
-      setSnackbar({ open: true, message: '비밀번호는 8자 이상이어야 합니다.' });
+    const result = validatePasswordChange(password.new_, password.confirm);
+    if (!result.valid) {
+      setSnackbar({ open: true, message: result.errorMessage });
       return;
     }
     setPassword({ current: '', new_: '', confirm: '' });

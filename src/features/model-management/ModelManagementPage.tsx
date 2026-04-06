@@ -6,14 +6,14 @@ import React, { useState, useCallback } from 'react';
 import {
   Box, Typography, Button, Paper, Chip, Dialog, DialogTitle, DialogContent, DialogActions,
   TextField, MenuItem, Snackbar, Alert, Tabs, Tab, Badge, Avatar, Menu,
-  RadioGroup, Radio, FormControlLabel, FormControl, FormLabel, Divider,
+  FormControlLabel, Checkbox, Divider,
 } from '@mui/material';
 import {
   Edit, Delete, Add, AccountTree, Settings, Send, CheckCircle, Cancel,
   Person, AdminPanelSettings, SwapHoriz, Schedule, ExpandMore,
 } from '@mui/icons-material';
-import { useModelManagement, badgeConfig, Formula } from './hooks/useModelManagement';
-import { useModelWorkflow, userPresets, ChangeRequest, AppliedScope } from './hooks/useModelWorkflow';
+import { useModelManagement, badgeConfig, Formula, ALL_DEPARTMENTS } from './hooks/useModelManagement';
+import { useModelWorkflow, userPresets, ChangeRequest } from './hooks/useModelWorkflow';
 import SimpleKnowledgeGraphTab from './components/SimpleKnowledgeGraphTab';
 
 // ── 상태 배지 설정 ──
@@ -52,7 +52,7 @@ const ModelManagementPage: React.FC = () => {
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
   const [reviewTarget, setReviewTarget] = useState<ChangeRequest | null>(null);
   const [reviewComment, setReviewComment] = useState('');
-  const [reviewScope, setReviewScope] = useState<AppliedScope>('task');
+  const [reviewDepts, setReviewDepts] = useState<string[]>(['전체']);
 
   // ── 변경 요청 필터 ──
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
@@ -135,17 +135,18 @@ const ModelManagementPage: React.FC = () => {
   const openReviewDialog = (cr: ChangeRequest) => {
     setReviewTarget(cr);
     setReviewComment('');
-    setReviewScope('task');
+    setReviewDepts(['전체']);
     setReviewDialogOpen(true);
   };
 
   const handleApprove = () => {
     if (!reviewTarget) return;
-    approveRequest(reviewTarget.id, reviewComment, reviewScope);
-    // 승인된 변경사항을 실제 수식에 반영
-    applyChanges(reviewTarget.formulaId, reviewTarget.modifiedFields);
+    approveRequest(reviewTarget.id, reviewComment, reviewDepts);
+    // 승인된 변경사항을 실제 수식에 반영 (부서 정보 포함)
+    applyChanges(reviewTarget.formulaId, { ...reviewTarget.modifiedFields, departments: reviewDepts });
     setReviewDialogOpen(false);
-    setToast({ open: true, severity: 'success', message: '변경 요청이 승인되어 모델에 반영되었습니다.' });
+    const deptLabel = reviewDepts.includes('전체') ? '전체 부서' : reviewDepts.join(', ');
+    setToast({ open: true, severity: 'success', message: `변경 요청이 승인되어 [${deptLabel}]에 반영되었습니다.` });
   };
 
   const handleReject = () => {
@@ -282,9 +283,16 @@ const ModelManagementPage: React.FC = () => {
                     <Typography component="code" sx={{ fontFamily: 'monospace', fontSize: 13, color: '#333', fontWeight: 500 }}>{f.expression}</Typography>
                   </Box>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>{f.description}</Typography>
-                  <Box sx={{ display: 'flex', gap: 0.8, flexWrap: 'wrap', mb: 2 }}>
+                  <Box sx={{ display: 'flex', gap: 0.8, flexWrap: 'wrap', mb: 1 }}>
                     {f.variables.map(v => (
                       <Chip key={v} label={v} size="small" variant="outlined" sx={{ fontSize: 11, height: 24, borderColor: '#ccc', color: '#555' }} />
+                    ))}
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mb: 2, alignItems: 'center' }}>
+                    <Typography sx={{ fontSize: 10, color: '#999', mr: 0.5 }}>적용부서:</Typography>
+                    {(f.departments || ['전체']).map(d => (
+                      <Chip key={d} label={d} size="small"
+                        sx={{ fontSize: 10, height: 20, bgcolor: d === '전체' ? '#e3f2fd' : '#f3e5f5', color: d === '전체' ? '#1565c0' : '#7b1fa2' }} />
                     ))}
                   </Box>
                   <Box sx={{ display: 'flex', gap: 1 }}>
@@ -409,13 +417,14 @@ const ModelManagementPage: React.FC = () => {
                         <strong>요청 사유:</strong> {cr.reason}
                       </Typography>
 
-                      {/* 승인 범위 표시 */}
-                      {cr.status === 'approved' && cr.appliedScope && (
-                        <Chip
-                          label={cr.appliedScope === 'global' ? '전체 업무 적용' : `${cr.taskName} 업무에만 적용`}
-                          size="small"
-                          sx={{ fontSize: 10, height: 20, bgcolor: '#e8f5e9', color: '#2e7d32', mb: 1 }}
-                        />
+                      {/* 승인 부서 표시 */}
+                      {cr.status === 'approved' && cr.approvedDepartments && (
+                        <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mb: 1 }}>
+                          {cr.approvedDepartments.map(d => (
+                            <Chip key={d} label={d} size="small"
+                              sx={{ fontSize: 10, height: 20, bgcolor: d === '전체' ? '#e3f2fd' : '#e8f5e9', color: d === '전체' ? '#1565c0' : '#2e7d32' }} />
+                          ))}
+                        </Box>
                       )}
 
                       {/* 검토 코멘트 */}
@@ -482,6 +491,31 @@ const ModelManagementPage: React.FC = () => {
           <TextField label="수식" fullWidth value={form.expression} placeholder="예: 생산원가 = 재료비 + 가공비 + 제경비" onChange={e => setForm(f => ({ ...f, expression: e.target.value }))} />
           <TextField label="설명" fullWidth multiline rows={2} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
           <TextField label="변수 (쉼표 구분)" fullWidth value={form.variables} placeholder="재료비, 가공비, 제경비" onChange={e => setForm(f => ({ ...f, variables: e.target.value }))} />
+          <Divider />
+          <Typography variant="subtitle2" fontWeight={600} sx={{ mt: 0.5 }}>적용 부서</Typography>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+            {ALL_DEPARTMENTS.map(dept => (
+              <FormControlLabel key={dept} sx={{ mr: 0 }}
+                control={
+                  <Checkbox size="small" checked={form.departments.includes(dept)}
+                    onChange={(e) => {
+                      if (dept === '전체') {
+                        setForm(f => ({ ...f, departments: e.target.checked ? ['전체'] : [] }));
+                      } else {
+                        setForm(f => {
+                          const next = e.target.checked
+                            ? [...f.departments.filter(d => d !== '전체'), dept]
+                            : f.departments.filter(d => d !== dept);
+                          return { ...f, departments: next.length === 0 ? ['전체'] : next };
+                        });
+                      }
+                    }}
+                  />
+                }
+                label={<Typography sx={{ fontSize: 12 }}>{dept}</Typography>}
+              />
+            ))}
+          </Box>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
           <Button onClick={() => setModalOpen(false)}>취소</Button>
@@ -581,18 +615,33 @@ const ModelManagementPage: React.FC = () => {
 
               <Divider />
 
-              {/* 적용 범위 선택 */}
-              <FormControl>
-                <FormLabel sx={{ fontSize: 13, fontWeight: 600 }}>승인 시 적용 범위</FormLabel>
-                <RadioGroup row value={reviewScope} onChange={(e) => setReviewScope(e.target.value as AppliedScope)}>
-                  <FormControlLabel value="task" label={
-                    <Typography sx={{ fontSize: 12 }}>해당 업무에만 적용</Typography>
-                  } control={<Radio size="small" />} />
-                  <FormControlLabel value="global" label={
-                    <Typography sx={{ fontSize: 12 }}>전체 업무에 적용</Typography>
-                  } control={<Radio size="small" />} />
-                </RadioGroup>
-              </FormControl>
+              {/* 적용 부서 선택 */}
+              <Box>
+                <Typography sx={{ fontSize: 13, fontWeight: 600, mb: 1 }}>승인 시 적용 부서</Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {ALL_DEPARTMENTS.map(dept => (
+                    <FormControlLabel key={dept} sx={{ mr: 0 }}
+                      control={
+                        <Checkbox size="small" checked={reviewDepts.includes(dept)}
+                          onChange={(e) => {
+                            if (dept === '전체') {
+                              setReviewDepts(e.target.checked ? ['전체'] : []);
+                            } else {
+                              setReviewDepts(prev => {
+                                const next = e.target.checked
+                                  ? [...prev.filter(d => d !== '전체'), dept]
+                                  : prev.filter(d => d !== dept);
+                                return next.length === 0 ? ['전체'] : next;
+                              });
+                            }
+                          }}
+                        />
+                      }
+                      label={<Typography sx={{ fontSize: 12 }}>{dept}</Typography>}
+                    />
+                  ))}
+                </Box>
+              </Box>
 
               <TextField label="검토 코멘트" fullWidth multiline rows={2} value={reviewComment}
                 onChange={e => setReviewComment(e.target.value)} placeholder="승인/반려 사유를 입력하세요" />
@@ -670,9 +719,13 @@ const ModelManagementPage: React.FC = () => {
                         </Typography>
                       </Box>
                     )}
-                    {cr.status === 'approved' && cr.appliedScope && (
-                      <Chip label={cr.appliedScope === 'global' ? '전체 적용' : '업무별 적용'} size="small"
-                        sx={{ fontSize: 9, height: 18, bgcolor: '#e8f5e9', color: '#2e7d32', mt: 1 }} />
+                    {cr.status === 'approved' && cr.approvedDepartments && (
+                      <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mt: 1 }}>
+                        {cr.approvedDepartments.map(d => (
+                          <Chip key={d} label={d} size="small"
+                            sx={{ fontSize: 9, height: 18, bgcolor: d === '전체' ? '#e3f2fd' : '#e8f5e9', color: d === '전체' ? '#1565c0' : '#2e7d32' }} />
+                        ))}
+                      </Box>
                     )}
                     {/* 본인 대기 중 요청 취소 */}
                     {cr.requesterId === currentUser.id && cr.status === 'pending' && (
