@@ -55,7 +55,6 @@ import {
   Schedule,
   Error,
   Analytics,
-  NoteAdd as NoteAddIcon,
   Send as SendIcon,
   AutoAwesome as AIIcon,
   Close as CloseIcon,
@@ -64,14 +63,17 @@ import {
   HourglassEmpty,
   PendingActions,
   TaskAlt,
+  ViewModule,
+  ViewList,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
 import { C } from '../../shared/constants/colors';
-import FileUploadArea from './components/FileUploadArea';
 import FileDetailDrawer from './components/FileDetailDrawer';
+import FileTable from './components/FileTable';
 import SearchFilterDialog from './components/SearchFilterDialog';
 import { useParsingPage } from './hooks/useParsingPage';
+import type { SortField } from './types';
 import cardStyles from './ParsingCardPage.module.css';
 
 // 📋 파일 카드 컴포넌트
@@ -734,6 +736,17 @@ const ParsingCardPage: React.FC = () => {
     handleFiles,
   } = useParsingPage();
 
+  // 뷰 모드 (카드 / 리스트)
+  const [viewMode, setViewMode] = useState<'card' | 'list'>('card');
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [sortField, setSortField] = useState<SortField | null>('uploadDate');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+    else { setSortField(field); setSortDirection('asc'); }
+  };
+
   // 📝 노트 관련 상태
   const [noteDialogOpen, setNoteDialogOpen] = useState(false);
   const [currentFileId, setCurrentFileId] = useState<string | null>(null);
@@ -894,7 +907,8 @@ ${currentFile?.status === 'extracting' ? `
           </Button>
 
           <TextField
-            fullWidth size="small"
+            size="small"
+            sx={{ flex: 1, minWidth: 100 }}
             placeholder="파일명 검색"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
@@ -922,6 +936,34 @@ ${currentFile?.status === 'extracting' ? `
           >
             <FilterList sx={{ fontSize: 16, mr: 0.5 }} />필터
           </Button>
+
+          {/* 뷰 전환 토글 */}
+          <Box sx={{ display: 'flex', borderRadius: '10px', border: '1px solid #e5e8eb', overflow: 'hidden', ml: 0.5 }}>
+            <IconButton
+              size="small"
+              onClick={() => setViewMode('card')}
+              sx={{
+                borderRadius: 0, px: 1.2,
+                bgcolor: viewMode === 'card' ? '#0064ff' : 'white',
+                color: viewMode === 'card' ? 'white' : '#8b95a1',
+                '&:hover': { bgcolor: viewMode === 'card' ? '#0056d3' : '#f5f5f5' },
+              }}
+            >
+              <ViewModule sx={{ fontSize: 18 }} />
+            </IconButton>
+            <IconButton
+              size="small"
+              onClick={() => setViewMode('list')}
+              sx={{
+                borderRadius: 0, px: 1.2,
+                bgcolor: viewMode === 'list' ? '#0064ff' : 'white',
+                color: viewMode === 'list' ? 'white' : '#8b95a1',
+                '&:hover': { bgcolor: viewMode === 'list' ? '#0056d3' : '#f5f5f5' },
+              }}
+            >
+              <ViewList sx={{ fontSize: 18 }} />
+            </IconButton>
+          </Box>
         </Box>
 
         {/* 업로드 큐 (파일 선택 시 표시) */}
@@ -977,7 +1019,7 @@ ${currentFile?.status === 'extracting' ? `
       </Box>
 
       {/* 📁 파일 그리드 (스크롤 영역) */}
-      <Box className={cardStyles.fileGrid} sx={{ px: 3, pt: 1, pb: 3 }}>
+      <Box className={cardStyles.fileGrid} sx={{ px: viewMode === 'card' ? 3 : 0, pt: 1, pb: 3 }}>
         {filteredAndSorted.length === 0 ? (
           <Box className={cardStyles.emptyState} sx={{ py: 12 }}>
             <Typography sx={{ fontSize: 64, mb: 3 }}>📄</Typography>
@@ -999,7 +1041,7 @@ ${currentFile?.status === 'extracting' ? `
               Excel 파일을 드래그하거나 업로드 버튼을 눌러주세요
             </Typography>
           </Box>
-        ) : (
+        ) : viewMode === 'card' ? (
           <Grid container spacing={3}>
             {filteredAndSorted.map(file => (
               <Grid item xs={12} sm={6} lg={4} key={file.id}>
@@ -1009,7 +1051,6 @@ ${currentFile?.status === 'extracting' ? `
                   onAnalysis={() => navigate('/analysis')}
                   onDetail={() => setDrawerFile(file)}
                   onRetry={() => {
-                    // 재시도 로직
                     console.log('Retrying file:', file.name);
                   }}
                   onClick={() => setDrawerFile(file)}
@@ -1019,6 +1060,22 @@ ${currentFile?.status === 'extracting' ? `
               </Grid>
             ))}
           </Grid>
+        ) : (
+          <FileTable
+            files={filteredAndSorted}
+            selectedIds={selectedIds}
+            sortField={sortField}
+            sortDirection={sortDirection}
+            onToggleSelect={id => setSelectedIds(prev => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next; })}
+            onToggleAll={() => { if (selectedIds.size === filteredAndSorted.length) setSelectedIds(new Set()); else setSelectedIds(new Set(filteredAndSorted.map(f => f.id))); }}
+            onSort={handleSort}
+            onRowClick={f => setDrawerFile(f)}
+            onVerify={(fileId, fileName) => navigate(`/verification?fileId=${fileId}&fileName=${encodeURIComponent(fileName)}`)}
+            onAnalysis={() => navigate('/analysis')}
+            onFailedDetail={f => setDrawerFile(f)}
+            onNoteClick={handleNoteClick}
+            getNoteCount={getNoteCount}
+          />
         )}
       </Box>
 

@@ -34,15 +34,16 @@ const FileTable: React.FC<FileTableProps> = ({
   onToggleSelect, onToggleAll, onSort, onRowClick, onVerify, onAnalysis, onFailedDetail,
   onNoteClick, getNoteCount,
 }) => {
-  const columns: { key: SortField; label: string; width?: number }[] = [
-    { key: 'name', label: '문서명', width: 200 },
-    { key: 'status', label: '상태', width: 130 },
-    { key: 'progress', label: '진행률', width: 100 },
-    { key: 'parsedItems', label: '파싱항목', width: 80 },
-    { key: 'anomalies', label: '이상치', width: 80 },
-    { key: 'uploader', label: '등록자', width: 80 },
-    { key: 'department', label: '등록부서', width: 100 },
-    { key: 'uploadDate', label: '업로드일', width: 100 },
+  const columns: { key: string; sortKey?: SortField; label: string; width?: number }[] = [
+    { key: 'name', sortKey: 'name', label: '문서명', width: 200 },
+    { key: 'status', sortKey: 'status', label: '상태', width: 130 },
+    { key: 'progress', sortKey: 'progress', label: '진행률', width: 100 },
+    { key: 'parsedItems', sortKey: 'parsedItems', label: '파싱항목', width: 80 },
+    { key: 'reliability', label: '신뢰도', width: 80 },
+    { key: 'anomalies', sortKey: 'anomalies', label: '이상치', width: 80 },
+    { key: 'uploader', sortKey: 'uploader', label: '등록자', width: 80 },
+    { key: 'department', sortKey: 'department', label: '등록부서', width: 100 },
+    { key: 'uploadDate', sortKey: 'uploadDate', label: '업로드일', width: 100 },
   ];
 
   return (
@@ -55,10 +56,10 @@ const FileTable: React.FC<FileTableProps> = ({
                 <Checkbox size="small" checked={selectedIds.size === files.length && files.length > 0} onChange={onToggleAll} />
               </TableCell>
               {columns.map(col => (
-                <TableCell key={col.key} sx={{ ...thSx, width: col.width, cursor: 'pointer' }} onClick={() => onSort(col.key)}>
+                <TableCell key={col.key} sx={{ ...thSx, width: col.width, cursor: col.sortKey ? 'pointer' : 'default' }} onClick={() => col.sortKey && onSort(col.sortKey)}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                     {col.label}
-                    <SortIcon field={col.key} active={sortField} direction={sortDirection} />
+                    {col.sortKey && <SortIcon field={col.sortKey} active={sortField} direction={sortDirection} />}
                   </Box>
                 </TableCell>
               ))}
@@ -89,6 +90,11 @@ const FileTable: React.FC<FileTableProps> = ({
                   </TableCell>
                   <TableCell sx={{ fontSize: 13, color: f.parsedItems != null ? C.dark : C.gray }}>
                     {f.parsedItems != null ? `${f.parsedItems}건` : '—'}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: 13, color: f.parsedItems != null ? '#00c896' : C.gray, fontWeight: 600 }}>
+                    {f.parsedItems != null && f.anomalies != null
+                      ? `${Math.round(((f.parsedItems - f.anomalies) / f.parsedItems) * 100)}%`
+                      : '—'}
                   </TableCell>
                   <TableCell sx={{ fontSize: 13, fontWeight: f.anomalies ? 600 : 400, color: f.anomalies ? C.red : C.gray }}>
                     {f.anomalies != null ? `${f.anomalies}건` : '—'}

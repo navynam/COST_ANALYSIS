@@ -12,8 +12,7 @@ import { useSidebar } from './hooks/useSidebar';
 const dashboardItem = { label: '대시보드', icon: <Dashboard />, path: '/dashboard' };
 
 const mainFlowItems = [
-  { label: '견적서 분석', icon: <Description />, path: '/parsing' },
-  { label: '견적서 분석(Card)', icon: <ViewModule />, path: '/parsing_card' },
+  { label: '견적서 분석', icon: <Description />, path: '/parsing_card' },
   { label: '견적서 비교', icon: <CompareArrows />, path: '/comparison' },
   { label: '인사이트 스튜디오', icon: <AutoGraph />, path: '/insight' },
 ];
