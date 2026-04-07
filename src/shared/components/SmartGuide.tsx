@@ -83,42 +83,6 @@ const SmartGuide: React.FC<SmartGuideProps> = ({
 
     switch (path) {
       case '/parsing':
-        return {
-          title: '📋 견적서 파싱 단계',
-          subtitle: 'Excel 파일을 업로드하여 자동 분석을 시작하세요',
-          steps: [
-            {
-              id: 'upload',
-              title: 'Excel 파일 업로드',
-              description: '.xlsx 파일을 드래그하거나 클릭하여 업로드',
-              completed: false,
-              current: true,
-              tip: '💡 여러 파일을 한 번에 업로드할 수 있어요!'
-            },
-            {
-              id: 'parse',
-              title: '자동 분석 실행',
-              description: 'AI가 견적서 구조를 자동으로 분석',
-              completed: false
-            },
-            {
-              id: 'review',
-              title: '결과 확인',
-              description: '파싱 결과를 검토하고 다음 단계로 진행',
-              completed: false
-            }
-          ],
-          tips: [
-            '🎯 Excel 파일의 헤더 행이 명확할수록 분석 정확도가 높아집니다',
-            '🔍 파싱 후 "원본보기"로 결과를 확인해보세요',
-            '⚡ 대용량 파일도 빠르게 처리됩니다'
-          ],
-          nextAction: {
-            label: '검증 단계로 →',
-            path: '/verification'
-          }
-        };
-
       case '/parsing_card':
         return {
           title: '견적서 분석',
@@ -277,6 +241,47 @@ const SmartGuide: React.FC<SmartGuideProps> = ({
           ]
         };
 
+      case '/models':
+        return {
+          title: '원가 모델관리',
+          subtitle: '원가 구조 수식을 관리하고, 부서별 변경 요청을 통해 모델을 운영합니다',
+          steps: [
+            {
+              id: 'formulas',
+              title: '① 수식 관리',
+              description: '생산원가, 재료비, 가공비, 제경비율 등 핵심 수식을 확인하고 관리합니다',
+              completed: false,
+              current: true,
+              tip: '💡 관리자는 직접 편집, 일반 사용자는 수정 요청을 통해 변경할 수 있습니다'
+            },
+            {
+              id: 'departments',
+              title: '② 부서별 적용',
+              description: '수식마다 적용 부서를 지정하여 부서별로 다른 모델을 운영할 수 있습니다',
+              completed: false,
+              tip: '💡 "전체" 또는 개별 부서(견적1팀, 견적2팀 등)를 체크박스로 선택합니다'
+            },
+            {
+              id: 'change-request',
+              title: '③ 변경 요청',
+              description: '일반 사용자가 수식 수정을 요청하면 관리자가 검토 후 승인/반려합니다',
+              completed: false,
+              tip: '💡 승인 시 적용 부서를 선택하여 특정 부서에만 반영할 수 있습니다'
+            },
+            {
+              id: 'knowledge-graph',
+              title: '④ 지식그래프',
+              description: '수식 간 관계를 시각적으로 확인하고 SVG로 내보낼 수 있습니다',
+              completed: false
+            }
+          ],
+          tips: [
+            '🔧 관리자: 수식 직접 편집/삭제 + 변경요청 승인/반려',
+            '📝 일반 사용자: 수정 요청 제출 → 관리자 승인 후 반영',
+            '📊 변경 요청 탭에서 대기/승인/반려 상태를 필터링할 수 있습니다'
+          ]
+        };
+
       default:
         return null;
     }
@@ -331,7 +336,7 @@ const SmartGuide: React.FC<SmartGuideProps> = ({
               <Typography variant="h6" fontWeight={600}>
                 {pageGuide.title}
               </Typography>
-              {location.pathname !== '/parsing_card' && (
+              {!['/parsing_card', '/parsing', '/comparison', '/models'].includes(location.pathname) && (
                 <Chip
                   label={`${completedSteps}/${totalSteps}`}
                   size="small"
@@ -358,12 +363,12 @@ const SmartGuide: React.FC<SmartGuideProps> = ({
             </Box>
           </Box>
 
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: location.pathname === '/parsing_card' ? 2 : 0 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: ['/parsing_card', '/parsing', '/comparison', '/models'].includes(location.pathname) ? 2 : 0 }}>
             {pageGuide.subtitle}
           </Typography>
 
           {/* 💡 진행률 */}
-          {location.pathname !== '/parsing_card' && (
+          {!['/parsing_card', '/parsing', '/comparison', '/models'].includes(location.pathname) && (
             <Box sx={{ mt: 2 }}>
               <LinearProgress
                 variant="determinate"
