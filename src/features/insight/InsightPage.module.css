@@ -1,12 +1,10 @@
-/* InsightPage CSS Module */
+/* InsightPage CSS Module — layout only */
 
-/* ── Layout ── */
 .root {
   display: flex;
   height: calc(100vh - 120px);
 }
 
-/* ── Sidebar ── */
 .sidebar {
   width: 250px;
   flex-shrink: 0;
@@ -15,25 +13,11 @@
   overflow: hidden;
 }
 
-.newChatBtn {
-  background-color: #003875;
-}
-
-.newChatBtn:hover {
-  background-color: #002a5c;
-}
-
 .sessionList {
   flex: 1;
   overflow: auto;
 }
 
-.chatIcon {
-  font-size: 18px;
-  color: #666;
-}
-
-/* ── Main Chat ── */
 .chatMain {
   flex: 1;
   display: flex;
@@ -47,18 +31,8 @@
   align-items: center;
 }
 
-.chatHeaderIcon {
-  color: #003875;
-}
-
-/* ── Empty State ── */
 .emptyState {
   text-align: center;
-}
-
-.emptyIcon {
-  font-size: 48px;
-  color: #ccc;
 }
 
 .exampleChips {
@@ -67,26 +41,16 @@
   flex-wrap: wrap;
 }
 
-.exampleChip {
-  border-color: #003875;
-  color: #003875;
-}
-
-/* ── Messages ── */
 .messageRow {
   display: flex;
 }
 
 .userBubble {
-  background-color: #003875;
-  color: #fff;
   border-radius: 16px;
   max-width: 70%;
 }
 
 .assistantBubble {
-  background-color: #f5f5f5;
-  color: #333;
   border-radius: 16px;
   max-width: 70%;
 }
@@ -99,36 +63,19 @@
 .timestampUser {
   display: block;
   text-align: right;
-  color: rgba(255, 255, 255, 0.6);
 }
 
 .timestampAssistant {
   display: block;
   text-align: right;
-  color: #999;
 }
 
-/* ── Loading ── */
 .loadingRow {
   display: flex;
   align-items: center;
 }
 
-/* ── Input Area ── */
 .inputArea {
   border-top: 1px solid #e0e0e0;
   display: flex;
-}
-
-.sendBtn {
-  background-color: #003875;
-  color: #fff;
-}
-
-.sendBtn:hover {
-  background-color: #002a5c;
-}
-
-.sendBtnDisabled {
-  background-color: #ccc;
 }

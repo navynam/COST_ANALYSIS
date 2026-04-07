@@ -1,4 +1,4 @@
-/* SettingsPage.module.css */
+/* SettingsPage CSS Module — layout only */
 
 .container {
   max-width: 700px;
@@ -8,10 +8,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.settingsIcon {
-  color: #e60012;
 }
 
 .formColumn {

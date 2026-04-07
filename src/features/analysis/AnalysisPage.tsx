@@ -120,23 +120,32 @@ const AnalysisPage: React.FC = () => {
   };
 
   return (
-    <Box className={styles.pageRoot} sx={{ bgcolor: C.bg }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: C.bg }}>
       {/* Header */}
       <Box className={styles.headerBar} sx={{ borderBottom: `1px solid ${C.border}`, px: 3, py: 2 }}>
-        <Box className={styles.headerLeft}>
-          <Typography className={styles.breadcrumb} sx={{ color: C.gray }}>분석 &gt;</Typography>
-          <Typography className={styles.pageTitle}>HEAD_LINING_원가계산서</Typography>
+        <Box className={styles.headerLeft} sx={{ gap: 1 }}>
+          <Typography sx={{ fontSize: 13, color: C.gray }}>분석 &gt;</Typography>
+          <Typography sx={{ fontSize: 16, fontWeight: 700 }}>HEAD_LINING_원가계산서</Typography>
         </Box>
-        <Box className={styles.headerRight} sx={{ gap: 1.5 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
 
           {/* ── 현재 페이지 기능 버튼 ── */}
-          <Box className={styles.featureButtons} sx={{ gap: 1, pr: 1.5, borderRight: '1px solid #e5e5e7' }}>
+          <Box sx={{ display: 'flex', gap: 1, pr: 1.5, borderRight: '1px solid #e5e5e7' }}>
             <Button
               variant="outlined"
               size="small"
               onClick={() => setOriginalViewOpen(true)}
-              className={styles.outlinedBtn}
-              sx={{ px: 1.5, '&:hover': { borderColor: '#d1d5db', bgcolor: '#f3f4f6', color: '#374151' } }}
+              sx={{
+                textTransform: 'none',
+                fontSize: 12,
+                fontWeight: 600,
+                borderRadius: '8px',
+                borderColor: '#e5e5e7',
+                color: '#6b7280',
+                bgcolor: '#fafafa',
+                px: 1.5,
+                '&:hover': { borderColor: '#d1d5db', bgcolor: '#f3f4f6', color: '#374151' }
+              }}
             >
               📄 원본보기
             </Button>
@@ -145,11 +154,24 @@ const AnalysisPage: React.FC = () => {
               size="small"
               startIcon={<NoteAddIcon sx={{ fontSize: 14 }} />}
               onClick={() => setNoteDialogOpen(true)}
-              className={styles.outlinedBtn}
-              sx={{ px: 1.5, '&:hover': { borderColor: '#d1d5db', bgcolor: '#f3f4f6', color: '#374151' } }}
+              sx={{
+                textTransform: 'none',
+                fontSize: 12,
+                fontWeight: 600,
+                borderRadius: '8px',
+                borderColor: '#e5e5e7',
+                color: '#6b7280',
+                bgcolor: '#fafafa',
+                px: 1.5,
+                '&:hover': { borderColor: '#d1d5db', bgcolor: '#f3f4f6', color: '#374151' }
+              }}
             >
               노트작성 {totalNotesCount > 0 && (
-                <Box component="span" className={styles.badgeBlue} sx={{ ml: 0.5, px: 0.75, py: 0.1 }}>
+                <Box component="span" sx={{
+                  ml: 0.5, px: 0.75, py: 0.1,
+                  bgcolor: '#0064ff', color: '#fff',
+                  borderRadius: '10px', fontSize: 10, fontWeight: 700, lineHeight: 1.6,
+                }}>
                   {totalNotesCount}
                 </Box>
               )}
@@ -160,15 +182,25 @@ const AnalysisPage: React.FC = () => {
               startIcon={<SaveIcon sx={{ fontSize: 14 }} />}
               onClick={handleSaveAllChanges}
               disabled={getModifiedCount() === 0}
-              className={styles.outlinedBtn}
               sx={{
+                textTransform: 'none',
+                fontSize: 12,
+                fontWeight: 600,
+                borderRadius: '8px',
+                borderColor: '#e5e5e7',
+                color: '#6b7280',
+                bgcolor: '#fafafa',
                 px: 1.5,
                 '&:hover': { borderColor: '#d1d5db', bgcolor: '#f3f4f6', color: '#374151' },
                 '&.Mui-disabled': { borderColor: '#e5e5e7', color: '#c0c4cc', bgcolor: '#fafafa' }
               }}
             >
               저장{getModifiedCount() > 0 && (
-                <Box component="span" className={styles.badgeOrange} sx={{ ml: 0.5, px: 0.75, py: 0.1 }}>
+                <Box component="span" sx={{
+                  ml: 0.5, px: 0.75, py: 0.1,
+                  bgcolor: '#ff9500', color: '#fff',
+                  borderRadius: '10px', fontSize: 10, fontWeight: 700, lineHeight: 1.6,
+                }}>
                   {getModifiedCount()}
                 </Box>
               )}
@@ -176,15 +208,23 @@ const AnalysisPage: React.FC = () => {
           </Box>
 
           {/* ── 단계 이동 버튼 ── */}
-          <Box className={styles.stepNavigation} sx={{ gap: 0.75 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
             {/* 이전 단계로 */}
             <Button
               variant="text"
               size="small"
               startIcon={<NavigateBefore sx={{ fontSize: 16 }} />}
               onClick={() => navigate('/parsing_card')}
-              className={styles.navBtn}
-              sx={{ px: 1.2, '&:hover': { bgcolor: '#f3f4f6', color: '#374151' } }}
+              sx={{
+                textTransform: 'none',
+                fontSize: 12,
+                fontWeight: 600,
+                borderRadius: '8px',
+                color: '#8b95a1',
+                px: 1.2,
+                minWidth: 0,
+                '&:hover': { bgcolor: '#f3f4f6', color: '#374151' }
+              }}
             >
               목록
             </Button>
@@ -193,8 +233,16 @@ const AnalysisPage: React.FC = () => {
               size="small"
               startIcon={<NavigateBefore sx={{ fontSize: 16 }} />}
               onClick={() => navigate('/verification')}
-              className={styles.navBtn}
-              sx={{ px: 1.2, '&:hover': { bgcolor: '#f3f4f6', color: '#374151' } }}
+              sx={{
+                textTransform: 'none',
+                fontSize: 12,
+                fontWeight: 600,
+                borderRadius: '8px',
+                color: '#8b95a1',
+                px: 1.2,
+                minWidth: 0,
+                '&:hover': { bgcolor: '#f3f4f6', color: '#374151' }
+              }}
             >
               검증
             </Button>
@@ -207,8 +255,16 @@ const AnalysisPage: React.FC = () => {
                 console.log('✅ 분석완료: 파일 상태 → analyzed');
                 alert('✅ 분석이 완료되었습니다. 상태가 "분석완료"로 변경되었습니다.');
               }}
-              className={styles.completeBtn}
-              sx={{ px: 2, '&:hover': { bgcolor: '#0056d3', boxShadow: 'none' } }}
+              sx={{
+                textTransform: 'none',
+                fontSize: 12,
+                fontWeight: 700,
+                borderRadius: '8px',
+                bgcolor: '#0064ff',
+                boxShadow: 'none',
+                px: 2,
+                '&:hover': { bgcolor: '#0056d3', boxShadow: 'none' }
+              }}
             >
               분석 완료
             </Button>
@@ -219,8 +275,16 @@ const AnalysisPage: React.FC = () => {
               size="small"
               endIcon={<NavigateNext sx={{ fontSize: 16 }} />}
               onClick={() => navigate('/comparison')}
-              className={styles.nextBtn}
-              sx={{ px: 2, '&:hover': { bgcolor: '#28a745', boxShadow: 'none' } }}
+              sx={{
+                textTransform: 'none',
+                fontSize: 12,
+                fontWeight: 700,
+                borderRadius: '8px',
+                bgcolor: '#34c759',
+                boxShadow: 'none',
+                px: 2,
+                '&:hover': { bgcolor: '#28a745', boxShadow: 'none' }
+              }}
             >
               비교
             </Button>
@@ -230,32 +294,32 @@ const AnalysisPage: React.FC = () => {
       </Box>
 
       {/* Info Cards - Verification 스타일 */}
-      <Box className={styles.infoCards} sx={{ gap: 2, px: 3, py: 2, bgcolor: '#f5f5f7' }}>
+      <Box sx={{ display: 'flex', gap: 2, px: 3, py: 2, bgcolor: '#f5f5f7' }}>
         {[
           { label: 'E.O. NO.', value: 'EO-2024-1201' },
           { label: '품번 / 품명', value: 'HL-2024-001 · HEAD LINING' },
           { label: '협력사 / 담당자', value: '대한(주) · 김철수' },
         ].map(c => (
-          <Paper key={c.label} className={styles.infoCard} sx={{ flex: 1, p: 1.5 }}>
-            <Typography className={styles.infoCardLabel} sx={{ mb: 0.25 }}>{c.label}</Typography>
-            <Typography className={styles.infoCardValue}>{c.value}</Typography>
+          <Paper key={c.label} sx={{ flex: 1, p: 1.5, borderRadius: '8px', border: '1px solid #e5e5e7', boxShadow: 'none' }}>
+            <Typography sx={{ fontSize: 10, color: '#86868b', mb: 0.25 }}>{c.label}</Typography>
+            <Typography sx={{ fontSize: 13, fontWeight: 600 }}>{c.value}</Typography>
           </Paper>
         ))}
-        <Paper className={styles.costCard} sx={{ p: 1.5 }}>
-          <Typography className={styles.infoCardLabel} sx={{ mb: 0.25 }}>생산원가</Typography>
-          <Typography className={styles.costValue}>₩76,800</Typography>
+        <Paper sx={{ flex: '0 0 140px', p: 1.5, borderRadius: '8px', border: '1px solid #e5e5e7', boxShadow: 'none' }}>
+          <Typography sx={{ fontSize: 10, color: '#86868b', mb: 0.25 }}>생산원가</Typography>
+          <Typography sx={{ fontSize: 16, fontWeight: 700, color: '#0071e3' }}>₩76,800</Typography>
         </Paper>
       </Box>
 
       {/* Tab Bar with Status - 통합 */}
-      <Box className={styles.tabBar} sx={{ borderBottom: `1px solid ${C.border}`, px: 3 }}>
+      <Box sx={{ borderBottom: `1px solid ${C.border}`, px: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Tabs value={activeTab} onChange={(_, v) => setActiveTab(v)}
           sx={{ minHeight: 40, '& .MuiTab-root': { minHeight: 40, fontSize: 13, fontWeight: 600, textTransform: 'none', px: 2.5 }, '& .Mui-selected': { color: C.blue }, '& .MuiTabs-indicator': { bgcolor: C.blue, height: 2.5 } }}>
           {['표준', '리스트', '관계도', '골든셋'].map(label => <Tab key={label} label={label} />)}
         </Tabs>
-
+        
         {/* Status 정보들 오른쪽 정렬 */}
-        <Box className={styles.statusRow} sx={{ gap: 3 }}>
+        <Box sx={{ display: 'flex', gap: 3 }}>
           {[
             { label: '수정된 항목', value: '1개', color: C.dark },
             { label: '신뢰도', value: '92%', color: C.green },
@@ -263,9 +327,9 @@ const AnalysisPage: React.FC = () => {
             { label: '이상치', value: '2건', color: C.red },
             { label: '하위 견적서', value: '3개', color: C.dark },
           ].map(s => (
-            <Box key={s.label} className={styles.statusItem} sx={{ gap: 0.75 }}>
-              <Typography className={styles.statusLabel} sx={{ color: C.gray }}>{s.label}</Typography>
-              <Typography className={styles.statusValue} sx={{ color: s.color }}>{s.value}</Typography>
+            <Box key={s.label} sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+              <Typography sx={{ fontSize: 12, color: C.gray }}>{s.label}</Typography>
+              <Typography sx={{ fontSize: 13, fontWeight: 600, color: s.color }}>{s.value}</Typography>
             </Box>
           ))}
         </Box>
@@ -283,15 +347,15 @@ const AnalysisPage: React.FC = () => {
             {costGroups.map(group => (
               <Paper key={group.id} sx={{ mb: 2, borderRadius: '10px', border: `1px solid ${C.border}`, boxShadow: 'none', overflow: 'hidden' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 2.5, py: 1.75, bgcolor: '#f9f9fb', borderBottom: `1px solid ${C.border}` }}>
-                  <Box className={styles.groupHeaderLeft} sx={{ gap: 1.25 }}>
-                    <Box className={styles.groupIcon} sx={{ bgcolor: group.iconBg, color: group.iconColor }}>{group.icon}</Box>
-                    <Typography className={styles.groupTitle}>{group.title}</Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+                    <Box sx={{ width: 26, height: 26, borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, bgcolor: group.iconBg, color: group.iconColor }}>{group.icon}</Box>
+                    <Typography sx={{ fontSize: 14, fontWeight: 600 }}>{group.title}</Typography>
                   </Box>
-                  <Box className={styles.groupHeaderRight} sx={{ gap: 1.25 }}>
-                    <Typography className={styles.groupTotalAmount}>{group.totalAmount}</Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+                    <Typography sx={{ fontSize: 16, fontWeight: 700 }}>{group.totalAmount}</Typography>
                     <Typography sx={{ fontSize: 13, color: C.gray }}>{group.totalPct}</Typography>
                     {group.anomalyCount > 0 && (
-                      <Box className={styles.anomalyBadge} sx={{ px: 0.75, py: 0.25, color: C.red }}>이상치 {group.anomalyCount}</Box>
+                      <Box sx={{ fontSize: 10, fontWeight: 600, px: 0.75, py: 0.25, borderRadius: '4px', bgcolor: '#f8d7da', color: C.red }}>이상치 {group.anomalyCount}</Box>
                     )}
                   </Box>
                 </Box>
@@ -340,7 +404,7 @@ const AnalysisPage: React.FC = () => {
                                 <ClickAwayListener onClickAway={commitEdit}>
                                   <TextField size="small" value={editValue} onChange={e => setEditValue(e.target.value)} autoFocus
                                     onKeyDown={e => { if (e.key === 'Enter') commitEdit(); if (e.key === 'Escape') setEditCell(null); }}
-                                    className={styles.editInput} />
+                                    sx={{ '& input': { fontSize: 12, p: '4px 8px' } }} />
                                 </ClickAwayListener>
                               ) : row.unitPrice}
                             </TableCell>
@@ -354,15 +418,14 @@ const AnalysisPage: React.FC = () => {
                               <ClickAwayListener onClickAway={commitEdit}>
                                 <TextField size="small" value={editValue} onChange={e => setEditValue(e.target.value)} autoFocus
                                   onKeyDown={e => { if (e.key === 'Enter') commitEdit(); if (e.key === 'Escape') setEditCell(null); }}
-                                  className={styles.editInput} />
+                                  sx={{ '& input': { fontSize: 12, p: '4px 8px' } }} />
                               </ClickAwayListener>
                             ) : (
-                              <Box className={styles.amountBox} sx={{ gap: 0.5 }}>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                                 {row.amount}
                                 <Typography
                                   component="span"
-                                  className={styles.calculationHint}
-                                  sx={{ color: C.gray, ml: 0.5, '&:hover': { color: C.blue } }}
+                                  sx={{ fontSize: 10, color: C.gray, ml: 0.5, cursor: 'pointer', '&:hover': { color: C.blue } }}
                                   onClick={(e) => { e.stopPropagation(); handleAmountClick(e, row, group.title); }}
                                 >
                                   💡
@@ -391,13 +454,13 @@ const AnalysisPage: React.FC = () => {
 
             {/* Summary */}
             <Paper sx={{ mb: 3, borderRadius: '10px', border: `1px solid ${C.border}`, boxShadow: 'none', overflow: 'hidden' }}>
-              <Box className={styles.groupHeader} sx={{ px: 2.5, py: 1.75, bgcolor: '#f9f9fb', borderBottom: `1px solid ${C.border}` }}>
-                <Box className={styles.groupHeaderLeft} sx={{ gap: 1.25 }}>
-                  <Box className={styles.summaryIcon} sx={{ bgcolor: C.dark }}>Σ</Box>
-                  <Typography className={styles.summaryTitle}>소계 (생산원가)</Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 2.5, py: 1.75, bgcolor: '#f9f9fb', borderBottom: `1px solid ${C.border}` }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+                  <Box sx={{ width: 26, height: 26, borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, bgcolor: C.dark, color: '#fff' }}>Σ</Box>
+                  <Typography sx={{ fontSize: 14, fontWeight: 600 }}>소계 (생산원가)</Typography>
                 </Box>
-                <Box className={styles.groupHeaderRight} sx={{ gap: 1.25 }}>
-                  <Typography className={styles.summaryTotal} sx={{ color: C.blue }}>₩76,800</Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+                  <Typography sx={{ fontSize: 18, fontWeight: 700, color: C.blue }}>₩76,800</Typography>
                   <Typography sx={{ fontSize: 13, color: C.gray }}>100%</Typography>
                 </Box>
               </Box>
@@ -418,7 +481,7 @@ const AnalysisPage: React.FC = () => {
                       <TableCell sx={{ ...tdNumSx, fontWeight: 600 }}>{sr.amount}</TableCell>
                       <TableCell sx={tdNumSx}>{sr.pct}</TableCell>
                       <TableCell sx={tdSx}>
-                        <Box className={styles.barContainer}>
+                        <Box sx={{ display: 'flex', height: 8, bgcolor: '#e5e5e7', borderRadius: 4, overflow: 'hidden' }}>
                           <Box sx={{ width: `${sr.barWidth}%`, bgcolor: sr.barColor, height: '100%' }} />
                         </Box>
                       </TableCell>
@@ -430,7 +493,7 @@ const AnalysisPage: React.FC = () => {
                     <TableCell sx={{ ...tdSx, fontWeight: 700, color: C.blue, fontSize: 15 }}>₩76,800</TableCell>
                     <TableCell sx={{ ...tdSx, fontWeight: 700 }}>100%</TableCell>
                     <TableCell sx={tdSx}>
-                      <Box className={styles.barContainer}>
+                      <Box sx={{ display: 'flex', height: 8, bgcolor: '#e5e5e7', borderRadius: 4, overflow: 'hidden' }}>
                         <Box sx={{ width: '58.9%', bgcolor: C.blue, height: '100%' }} />
                         <Box sx={{ width: '30.1%', bgcolor: C.green, height: '100%' }} />
                         <Box sx={{ width: '11.1%', bgcolor: C.orange, height: '100%' }} />
@@ -449,9 +512,9 @@ const AnalysisPage: React.FC = () => {
           <>
             {listData.map(group => (
               <Paper key={group.id} sx={{ mb: 2, borderRadius: '10px', border: `1px solid ${C.border}`, boxShadow: 'none', overflow: 'hidden' }}>
-                <Box className={styles.listGroupHeader} sx={{ gap: 1.25, px: 2.5, py: 1.75, bgcolor: '#f9f9fb', borderBottom: `1px solid ${C.border}` }}>
-                  <Box className={styles.groupIcon} sx={{ bgcolor: group.iconBg, color: group.iconColor }}>{group.icon}</Box>
-                  <Typography className={styles.groupTitle}>{group.title}</Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, px: 2.5, py: 1.75, bgcolor: '#f9f9fb', borderBottom: `1px solid ${C.border}` }}>
+                  <Box sx={{ width: 26, height: 26, borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, bgcolor: group.iconBg, color: group.iconColor }}>{group.icon}</Box>
+                  <Typography sx={{ fontSize: 14, fontWeight: 600 }}>{group.title}</Typography>
                 </Box>
                 <Table size="small">
                   <TableHead>
@@ -481,11 +544,11 @@ const AnalysisPage: React.FC = () => {
 
         {/* ── 관계도 뷰 ── */}
         {activeTab === 2 && (
-          <Box className={styles.relationContainer} sx={{ gap: 2 }}>
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
             <Paper sx={{ flex: 1, borderRadius: '10px', border: `1px solid ${C.border}`, boxShadow: 'none', overflow: 'hidden', minWidth: 0 }}>
               <Box sx={{ px: 2.5, py: 1.75, bgcolor: '#f9f9fb', borderBottom: `1px solid ${C.border}` }}>
-                <Typography className={styles.relationHeader}>🔗 원가 구조 관계도</Typography>
-                <Typography className={styles.relationSubheader} sx={{ color: C.gray }}>노드 간 관계와 이상치를 시각적으로 확인합니다</Typography>
+                <Typography sx={{ fontSize: 14, fontWeight: 600 }}>🔗 원가 구조 관계도</Typography>
+                <Typography sx={{ fontSize: 11, color: C.gray }}>노드 간 관계와 이상치를 시각적으로 확인합니다</Typography>
               </Box>
               <Box sx={{ p: 3 }}>
                 <RelationView
@@ -503,8 +566,12 @@ const AnalysisPage: React.FC = () => {
                 position: 'sticky', top: 16,
               }}>
                 {/* 패널 헤더 */}
-                <Box className={styles.detailPanelHeader} sx={{ px: 2, py: 1.5, bgcolor: '#f9f9fb', borderBottom: `1px solid ${C.border}` }}>
-                  <Typography className={styles.detailPanelTitle} sx={{ color: C.dark }}>상세 정보</Typography>
+                <Box sx={{
+                  px: 2, py: 1.5, bgcolor: '#f9f9fb',
+                  borderBottom: `1px solid ${C.border}`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                }}>
+                  <Typography sx={{ fontSize: 13, fontWeight: 700, color: C.dark }}>상세 정보</Typography>
                   <IconButton size="small" onClick={() => setSelectedRelationNode(null)} sx={{ width: 22, height: 22 }}>
                     <CloseIcon sx={{ fontSize: 14 }} />
                   </IconButton>
@@ -514,52 +581,56 @@ const AnalysisPage: React.FC = () => {
                 <Box sx={{ p: 2 }}>
                   {/* 상태 + 이름 */}
                   <Box sx={{ mb: 2 }}>
-                    <Box className={styles.detailStatusBadge} sx={{
-                      px: 1, py: 0.25, mb: 0.75,
+                    <Box sx={{
+                      display: 'inline-block', px: 1, py: 0.25, borderRadius: '4px', mb: 0.75,
                       bgcolor: selectedRelationNode.status === 'anomaly' ? '#fff0f0' : '#f0fdf4',
                       border: `1px solid ${selectedRelationNode.status === 'anomaly' ? '#fca5a5' : '#86efac'}`,
                     }}>
-                      <Typography className={styles.detailStatusText} sx={{
+                      <Typography sx={{
+                        fontSize: 10, fontWeight: 700,
                         color: selectedRelationNode.status === 'anomaly' ? '#dc2626' : '#16a34a',
                       }}>
                         {selectedRelationNode.status === 'anomaly' ? '⚠️ 이상치' : '✅ 정상'}
                       </Typography>
                     </Box>
-                    <Typography className={styles.detailNodeLabel} sx={{ color: C.dark }}>
+                    <Typography sx={{ fontSize: 15, fontWeight: 700, color: C.dark, lineHeight: 1.3 }}>
                       {selectedRelationNode.label}
                     </Typography>
                     {selectedRelationNode.sub && (
-                      <Typography className={styles.detailNodeSub} sx={{ color: C.gray, mt: 0.5 }}>{selectedRelationNode.sub}</Typography>
+                      <Typography sx={{ fontSize: 11, color: C.gray, mt: 0.5 }}>{selectedRelationNode.sub}</Typography>
                     )}
                   </Box>
 
                   {/* 금액 */}
-                  <Box className={styles.amountSection} sx={{ mb: 2, p: 1.5 }}>
-                    <Typography className={styles.amountLabel} sx={{ color: C.gray, mb: 0.5 }}>금액</Typography>
-                    <Typography className={styles.amountValue} sx={{
+                  <Box sx={{ mb: 2, p: 1.5, bgcolor: '#f9fafb', borderRadius: '8px' }}>
+                    <Typography sx={{ fontSize: 10, color: C.gray, mb: 0.5 }}>금액</Typography>
+                    <Typography sx={{
+                      fontSize: 20, fontWeight: 800,
                       color: selectedRelationNode.status === 'anomaly' ? '#dc2626' : C.blue,
                     }}>
                       {selectedRelationNode.amount}
                     </Typography>
                     {selectedRelationNode.detail && (
-                      <Typography className={styles.amountDetail} sx={{ color: C.gray, mt: 0.25 }}>비율: {selectedRelationNode.detail}</Typography>
+                      <Typography sx={{ fontSize: 11, color: C.gray, mt: 0.25 }}>비율: {selectedRelationNode.detail}</Typography>
                     )}
                   </Box>
 
                   {/* 신뢰도 */}
                   <Box sx={{ mb: 2 }}>
-                    <Box className={styles.detailRow} sx={{ mb: 0.5 }}>
-                      <Typography className={styles.confidenceLabel} sx={{ color: C.gray }}>신뢰도</Typography>
-                      <Typography className={styles.confidenceValue} sx={{
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                      <Typography sx={{ fontSize: 11, color: C.gray }}>신뢰도</Typography>
+                      <Typography sx={{
+                        fontSize: 11, fontWeight: 700,
                         color: selectedRelationNode.confidence >= 90 ? '#16a34a' : selectedRelationNode.confidence >= 70 ? '#d97706' : '#dc2626',
                       }}>
                         {selectedRelationNode.confidence}%
                       </Typography>
                     </Box>
-                    <Box className={styles.confidenceBarBg}>
-                      <Box className={styles.confidenceBarFill} sx={{
-                        width: `${selectedRelationNode.confidence}%`,
+                    <Box sx={{ height: 6, bgcolor: '#e5e7eb', borderRadius: 3, overflow: 'hidden' }}>
+                      <Box sx={{
+                        width: `${selectedRelationNode.confidence}%`, height: '100%', borderRadius: 3,
                         bgcolor: selectedRelationNode.confidence >= 90 ? '#22c55e' : selectedRelationNode.confidence >= 70 ? '#f59e0b' : '#ef4444',
+                        transition: 'width 0.4s ease',
                       }} />
                     </Box>
                   </Box>
@@ -568,21 +639,21 @@ const AnalysisPage: React.FC = () => {
                   {selectedRelationNode.level >= 2 && (
                     <Box sx={{ borderTop: `1px solid ${C.border}`, pt: 1.5, mb: 2 }}>
                       {selectedRelationNode.spec && (
-                        <Box className={styles.detailRow} sx={{ mb: 0.75 }}>
-                          <Typography className={styles.detailRowLabel} sx={{ color: C.gray }}>규격</Typography>
-                          <Typography className={styles.detailRowValue} sx={{ color: C.dark }}>{selectedRelationNode.spec}</Typography>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.75 }}>
+                          <Typography sx={{ fontSize: 11, color: C.gray }}>규격</Typography>
+                          <Typography sx={{ fontSize: 11, fontWeight: 600, color: C.dark }}>{selectedRelationNode.spec}</Typography>
                         </Box>
                       )}
                       {selectedRelationNode.qty && (
-                        <Box className={styles.detailRow} sx={{ mb: 0.75 }}>
-                          <Typography className={styles.detailRowLabel} sx={{ color: C.gray }}>수량</Typography>
-                          <Typography className={styles.detailRowValue} sx={{ color: C.dark }}>{selectedRelationNode.qty} {selectedRelationNode.unit}</Typography>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.75 }}>
+                          <Typography sx={{ fontSize: 11, color: C.gray }}>수량</Typography>
+                          <Typography sx={{ fontSize: 11, fontWeight: 600, color: C.dark }}>{selectedRelationNode.qty} {selectedRelationNode.unit}</Typography>
                         </Box>
                       )}
                       {selectedRelationNode.unitPrice && (
-                        <Box className={styles.detailRow} sx={{ mb: 0.75 }}>
-                          <Typography className={styles.detailRowLabel} sx={{ color: C.gray }}>단가</Typography>
-                          <Typography className={styles.detailRowValue} sx={{ color: C.dark }}>₩{selectedRelationNode.unitPrice}</Typography>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.75 }}>
+                          <Typography sx={{ fontSize: 11, color: C.gray }}>단가</Typography>
+                          <Typography sx={{ fontSize: 11, fontWeight: 600, color: C.dark }}>₩{selectedRelationNode.unitPrice}</Typography>
                         </Box>
                       )}
                     </Box>
@@ -590,11 +661,11 @@ const AnalysisPage: React.FC = () => {
 
                   {/* AI 판단근거 (이상치인 경우) */}
                   {selectedRelationNode.status === 'anomaly' && selectedRelationNode.anomalyReason && (
-                    <Box className={styles.aiReasonBox} sx={{ mb: 2, p: 1.5 }}>
-                      <Typography className={styles.aiReasonTitle} sx={{ color: C.orange, mb: 0.75 }}>
+                    <Box sx={{ mb: 2, p: 1.5, bgcolor: '#fff5f5', borderRadius: '8px', border: '1px solid #fca5a520' }}>
+                      <Typography sx={{ fontSize: 11, fontWeight: 700, color: C.orange, mb: 0.75 }}>
                         🤖 AI 판단 근거
                       </Typography>
-                      <Typography className={styles.aiReasonText}>
+                      <Typography sx={{ fontSize: 11, color: '#7f1d1d', lineHeight: 1.6 }}>
                         {selectedRelationNode.anomalyReason}
                       </Typography>
                     </Box>
@@ -607,9 +678,9 @@ const AnalysisPage: React.FC = () => {
                     size="small"
                     disabled={!hasExcelData(selectedRelationNode.label)}
                     onClick={() => handleCellClick(selectedRelationNode.label)}
-                    className={styles.viewOriginalBtn}
                     sx={{
-                      borderColor: C.blue, color: C.blue,
+                      fontSize: 12, fontWeight: 600, textTransform: 'none',
+                      borderRadius: '8px', borderColor: C.blue, color: C.blue,
                       '&:hover': { bgcolor: 'rgba(0,100,255,0.04)', borderColor: C.blue },
                       '&.Mui-disabled': { borderColor: '#d1d5db', color: '#9ca3af' },
                     }}
@@ -642,8 +713,13 @@ const AnalysisPage: React.FC = () => {
           maxWidth="md"
           fullWidth
         >
-          <DialogTitle className={styles.noteDialogTitle} sx={{ pb: 1 }}>
-            <Box className={styles.noteDialogTitleLeft}>
+          <DialogTitle sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            pb: 1
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <NoteAddIcon color="primary" />
               <Typography variant="h6">📝 분석 노트 작성</Typography>
             </Box>
@@ -709,9 +785,9 @@ const AnalysisPage: React.FC = () => {
       {/* Anomaly Reason Popover */}
       <Popover open={!!anomalyAnchor} anchorEl={anomalyAnchor?.el} onClose={() => setAnomalyAnchor(null)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} transformOrigin={{ vertical: 'top', horizontal: 'left' }}>
-        <Box className={styles.anomalyPopover} sx={{ bgcolor: C.dark, p: 1.5 }}>
-          <Typography className={styles.anomalyPopoverTitle} sx={{ mb: 0.75, color: C.orange }}>🤖 AI 판단 근거</Typography>
-          <Typography className={styles.anomalyPopoverText}>{anomalyAnchor?.reason}</Typography>
+        <Box sx={{ bgcolor: C.dark, color: '#fff', borderRadius: '8px', p: 1.5, maxWidth: 260, fontSize: 12, lineHeight: 1.5 }}>
+          <Typography sx={{ fontWeight: 600, mb: 0.75, color: C.orange, fontSize: 12 }}>🤖 AI 판단 근거</Typography>
+          <Typography sx={{ fontSize: 12, color: '#ddd' }}>{anomalyAnchor?.reason}</Typography>
         </Box>
       </Popover>
 
@@ -719,74 +795,85 @@ const AnalysisPage: React.FC = () => {
       <Popover open={!!calculationAnchor} anchorEl={calculationAnchor?.el} onClose={() => setCalculationAnchor(null)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} transformOrigin={{ vertical: 'top', horizontal: 'center' }}>
         {calculationAnchor && (
-          <Paper className={styles.calcPopover} sx={{ border: `1px solid ${C.border}` }}>
-            <Box className={styles.calcHeader} sx={{ bgcolor: C.blue, p: 2 }}>
-              <Typography className={styles.calcHeaderTitle}>🧮 계산식 상세 정보</Typography>
+          <Paper sx={{ maxWidth: 400, bgcolor: '#fff', borderRadius: '12px', border: `1px solid ${C.border}`, boxShadow: '0 8px 32px rgba(0,0,0,0.12)', overflow: 'hidden' }}>
+            <Box sx={{ bgcolor: C.blue, color: '#fff', p: 2 }}>
+              <Typography sx={{ fontSize: 16, fontWeight: 700 }}>🧮 계산식 상세 정보</Typography>
             </Box>
             <Box sx={{ p: 3 }}>
               <Box sx={{ mb: 3 }}>
-                <Typography className={styles.calcGroupLabel} sx={{ color: C.gray, mb: 1 }}>{calculationAnchor.groupTitle} &gt; {calculationAnchor.row.category}</Typography>
-                <Typography className={styles.calcItemName} sx={{ color: C.dark, mb: 0.5 }}>{calculationAnchor.row.name}</Typography>
-                {calculationAnchor.row.spec && <Typography className={styles.calcItemSpec} sx={{ color: C.gray }}>규격: {calculationAnchor.row.spec}</Typography>}
+                <Typography sx={{ fontSize: 12, color: C.gray, mb: 1 }}>{calculationAnchor.groupTitle} &gt; {calculationAnchor.row.category}</Typography>
+                <Typography sx={{ fontSize: 16, fontWeight: 600, color: C.dark, mb: 0.5 }}>{calculationAnchor.row.name}</Typography>
+                {calculationAnchor.row.spec && <Typography sx={{ fontSize: 12, color: C.gray }}>규격: {calculationAnchor.row.spec}</Typography>}
               </Box>
               <Box sx={{ mb: 3 }}>
-                <Typography className={styles.calcSectionTitle} sx={{ color: C.blue, mb: 1.5 }}>💰 계산 과정</Typography>
+                <Typography sx={{ fontSize: 13, fontWeight: 600, color: C.blue, mb: 1.5 }}>💰 계산 과정</Typography>
                 {calculationAnchor.row.qty && calculationAnchor.row.unitPrice ? (
-                  <Box className={styles.calcDetailBox} sx={{ p: 2, border: `1px solid ${C.border}`, mb: 2 }}>
-                    <Box className={styles.calcDetailRow} sx={{ gap: 2, mb: 1 }}>
-                      <Typography className={styles.calcDetailLabel}>수량</Typography>
-                      <Typography className={styles.calcDetailValue}>{calculationAnchor.row.qty} {calculationAnchor.row.unit}</Typography>
+                  <Box sx={{ bgcolor: '#f8f9fa', p: 2, borderRadius: '8px', border: `1px solid ${C.border}`, mb: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+                      <Typography sx={{ fontSize: 14, fontWeight: 600 }}>수량</Typography>
+                      <Typography sx={{ fontSize: 14, fontFamily: 'monospace' }}>{calculationAnchor.row.qty} {calculationAnchor.row.unit}</Typography>
                     </Box>
-                    <Box className={styles.calcDetailRow} sx={{ gap: 2, mb: 1 }}>
-                      <Typography className={styles.calcDetailLabel}>단가</Typography>
-                      <Typography className={styles.calcDetailValue}>₩{calculationAnchor.row.unitPrice}</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+                      <Typography sx={{ fontSize: 14, fontWeight: 600 }}>단가</Typography>
+                      <Typography sx={{ fontSize: 14, fontFamily: 'monospace' }}>₩{calculationAnchor.row.unitPrice}</Typography>
                     </Box>
-                    <Box className={styles.calcDetailRow} sx={{ gap: 2, mb: 2 }}>
-                      <Typography className={styles.calcDetailLabel}>가중치</Typography>
-                      <Box className={styles.calcConfBar} sx={{ gap: 1 }}>
-                        <Typography className={styles.calcDetailValue}>{calculationAnchor.row.status === 'anomaly' ? '1.2' : '1.0'}</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                      <Typography sx={{ fontSize: 14, fontWeight: 600 }}>가중치</Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography sx={{ fontSize: 14, fontFamily: 'monospace' }}>{calculationAnchor.row.status === 'anomaly' ? '1.2' : '1.0'}</Typography>
                         {calculationAnchor.row.status === 'anomaly' && (
                           <Chip label="이상치 조정" size="small" sx={{ bgcolor: '#ffebee', color: C.red, fontSize: '10px', height: 20 }} />
                         )}
                       </Box>
                     </Box>
-                    <Box className={styles.calcResultBox} sx={{ p: 1.5, border: `2px solid ${C.blue}` }}>
-                      <Typography className={styles.calcResultText} sx={{ color: C.blue }}>
+                    <Box sx={{ bgcolor: '#fff', p: 1.5, borderRadius: '6px', border: `2px solid ${C.blue}`, textAlign: 'center' }}>
+                      <Typography sx={{ fontSize: 16, fontFamily: 'monospace', fontWeight: 700, color: C.blue }}>
                         {calculationAnchor.row.qty} × ₩{calculationAnchor.row.unitPrice} × {calculationAnchor.row.status === 'anomaly' ? '1.2' : '1.0'} = ₩{calculationAnchor.row.amount}
                       </Typography>
                     </Box>
                   </Box>
                 ) : (
-                  <Box className={styles.calcFixedBox} sx={{ p: 2, border: `1px solid ${C.border}` }}>
-                    <Typography className={styles.calcFixedText} sx={{ color: C.orange }}>고정 배분액 = ₩{calculationAnchor.row.amount}</Typography>
-                    <Typography className={styles.calcFixedNote} sx={{ color: C.gray, mt: 0.5 }}>수량/단가 기반이 아닌 일괄 배분 비용</Typography>
+                  <Box sx={{ bgcolor: '#f8f9fa', p: 2, borderRadius: '8px', border: `1px solid ${C.border}`, textAlign: 'center' }}>
+                    <Typography sx={{ fontSize: 16, fontFamily: 'monospace', fontWeight: 600, color: C.orange }}>고정 배분액 = ₩{calculationAnchor.row.amount}</Typography>
+                    <Typography sx={{ fontSize: 12, color: C.gray, mt: 0.5 }}>수량/단가 기반이 아닌 일괄 배분 비용</Typography>
                   </Box>
                 )}
               </Box>
-              <Box className={styles.calcFooterGrid} sx={{ gap: 2, pt: 2, borderTop: `1px solid ${C.border}` }}>
+              <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, pt: 2, borderTop: `1px solid ${C.border}` }}>
                 <Box>
-                  <Typography className={styles.calcFooterLabel} sx={{ color: C.gray, mb: 0.5 }}>전체 대비 비율</Typography>
-                  <Typography className={styles.calcFooterValue}>{calculationAnchor.row.ratio}</Typography>
+                  <Typography sx={{ fontSize: 11, color: C.gray, mb: 0.5 }}>전체 대비 비율</Typography>
+                  <Typography sx={{ fontSize: 14, fontWeight: 600 }}>{calculationAnchor.row.ratio}</Typography>
                 </Box>
                 <Box>
-                  <Typography className={styles.calcFooterLabel} sx={{ color: C.gray, mb: 0.5 }}>AI 신뢰도</Typography>
-                  <Box className={styles.calcConfBar} sx={{ gap: 1 }}>
-                    <Typography className={styles.calcFooterValue}>{calculationAnchor.row.confidence}%</Typography>
-                    <Box className={styles.calcConfBarBg}>
+                  <Typography sx={{ fontSize: 11, color: C.gray, mb: 0.5 }}>AI 신뢰도</Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography sx={{ fontSize: 14, fontWeight: 600 }}>{calculationAnchor.row.confidence}%</Typography>
+                    <Box sx={{ width: 40, height: 6, bgcolor: '#e0e0e0', borderRadius: 3, overflow: 'hidden' }}>
                       <Box sx={{ width: `${calculationAnchor.row.confidence}%`, height: '100%', bgcolor: calculationAnchor.row.confidence >= 90 ? C.green : calculationAnchor.row.confidence >= 70 ? C.orange : C.red }} />
                     </Box>
                   </Box>
                 </Box>
               </Box>
               {calculationAnchor.row.status === 'anomaly' && calculationAnchor.row.anomalyReason && (
-                <Box className={styles.calcAnomalyBox} sx={{ mt: 2, p: 2, border: `1px solid ${C.red}20` }}>
-                  <Typography className={styles.calcAnomalyTitle} sx={{ color: C.red, mb: 0.5 }}>⚠️ 이상치 감지</Typography>
-                  <Typography className={styles.calcAnomalyText} sx={{ color: C.red }}>{calculationAnchor.row.anomalyReason}</Typography>
+                <Box sx={{ mt: 2, p: 2, bgcolor: '#fff5f5', border: `1px solid ${C.red}20`, borderRadius: '8px' }}>
+                  <Typography sx={{ fontSize: 12, fontWeight: 600, color: C.red, mb: 0.5 }}>⚠️ 이상치 감지</Typography>
+                  <Typography sx={{ fontSize: 12, color: C.red }}>{calculationAnchor.row.anomalyReason}</Typography>
                 </Box>
               )}
-              <Typography
-                className={styles.calcCloseText}
-                sx={{ color: C.gray, mt: 2, pt: 1, borderTop: `1px solid ${C.border}`, '&:hover': { color: C.blue } }}
+              <Typography 
+                sx={{ 
+                  fontSize: 10, 
+                  color: C.gray, 
+                  textAlign: 'center', 
+                  mt: 2, 
+                  pt: 1, 
+                  borderTop: `1px solid ${C.border}`,
+                  cursor: 'pointer',
+                  '&:hover': {
+                    color: C.blue,
+                    textDecoration: 'underline'
+                  }
+                }}
                 onClick={() => setCalculationAnchor(null)}
               >
                 클릭하여 닫기

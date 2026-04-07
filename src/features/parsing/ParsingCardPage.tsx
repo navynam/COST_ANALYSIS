@@ -1,35 +1,35 @@
 /**
  * 📄 파싱(업로드) 페이지 - 카드 버전 - 견적서 처리 1단계
- *
+ * 
  * 🎯 주요 기능:
  * 1. 드래그앤드롭 파일 업로드 (Excel 파일)
  * 2. AI 자동 파싱 진행률 실시간 표시
  * 3. 파일별 상태 관리 (대기/추출중/검증/분석/실패)
  * 4. 파일 목록을 카드 형태로 표시 (그리드 레이아웃)
  * 5. 개별 파일 카드에 상세 정보 및 액션 버튼
- *
+ * 
  * 📊 카드 기반 레이아웃:
  * - 그리드: 반응형 카드 레이아웃 (데스크톱 3열, 태블릿 2열, 모바일 1열)
  * - 카드: 파일별 독립된 카드 컴포넌트
  * - 상태: 카드 헤더 색상으로 상태 구분
  * - 액션: 카드 하단에 상태별 액션 버튼
- *
+ * 
  * 🎨 카드 디자인:
  * - 헤더: 파일명 + 상태 배지
  * - 바디: 파일 정보 (크기, 업로드 시간, 진행률)
  * - 푸터: 액션 버튼 (검증하기, 분석하기, 재시도 등)
- *
+ * 
  * 🔗 기존 테이블 버전과 동일한 기능:
  * - 상태 필터링, 검색, 정렬 모든 기능 지원
  * - 동일한 useParsingPage 훅 사용
  * - 동일한 라우팅 및 상태 관리
  */
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Typography,
-  TextField,
-  InputAdornment,
+import { 
+  Box, 
+  Typography, 
+  TextField, 
+  InputAdornment, 
   Button,
   Card,
   Chip,
@@ -55,6 +55,7 @@ import {
   Schedule,
   Error,
   Analytics,
+  NoteAdd as NoteAddIcon,
   Send as SendIcon,
   AutoAwesome as AIIcon,
   Close as CloseIcon,
@@ -67,10 +68,11 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import { C } from '../../shared/constants/colors';
+import FileUploadArea from './components/FileUploadArea';
 import FileDetailDrawer from './components/FileDetailDrawer';
 import SearchFilterDialog from './components/SearchFilterDialog';
 import { useParsingPage } from './hooks/useParsingPage';
-import styles from './ParsingCardPage.module.css';
+import cardStyles from './ParsingCardPage.module.css';
 
 // 📋 파일 카드 컴포넌트
 const FileCard: React.FC<{
@@ -82,59 +84,59 @@ const FileCard: React.FC<{
   onClick: () => void;
   onNoteClick: (fileId: string) => void;
   getNoteCount: (fileId: string) => number;
-}> = ({ file, onVerify, onAnalysis, onDetail, onClick, onNoteClick, getNoteCount }) => {
+}> = ({ file, onVerify, onAnalysis, onDetail, onRetry, onClick, onNoteClick, getNoteCount }) => {
 
   // 상태별 색상 및 아이콘
   const getStatusConfig = (status: string) => {
     switch (status) {
       case 'extracting':
-        return {
-          color: '#ff9800',
-          icon: <Schedule sx={{ fontSize: 16 }} />,
-          label: '추출중',
-          bgColor: '#fff3e0'
+        return { 
+          color: '#ff9800', 
+          icon: <Schedule sx={{ fontSize: 16 }} />, 
+          label: '추출중', 
+          bgColor: '#fff3e0' 
         };
       case 'verifying':
-        return {
-          color: '#2196f3',
-          icon: <Schedule sx={{ fontSize: 16 }} />,
-          label: '검증중',
-          bgColor: '#e3f2fd'
+        return { 
+          color: '#2196f3', 
+          icon: <Schedule sx={{ fontSize: 16 }} />, 
+          label: '검증중', 
+          bgColor: '#e3f2fd' 
         };
       case 'verified':
-        return {
-          color: '#4caf50',
-          icon: <CheckCircle sx={{ fontSize: 16 }} />,
-          label: '검증완료',
-          bgColor: '#e8f5e8'
+        return { 
+          color: '#4caf50', 
+          icon: <CheckCircle sx={{ fontSize: 16 }} />, 
+          label: '검증완료', 
+          bgColor: '#e8f5e8' 
         };
       case 'analyzing':
-        return {
-          color: '#9c27b0',
-          icon: <Analytics sx={{ fontSize: 16 }} />,
-          label: '분석중',
-          bgColor: '#f3e5f5'
+        return { 
+          color: '#9c27b0', 
+          icon: <Analytics sx={{ fontSize: 16 }} />, 
+          label: '분석중', 
+          bgColor: '#f3e5f5' 
         };
       case 'analyzed':
-        return {
-          color: '#34c759',
-          icon: <CheckCircle sx={{ fontSize: 16 }} />,
-          label: '분석완료',
-          bgColor: '#e8f5e9'
+        return { 
+          color: '#34c759', 
+          icon: <CheckCircle sx={{ fontSize: 16 }} />, 
+          label: '분석완료', 
+          bgColor: '#e8f5e9' 
         };
       case 'failed':
-        return {
-          color: '#f44336',
-          icon: <Error sx={{ fontSize: 16 }} />,
-          label: '실패',
-          bgColor: '#ffebee'
+        return { 
+          color: '#f44336', 
+          icon: <Error sx={{ fontSize: 16 }} />, 
+          label: '실패', 
+          bgColor: '#ffebee' 
         };
       default:
-        return {
-          color: '#9e9e9e',
-          icon: <Schedule sx={{ fontSize: 16 }} />,
-          label: '대기',
-          bgColor: '#f5f5f5'
+        return { 
+          color: '#9e9e9e', 
+          icon: <Schedule sx={{ fontSize: 16 }} />, 
+          label: '대기', 
+          bgColor: '#f5f5f5' 
         };
     }
   };
@@ -150,14 +152,14 @@ const FileCard: React.FC<{
 
   return (
     <Card
-      className={styles.fileCard}
+      className={cardStyles.fileCard}
       onClick={onClick}
     >
       {/* 🎨 Toss 스타일 카드 헤더 - 컴팩트 */}
-      <Box className={styles.cardHeader}>
-        <Box className={styles.cardHeaderRow}>
+      <Box sx={{ p: 2.5, pb: 1.5 }}>
+        <Box className={cardStyles.cardHeaderRow} sx={{ mb: 2 }}>
           {/* 상태 배지, 파일명 */}
-          <Box className={styles.cardBadgeRow}>
+          <Box className={cardStyles.cardBadgeRow} sx={{ gap: 2 }}>
             <Box
               sx={{
                 px: 1.5,
@@ -173,7 +175,8 @@ const FileCard: React.FC<{
               {statusConfig.label}
             </Box>
             <Typography
-              className={styles.cardFileName}
+              className={cardStyles.cardFileName}
+              sx={{ fontSize: 16, fontWeight: 700, color: '#191f28' }}
               title={file.name}
             >
               {file.name}
@@ -182,23 +185,23 @@ const FileCard: React.FC<{
         </Box>
 
         {/* 📋 Toss 스타일 파일 정보 */}
-        <Box className={styles.cardInfoBlock}>
+        <Box sx={{ mb: 2 }}>
           {/* 첫 번째 라인: 파일 크기, 업로드일 */}
-          <Box className={styles.cardInfoRow}>
-            <Typography className={styles.cardInfoText}>
+          <Box className={cardStyles.cardInfoRow} sx={{ gap: 3, mb: 1 }}>
+            <Typography sx={{ fontSize: 14, color: '#8b95a1', fontWeight: 500 }}>
               📁 {formatFileSize(file.size || 0)}
             </Typography>
-            <Typography className={styles.cardInfoText}>
+            <Typography sx={{ fontSize: 14, color: '#8b95a1', fontWeight: 500 }}>
               📅 {file.uploadDate || file.uploadedAt}
             </Typography>
           </Box>
 
           {/* 두 번째 라인: 업로더, 부서 */}
-          <Box className={styles.cardInfoRow}>
-            <Typography className={styles.cardInfoText}>
+          <Box className={cardStyles.cardInfoRow} sx={{ gap: 3, mb: 1 }}>
+            <Typography sx={{ fontSize: 14, color: '#8b95a1', fontWeight: 500 }}>
               👤 {file.uploader}
             </Typography>
-            <Typography className={styles.cardInfoText}>
+            <Typography sx={{ fontSize: 14, color: '#8b95a1', fontWeight: 500 }}>
               🏢 {file.department}
             </Typography>
           </Box>
@@ -207,32 +210,37 @@ const FileCard: React.FC<{
         </Box>
 
         {/* 🔄 동적 콘텐츠 영역 - 최소 여백 */}
-        <Box className={styles.cardDynamicArea} sx={{ mb: 0.5 }}>
+        <Box sx={{ mb: 0.5, flex: 1 }}>
           {/* ⚡ Toss 스타일 진행률 (추출 중) */}
           {file.status === 'extracting' && (
-            <Box className={styles.extractingBox}>
-              <Box className={styles.extractingHeader}>
-                <Typography className={styles.extractingLabel}>
+            <Box sx={{ p: 2.5, bgcolor: '#f9fafb', borderRadius: '12px' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
+                <Typography sx={{ fontSize: 14, color: '#4e5968', fontWeight: 600 }}>
                   데이터 추출 중
                 </Typography>
                 <Typography sx={{ fontSize: 14, color: statusConfig.color, fontWeight: 700 }}>
                   {file.progress || 0}%
                 </Typography>
               </Box>
-              <LinearProgress
-                variant="determinate"
-                value={file.progress || 0}
-                sx={{
-                  height: 8,
+              <LinearProgress 
+                variant="determinate" 
+                value={file.progress || 0} 
+                sx={{ 
+                  height: 8, 
                   borderRadius: 4,
                   backgroundColor: '#e5e8eb',
                   '& .MuiLinearProgress-bar': {
                     backgroundColor: statusConfig.color,
                     borderRadius: 4
                   }
-                }}
+                }} 
               />
-              <Typography className={styles.extractingHint} sx={{ mt: 1 }}>
+              <Typography sx={{ 
+                fontSize: 12, 
+                color: '#8b95a1', 
+                mt: 1,
+                textAlign: 'center'
+              }}>
                 Excel 파일을 분석하고 데이터를 추출하고 있어요
               </Typography>
             </Box>
@@ -240,64 +248,115 @@ const FileCard: React.FC<{
 
           {/* ✅ Toss 스타일 추출 결과 (완료, 분석중, 검증 단계) - 컴팩트 */}
           {(file.status === 'verifying' || file.status === 'verified' || file.status === 'analyzing' || file.status === 'analyzed') && (
-            <Box className={styles.completedBox}>
-              <Typography className={styles.completedTitle} sx={{ mb: 1.5 }}>
+            <Box sx={{ p: 2, bgcolor: '#f0fdf4', borderRadius: '10px', border: '1px solid #dcfce7' }}>
+              <Typography sx={{ 
+                fontSize: 12, 
+                color: '#15803d', 
+                fontWeight: 700,
+                mb: 1.5,
+                textAlign: 'center'
+              }}>
                 ✨ 추출 완료
               </Typography>
-
+              
               {/* 📊 추출 결과 요약 - 축소 */}
-              <Box className={styles.statsRow}>
-                <Box className={styles.statItem}>
-                  <Typography className={styles.statValue} sx={{ color: '#0064ff' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1.5 }}>
+                <Box sx={{ textAlign: 'center', flex: 1 }}>
+                  <Typography sx={{ 
+                    fontSize: 16, 
+                    fontWeight: 800, 
+                    color: '#0064ff',
+                    lineHeight: 1
+                  }}>
                     {file.parsedItems || 156}
                   </Typography>
-                  <Typography className={styles.statLabel}>
+                  <Typography sx={{ 
+                    fontSize: 10, 
+                    color: '#15803d',
+                    fontWeight: 500
+                  }}>
                     파싱 항목
                   </Typography>
                 </Box>
-
-                <Box className={styles.statItem}>
-                  <Typography className={styles.statValue} sx={{ color: '#00c896' }}>
-                    {(file.parsedItems && file.anomalies) ?
-                      Math.round(((file.parsedItems - file.anomalies) / file.parsedItems) * 100) :
+                
+                <Box sx={{ textAlign: 'center', flex: 1 }}>
+                  <Typography sx={{ 
+                    fontSize: 16, 
+                    fontWeight: 800, 
+                    color: '#00c896',
+                    lineHeight: 1
+                  }}>
+                    {(file.parsedItems && file.anomalies) ? 
+                      Math.round(((file.parsedItems - file.anomalies) / file.parsedItems) * 100) : 
                       94
                     }%
                   </Typography>
-                  <Typography className={styles.statLabel}>
+                  <Typography sx={{ 
+                    fontSize: 10, 
+                    color: '#15803d',
+                    fontWeight: 500
+                  }}>
                     신뢰도
                   </Typography>
                 </Box>
-
-                <Box className={styles.statItem}>
-                  <Typography className={styles.statValue} sx={{ color: file.anomalies && file.anomalies > 0 ? '#ff5a5a' : '#8b95a1' }}>
+                
+                <Box sx={{ textAlign: 'center', flex: 1 }}>
+                  <Typography sx={{ 
+                    fontSize: 16, 
+                    fontWeight: 800, 
+                    color: file.anomalies && file.anomalies > 0 ? '#ff5a5a' : '#8b95a1',
+                    lineHeight: 1
+                  }}>
                     {file.anomalies || 3}
                   </Typography>
-                  <Typography className={styles.statLabel}>
+                  <Typography sx={{ 
+                    fontSize: 10, 
+                    color: '#15803d',
+                    fontWeight: 500
+                  }}>
                     이상치
                   </Typography>
                 </Box>
               </Box>
 
               {/* 📋 추출된 카테고리 - 축소 */}
-              <Box className={styles.categoryRow} sx={{ mt: 1.5, pt: 1.5 }}>
-                <Box className={styles.categoryChips}>
-                  <Chip
-                    label="재료비 (4건)"
-                    size="small"
-                    className={styles.chipMaterial}
-                    sx={{ '& .MuiChip-label': { px: 0.5 } }}
+              <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px solid #dcfce7' }}>
+                <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', justifyContent: 'center' }}>
+                  <Chip 
+                    label="재료비 (4건)" 
+                    size="small" 
+                    sx={{ 
+                      fontSize: 9, 
+                      height: 18,
+                      bgcolor: '#dbeafe', 
+                      color: '#1d4ed8',
+                      fontWeight: 600,
+                      '& .MuiChip-label': { px: 0.5 }
+                    }} 
                   />
-                  <Chip
-                    label="가공비 (3건)"
-                    size="small"
-                    className={styles.chipProcessing}
-                    sx={{ '& .MuiChip-label': { px: 0.5 } }}
+                  <Chip 
+                    label="가공비 (3건)" 
+                    size="small" 
+                    sx={{ 
+                      fontSize: 9, 
+                      height: 18,
+                      bgcolor: '#fef3c7', 
+                      color: '#d97706',
+                      fontWeight: 600,
+                      '& .MuiChip-label': { px: 0.5 }
+                    }} 
                   />
-                  <Chip
-                    label="경비 (2건)"
-                    size="small"
-                    className={styles.chipExpense}
-                    sx={{ '& .MuiChip-label': { px: 0.5 } }}
+                  <Chip 
+                    label="경비 (2건)" 
+                    size="small" 
+                    sx={{ 
+                      fontSize: 9, 
+                      height: 18,
+                      bgcolor: '#dcfce7', 
+                      color: '#059669',
+                      fontWeight: 600,
+                      '& .MuiChip-label': { px: 0.5 }
+                    }} 
                   />
                 </Box>
               </Box>
@@ -306,12 +365,24 @@ const FileCard: React.FC<{
 
           {/* 📋 대기 상태 안내 (추출 전) - 컴팩트 */}
           {file.status === 'pending' && (
-            <Box className={styles.pendingBox}>
-              <Typography className={styles.pendingTitle} sx={{ mb: 1 }}>
+            <Box sx={{ p: 2, bgcolor: '#f9fafb', borderRadius: '10px', border: '1px solid #e5e8eb' }}>
+              <Typography sx={{ 
+                fontSize: 12, 
+                color: '#6b7280', 
+                fontWeight: 700,
+                mb: 1,
+                textAlign: 'center'
+              }}>
                 ⏳ 대기 중
               </Typography>
-
-              <Typography className={styles.pendingHint}>
+              
+              <Typography sx={{ 
+                fontSize: 12, 
+                color: '#6b7280',
+                fontWeight: 500,
+                textAlign: 'center',
+                lineHeight: 1.4
+              }}>
                 곧 데이터 추출이 시작됩니다
               </Typography>
             </Box>
@@ -319,11 +390,24 @@ const FileCard: React.FC<{
 
           {/* ⚠️ 오류 상태 - 간소화 (오류 사유만) */}
           {file.status === 'failed' && (
-            <Box className={styles.failedBox}>
-              <Typography className={styles.failedTitle} sx={{ mb: 1.5 }}>
+            <Box sx={{ p: 2, bgcolor: '#fff5f5', borderRadius: '10px', border: '1px solid #fee2e2' }}>
+              <Typography sx={{ 
+                fontSize: 12, 
+                color: '#dc2626',
+                fontWeight: 600,
+                mb: 1.5
+              }}>
                 오류 사유
               </Typography>
-              <Typography className={styles.failedMessage}>
+              <Typography sx={{ 
+                fontSize: 13, 
+                color: '#991b1b',
+                lineHeight: 1.4,
+                fontWeight: 500,
+                bgcolor: '#fee2e2',
+                p: 1.5,
+                borderRadius: '8px'
+              }}>
                 {file.error || 'Excel 파일 형식이 올바르지 않거나 데이터를 읽을 수 없습니다. 파일을 다시 확인해주세요.'}
               </Typography>
             </Box>
@@ -332,29 +416,52 @@ const FileCard: React.FC<{
       </Box>
 
       {/* 🎯 Toss 스타일 버튼 영역 - 노트 + 액션 */}
-      <Box className={styles.cardActions}>
+      <Box sx={{ 
+        p: 2, 
+        pt: 0.5, 
+        mt: 'auto'
+      }}>
         {file.status === 'verifying' && (
-          <Box className={styles.actionRow}>
-            <Button
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button 
               variant="outlined"
               onClick={(e) => { e.stopPropagation(); onNoteClick(file.id.toString()); }}
-              className={styles.noteBtn}
-              sx={{ py: 1, px: 3 }}
+              sx={{ 
+                fontSize: 12, 
+                fontWeight: 600,
+                textTransform: 'none', 
+                borderRadius: '8px', 
+                py: 1,
+                px: 3,
+                minWidth: 120,
+                whiteSpace: 'nowrap',
+                borderColor: '#0064ff',
+                color: '#0064ff',
+                '&:hover': { 
+                  borderColor: '#0056d3',
+                  bgcolor: 'rgba(0, 100, 255, 0.04)'
+                }
+              }}
             >
               📝 노트({getNoteCount(file.id.toString())})
             </Button>
-            <Button
-              variant="contained"
+            <Button 
+              variant="contained" 
               fullWidth
               onClick={(e) => { e.stopPropagation(); onVerify(); }}
-              className={styles.primaryBtn}
-              sx={{
-                bgcolor: '#0064ff',
+              sx={{ 
+                fontSize: 16, 
+                fontWeight: 700,
+                textTransform: 'none', 
+                bgcolor: '#0064ff', 
+                borderRadius: '12px', 
                 py: 1.25,
-                '&:hover': {
+                boxShadow: 'none',
+                letterSpacing: '-0.3px',
+                '&:hover': { 
                   bgcolor: '#0056d3',
                   boxShadow: 'none'
-                }
+                } 
               }}
             >
               검증하기
@@ -363,75 +470,135 @@ const FileCard: React.FC<{
         )}
 
         {file.status === 'verified' && (
-          <Box className={styles.actionRow}>
-            <Button
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button 
               variant="outlined"
               onClick={(e) => { e.stopPropagation(); onNoteClick(file.id.toString()); }}
-              className={styles.noteBtn}
-              sx={{ py: 1, px: 3 }}
+              sx={{ 
+                fontSize: 12, 
+                fontWeight: 600,
+                textTransform: 'none', 
+                borderRadius: '8px', 
+                py: 1,
+                px: 3,
+                minWidth: 120,
+                whiteSpace: 'nowrap',
+                borderColor: '#0064ff',
+                color: '#0064ff',
+                '&:hover': { 
+                  borderColor: '#0056d3',
+                  bgcolor: 'rgba(0, 100, 255, 0.04)'
+                }
+              }}
             >
               📝 노트({getNoteCount(file.id.toString())})
             </Button>
-            <Button
-              variant="contained"
+            <Button 
+              variant="contained" 
               fullWidth
               onClick={(e) => { e.stopPropagation(); onAnalysis(); }}
-              className={styles.primaryBtn}
-              sx={{
-                bgcolor: '#4caf50',
+              sx={{ 
+                fontSize: 16, 
+                fontWeight: 700,
+                textTransform: 'none', 
+                bgcolor: '#4caf50', 
+                borderRadius: '12px', 
                 py: 1.25,
-                '&:hover': {
+                boxShadow: 'none',
+                letterSpacing: '-0.3px',
+                '&:hover': { 
                   bgcolor: '#388e3c',
                   boxShadow: 'none'
-                }
+                } 
               }}
             >
               분석하기
             </Button>
           </Box>
         )}
-
+        
         {file.status === 'extracting' && (
-          <Box className={styles.actionRow}>
-            <Button
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button 
               variant="outlined"
               onClick={(e) => { e.stopPropagation(); onNoteClick(file.id.toString()); }}
-              className={styles.noteBtn}
-              sx={{ py: 1, px: 3 }}
+              sx={{ 
+                fontSize: 12, 
+                fontWeight: 600,
+                textTransform: 'none', 
+                borderRadius: '8px', 
+                py: 1,
+                px: 3,
+                minWidth: 120,
+                whiteSpace: 'nowrap',
+                borderColor: '#0064ff',
+                color: '#0064ff',
+                '&:hover': { 
+                  borderColor: '#0056d3',
+                  bgcolor: 'rgba(0, 100, 255, 0.04)'
+                }
+              }}
             >
               📝 노트({getNoteCount(file.id.toString())})
             </Button>
-            <Button
-              variant="outlined"
+            <Button 
+              variant="outlined" 
               fullWidth
-              disabled
-              className={styles.disabledBtn}
-              sx={{ py: 1.25 }}
+              disabled 
+              sx={{ 
+                fontSize: 16, 
+                fontWeight: 700,
+                textTransform: 'none', 
+                borderRadius: '12px',
+                py: 1.25,
+                borderColor: '#f2f4f6',
+                color: '#8b95a1',
+                letterSpacing: '-0.3px'
+              }}
             >
               처리중
             </Button>
           </Box>
         )}
-
+        
         {file.status === 'failed' && (
-          <Box className={styles.actionRow}>
-            <Button
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button 
               variant="outlined"
               onClick={(e) => { e.stopPropagation(); onNoteClick(file.id.toString()); }}
-              className={styles.noteBtn}
-              sx={{ py: 1, px: 3 }}
+              sx={{ 
+                fontSize: 12, 
+                fontWeight: 600,
+                textTransform: 'none', 
+                borderRadius: '8px', 
+                py: 1,
+                px: 3,
+                minWidth: 120,
+                whiteSpace: 'nowrap',
+                borderColor: '#0064ff',
+                color: '#0064ff',
+                '&:hover': { 
+                  borderColor: '#0056d3',
+                  bgcolor: 'rgba(0, 100, 255, 0.04)'
+                }
+              }}
             >
               📝 노트({getNoteCount(file.id.toString())})
             </Button>
-            <Button
-              variant="contained"
+            <Button 
+              variant="contained" 
               fullWidth
               onClick={(e) => { e.stopPropagation(); onDetail(); }}
-              className={styles.primaryBtn}
-              sx={{
+              sx={{ 
+                fontSize: 16, 
+                fontWeight: 700,
+                textTransform: 'none', 
+                borderRadius: '12px',
                 py: 1.25,
                 bgcolor: '#ff5a5a',
-                '&:hover': {
+                boxShadow: 'none',
+                letterSpacing: '-0.3px',
+                '&:hover': { 
                   bgcolor: '#ff4444',
                   boxShadow: 'none'
                 }
@@ -441,26 +608,45 @@ const FileCard: React.FC<{
             </Button>
           </Box>
         )}
-
+        
         {file.status === 'analyzing' && (
-          <Box className={styles.actionRow}>
-            <Button
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button 
               variant="outlined"
               onClick={(e) => { e.stopPropagation(); onNoteClick(file.id.toString()); }}
-              className={styles.noteBtn}
-              sx={{ py: 1, px: 3 }}
+              sx={{ 
+                fontSize: 12, 
+                fontWeight: 600,
+                textTransform: 'none', 
+                borderRadius: '8px', 
+                py: 1,
+                px: 3,
+                minWidth: 120,
+                whiteSpace: 'nowrap',
+                borderColor: '#0064ff',
+                color: '#0064ff',
+                '&:hover': { 
+                  borderColor: '#0056d3',
+                  bgcolor: 'rgba(0, 100, 255, 0.04)'
+                }
+              }}
             >
               📝 노트({getNoteCount(file.id.toString())})
             </Button>
-            <Button
-              variant="contained"
+            <Button 
+              variant="contained" 
               fullWidth
               onClick={(e) => { e.stopPropagation(); onAnalysis(); }}
-              className={styles.primaryBtn}
-              sx={{
-                bgcolor: '#9c27b0',
+              sx={{ 
+                fontSize: 16, 
+                fontWeight: 700,
+                textTransform: 'none', 
+                bgcolor: '#9c27b0', 
+                borderRadius: '12px',
                 py: 1.25,
-                '&:hover': {
+                boxShadow: 'none',
+                letterSpacing: '-0.3px',
+                '&:hover': { 
                   bgcolor: '#7b1fa2',
                   boxShadow: 'none'
                 }
@@ -472,24 +658,43 @@ const FileCard: React.FC<{
         )}
 
         {file.status === 'analyzed' && (
-          <Box className={styles.actionRow}>
-            <Button
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button 
               variant="outlined"
               onClick={(e) => { e.stopPropagation(); onNoteClick(file.id.toString()); }}
-              className={styles.noteBtn}
-              sx={{ py: 1, px: 3 }}
+              sx={{ 
+                fontSize: 12, 
+                fontWeight: 600,
+                textTransform: 'none', 
+                borderRadius: '8px', 
+                py: 1,
+                px: 3,
+                minWidth: 120,
+                whiteSpace: 'nowrap',
+                borderColor: '#0064ff',
+                color: '#0064ff',
+                '&:hover': { 
+                  borderColor: '#0056d3',
+                  bgcolor: 'rgba(0, 100, 255, 0.04)'
+                }
+              }}
             >
               📝 노트({getNoteCount(file.id.toString())})
             </Button>
-            <Button
-              variant="contained"
+            <Button 
+              variant="contained" 
               fullWidth
               onClick={(e) => { e.stopPropagation(); onAnalysis(); }}
-              className={styles.primaryBtn}
-              sx={{
-                bgcolor: '#34c759',
+              sx={{ 
+                fontSize: 16, 
+                fontWeight: 700,
+                textTransform: 'none', 
+                bgcolor: '#34c759', 
+                borderRadius: '12px',
                 py: 1.25,
-                '&:hover': {
+                boxShadow: 'none',
+                letterSpacing: '-0.3px',
+                '&:hover': { 
                   bgcolor: '#2da44e',
                   boxShadow: 'none'
                 }
@@ -539,7 +744,7 @@ const ParsingCardPage: React.FC = () => {
 
   // 📝 파일별 노트 개수 계산
   const getNoteCount = (fileId: string): number => {
-    return savedNotes.filter(note =>
+    return savedNotes.filter(note => 
       note.fileId === fileId && note.content && note.content.trim()
     ).length;
   };
@@ -572,12 +777,12 @@ const ParsingCardPage: React.FC = () => {
     };
 
     setSavedNotes(prev => [...prev, newNote]);
-
+    
     // localStorage에 저장
     const existingNotes = JSON.parse(localStorage.getItem('parsing-notes') || '[]');
     existingNotes.push(newNote);
     localStorage.setItem('parsing-notes', JSON.stringify(existingNotes));
-
+    
     console.log('📝 파싱 노트 저장 완료:', newNote);
     setNoteContent('');
     setNoteDialogOpen(false);
@@ -587,7 +792,7 @@ const ParsingCardPage: React.FC = () => {
   // 📝 AI 분석 (검증 페이지와 유사)
   const handleAIAnalysis = async () => {
     setIsAnalyzing(true);
-
+    
     setTimeout(() => {
       const currentFile = filteredAndSorted.find(f => f.id.toString() === currentFileId);
       const aiSuggestion = `
@@ -623,7 +828,7 @@ ${currentFile?.status === 'extracting' ? `
 2. ${currentFile?.anomalies && currentFile.anomalies > 0 ? '이상치 항목 우선 검토' : '표준 검증 프로세스 진행'}
 3. 문제 발견시 이 노트에 세부 사항 기록
       `;
-
+      
       setNoteContent(aiSuggestion);
       setIsAnalyzing(false);
     }, 2000);
@@ -633,7 +838,7 @@ ${currentFile?.status === 'extracting' ? `
   useEffect(() => {
     try {
       const savedNotesData = JSON.parse(localStorage.getItem('parsing-notes') || '[]');
-      const validNotes = Array.isArray(savedNotesData) ? savedNotesData.filter(note =>
+      const validNotes = Array.isArray(savedNotesData) ? savedNotesData.filter(note => 
         note && note.id && note.content && note.content.trim().length > 0
       ) : [];
       setSavedNotes(validNotes);
@@ -645,31 +850,27 @@ ${currentFile?.status === 'extracting' ? `
 
   return (
     <Box
-      sx={{
-        bgcolor: C.bg, position: 'relative',
-        display: 'flex', flexDirection: 'column',
-        height: 'calc(100vh - 112px)',
-        overflow: 'hidden',
-      }}
+      className={cardStyles.root}
+      sx={{ bgcolor: C.bg }}
       onDragOver={e => { e.preventDefault(); setDragOver(true); }}
       onDragLeave={() => setDragOver(false)}
       onDrop={e => { e.preventDefault(); setDragOver(false); if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); }}
     >
       {/* 드래그 오버레이 */}
       {dragOver && (
-        <Box className={styles.dragOverlay}>
-          <Typography className={styles.dragOverlayText}>
+        <Box className={cardStyles.dragOverlay}>
+          <Typography sx={{ fontSize: 20, fontWeight: 700, color: '#0064ff' }}>
             파일을 놓으면 업로드됩니다
           </Typography>
         </Box>
       )}
 
       {/* ── 상단 컨트롤 패널 (고정 영역) ── */}
-      <Box className={styles.controlPanel} sx={{ mx: 3, mt: 1.5, mb: 1.5 }}>
+      <Box className={cardStyles.controlPanel} sx={{ mx: 3, mt: 1.5, mb: 1.5 }}>
 
         {/* 툴바: 타이틀 | 업로드 버튼 | 검색 | 필터 */}
-        <Box className={styles.toolbar} sx={{ px: 2, py: 1.5 }}>
-          <Typography className={styles.toolbarTitle} sx={{ color: C.dark, mr: 0.5 }}>
+        <Box className={cardStyles.toolbar} sx={{ px: 2, py: 1.5, gap: 1.5 }}>
+          <Typography sx={{ fontSize: 17, fontWeight: 700, color: C.dark, whiteSpace: 'nowrap', mr: 0.5 }}>
             견적서 파싱
           </Typography>
 
@@ -681,9 +882,11 @@ ${currentFile?.status === 'extracting' ? `
             variant="contained"
             startIcon={<UploadFile sx={{ fontSize: 17 }} />}
             onClick={() => fileInputRef.current?.click()}
-            className={styles.uploadBtn}
             sx={{
-              py: 0.875, px: 3,
+              whiteSpace: 'nowrap', fontSize: 13, fontWeight: 600,
+              borderRadius: '10px', py: 0.875, px: 3,
+              minWidth: '150px',
+              bgcolor: '#0064ff', boxShadow: 'none', textTransform: 'none',
               '&:hover': { bgcolor: '#0056d3', boxShadow: 'none' },
             }}
           >
@@ -708,12 +911,12 @@ ${currentFile?.status === 'extracting' ? `
           <Button
             variant={isSearchActive ? 'contained' : 'outlined'}
             onClick={() => setSearchDialogOpen(true)}
-            className={isSearchActive ? styles.filterBtnActive : styles.filterBtnInactive}
             sx={{
-              py: 0.875, px: 2,
+              whiteSpace: 'nowrap', fontSize: 13, fontWeight: 600,
+              borderRadius: '10px', py: 0.875, px: 2, textTransform: 'none',
               ...(isSearchActive
-                ? { '&:hover': { bgcolor: '#0056d3', boxShadow: 'none' } }
-                : { '&:hover': { borderColor: '#0064ff', bgcolor: 'white' } }
+                ? { bgcolor: '#0064ff', boxShadow: 'none', '&:hover': { bgcolor: '#0056d3', boxShadow: 'none' } }
+                : { borderColor: '#e5e8eb', color: '#4e5968', bgcolor: 'white', '&:hover': { borderColor: '#0064ff', bgcolor: 'white' } }
               ),
             }}
           >
@@ -725,15 +928,15 @@ ${currentFile?.status === 'extracting' ? `
         {uploadQueue.length > 0 && (
           <Box sx={{ px: 2, py: 1, borderBottom: '1px solid #f2f4f6' }}>
             {uploadQueue.map((q, i) => (
-              <Box key={i} className={styles.uploadQueueRow} sx={{ mb: i < uploadQueue.length - 1 ? 0.75 : 0 }}>
+              <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: i < uploadQueue.length - 1 ? 0.75 : 0 }}>
                 <Typography sx={{ fontSize: 13 }}>📄</Typography>
-                <Typography className={styles.uploadQueueFileName}>
+                <Typography sx={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#191f28', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {q.file.name}
                 </Typography>
-                <Box className={styles.uploadQueueProgress}>
-                  <Box className={styles.uploadQueueProgressFill} sx={{ width: `${q.progress}%`, bgcolor: C.blue }} />
+                <Box sx={{ width: 100, height: 3, bgcolor: '#e5e8eb', borderRadius: 2, overflow: 'hidden' }}>
+                  <Box sx={{ width: `${q.progress}%`, height: '100%', bgcolor: C.blue, borderRadius: 2, transition: 'width 0.3s' }} />
                 </Box>
-                <Typography className={styles.uploadQueuePercent} sx={{ color: C.gray }}>{q.progress}%</Typography>
+                <Typography sx={{ fontSize: 11, color: C.gray, minWidth: 30, textAlign: 'right' }}>{q.progress}%</Typography>
                 <IconButton size="small" onClick={() => setUploadQueue(prev => prev.filter((_, j) => j !== i))}
                   sx={{ width: 20, height: 20, bgcolor: '#e5e5e7', '&:hover': { bgcolor: '#f8d7da', color: C.red } }}>
                   <CloseIcon sx={{ fontSize: 10 }} />
@@ -744,7 +947,7 @@ ${currentFile?.status === 'extracting' ? `
         )}
 
         {/* 상태 필터 (아이콘 칩) */}
-        <Box className={styles.statusFilterRow} sx={{ px: 2, py: 1 }}>
+        <Box className={cardStyles.statusFilterRow} sx={{ px: 2, py: 1, gap: 1 }}>
           {statusCards.map(sc => (
             <Box
               key={sc.key}
@@ -761,10 +964,10 @@ ${currentFile?.status === 'extracting' ? `
               <Box sx={{ display: 'flex', alignItems: 'center', color: sc.colorKey }}>
                 {statusIconMap[sc.key]}
               </Box>
-              <Typography className={styles.statusChipCount} sx={{ color: sc.colorKey }}>
+              <Typography sx={{ fontSize: 13, fontWeight: 700, color: sc.colorKey, lineHeight: 1 }}>
                 {counts[sc.key]}
               </Typography>
-              <Typography className={styles.statusChipLabel}>
+              <Typography sx={{ fontSize: 11, color: '#4e5968', fontWeight: 500, lineHeight: 1 }}>
                 {sc.label}
               </Typography>
             </Box>
@@ -774,14 +977,25 @@ ${currentFile?.status === 'extracting' ? `
       </Box>
 
       {/* 📁 파일 그리드 (스크롤 영역) */}
-      <Box sx={{ flex: 1, overflowY: 'auto', px: 3, pt: 1, pb: 3 }}>
+      <Box className={cardStyles.fileGrid} sx={{ px: 3, pt: 1, pb: 3 }}>
         {filteredAndSorted.length === 0 ? (
-          <Box className={styles.emptyState} sx={{ py: 12 }}>
-            <Typography className={styles.emptyIcon} sx={{ mb: 3 }}>📄</Typography>
-            <Typography className={styles.emptyTitle} sx={{ mb: 1 }}>
+          <Box className={cardStyles.emptyState} sx={{ py: 12 }}>
+            <Typography sx={{ fontSize: 64, mb: 3 }}>📄</Typography>
+            <Typography sx={{ 
+              fontSize: 20, 
+              color: '#191f28', 
+              mb: 1,
+              fontWeight: 700,
+              letterSpacing: '-0.5px'
+            }}>
               아직 업로드된 파일이 없어요
             </Typography>
-            <Typography className={styles.emptyDescription}>
+            <Typography sx={{ 
+              fontSize: 16, 
+              color: '#8b95a1',
+              fontWeight: 500,
+              lineHeight: 1.6
+            }}>
               Excel 파일을 드래그하거나 업로드 버튼을 눌러주세요
             </Typography>
           </Box>
@@ -795,6 +1009,7 @@ ${currentFile?.status === 'extracting' ? `
                   onAnalysis={() => navigate('/analysis')}
                   onDetail={() => setDrawerFile(file)}
                   onRetry={() => {
+                    // 재시도 로직
                     console.log('Retrying file:', file.name);
                   }}
                   onClick={() => setDrawerFile(file)}
@@ -816,10 +1031,10 @@ ${currentFile?.status === 'extracting' ? `
       />
 
       {/* 📝 노트 작성 다이얼로그 */}
-      <Dialog
-        open={noteDialogOpen}
+      <Dialog 
+        open={noteDialogOpen} 
         onClose={() => setNoteDialogOpen(false)}
-        maxWidth="md"
+        maxWidth="md" 
         fullWidth
         PaperProps={{
           sx: {
@@ -828,8 +1043,13 @@ ${currentFile?.status === 'extracting' ? `
           }
         }}
       >
-        <DialogTitle className={styles.noteDialogTitle} sx={{ pb: 1 }}>
-          <Typography variant="h6" className={styles.noteDialogTitleText}>
+        <DialogTitle sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between',
+          pb: 1
+        }}>
+          <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 18 }}>
             📝 파싱 노트 작성
           </Typography>
           <IconButton onClick={() => setNoteDialogOpen(false)} size="small">
@@ -851,8 +1071,8 @@ ${currentFile?.status === 'extracting' ? `
           {/* 노트 유형 선택 */}
           <FormControl fullWidth sx={{ mb: 2 }}>
             <InputLabel>노트 유형</InputLabel>
-            <Select
-              value={noteType}
+            <Select 
+              value={noteType} 
               onChange={(e) => setNoteType(e.target.value)}
               label="노트 유형"
             >
@@ -870,10 +1090,15 @@ ${currentFile?.status === 'extracting' ? `
             startIcon={isAnalyzing ? <AIIcon className="animate-spin" /> : <AIIcon />}
             onClick={handleAIAnalysis}
             disabled={isAnalyzing || !currentFileId}
-            className={styles.aiAnalysisBtn}
-            sx={{
-              mb: 2,
+            sx={{ 
+              mb: 2, 
               py: 1.5,
+              textTransform: 'none',
+              fontSize: 15,
+              fontWeight: 600,
+              borderRadius: '12px',
+              borderColor: '#0064ff',
+              color: '#0064ff',
               '&:hover': {
                 borderColor: '#0056d3',
                 bgcolor: 'rgba(0, 100, 255, 0.04)'
@@ -902,38 +1127,49 @@ ${currentFile?.status === 'extracting' ? `
           {savedNotes && savedNotes.length > 0 && savedNotes.some(note => note && note.content && note.content.trim()) && currentFileId && (
             <>
               <Divider sx={{ my: 2 }} />
-
-              <Box className={styles.noteHistoryHeader} sx={{ mb: 2 }}>
+              
+              <Box sx={{ 
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                mb: 2
+              }}>
                 <Typography variant="subtitle2" color="text.secondary">
                   📋 이 파일의 노트 히스토리 ({savedNotes.filter(n => n.fileId === currentFileId && n.content && n.content.trim()).length}개)
                 </Typography>
-
+                
                 <Button
                   size="small"
                   variant="outlined"
                   color="error"
                   onClick={() => {
+                    // 현재 파일의 노트만 삭제
                     const updatedNotes = savedNotes.filter(n => n.fileId !== currentFileId);
                     setSavedNotes(updatedNotes);
                     localStorage.setItem('parsing-notes', JSON.stringify(updatedNotes));
                     console.log('🗑️ 파일 노트 히스토리 초기화');
                   }}
-                  className={styles.resetBtn}
-                  sx={{ py: 0.25, px: 1 }}
+                  sx={{ 
+                    fontSize: '10px',
+                    py: 0.25,
+                    px: 1,
+                    minWidth: 'auto'
+                  }}
                 >
                   초기화
                 </Button>
               </Box>
-
-              <Box className={styles.noteHistoryList}>
+              
+              <Box sx={{ maxHeight: 250, overflowY: 'auto', pr: 1 }}>
                 {savedNotes.filter(note => note.fileId === currentFileId && note.content && note.content.trim()).slice().reverse().map((note, index) => (
-                  <Paper
-                    key={note.id}
-                    variant="outlined"
-                    className={styles.noteHistoryItem}
-                    sx={{
-                      p: 2,
-                      mb: 1.5,
+                  <Paper 
+                    key={note.id} 
+                    variant="outlined" 
+                    sx={{ 
+                      p: 2, 
+                      mb: 1.5, 
+                      borderRadius: '8px',
+                      transition: 'all 0.2s ease',
                       '&:hover': {
                         boxShadow: 2,
                         borderColor: 'primary.main'
@@ -941,42 +1177,56 @@ ${currentFile?.status === 'extracting' ? `
                     }}
                   >
                     {/* 노트 헤더 */}
-                    <Box className={styles.noteHeader} sx={{ mb: 1 }}>
-                      <Box className={styles.noteHeaderLeft}>
-                        <Chip
-                          size="small"
+                    <Box sx={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'space-between', 
+                      mb: 1 
+                    }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <Chip 
+                          size="small" 
                           label={
-                            note.type === 'parsing' ? '🔍 파싱' :
-                            note.type === 'upload' ? '📤 업로드' :
+                            note.type === 'parsing' ? '🔍 파싱' : 
+                            note.type === 'upload' ? '📤 업로드' : 
                             note.type === 'format' ? '📋 형식' :
                             '💡 개선'
-                          }
+                          } 
                           variant="outlined"
                           sx={{
                             fontSize: '10px',
                             height: '20px',
-                            bgcolor:
-                              note.type === 'parsing' ? '#fff3e0' :
-                              note.type === 'upload' ? '#e8f5e8' :
+                            bgcolor: 
+                              note.type === 'parsing' ? '#fff3e0' : 
+                              note.type === 'upload' ? '#e8f5e8' : 
                               note.type === 'format' ? '#e3f2fd' :
                               '#f3e5f5',
-                            color:
-                              note.type === 'parsing' ? '#e65100' :
-                              note.type === 'upload' ? '#2e7d32' :
+                            color: 
+                              note.type === 'parsing' ? '#e65100' : 
+                              note.type === 'upload' ? '#2e7d32' : 
                               note.type === 'format' ? '#1565c0' :
                               '#7b1fa2'
                           }}
                         />
                         {index === 0 && (
-                          <Chip
-                            size="small"
-                            label="최신"
-                            className={styles.latestChip}
+                          <Chip 
+                            size="small" 
+                            label="최신" 
+                            sx={{ 
+                              bgcolor: '#ff5722', 
+                              color: 'white',
+                              fontSize: '9px',
+                              height: '18px'
+                            }}
                           />
                         )}
                       </Box>
-
-                      <Typography variant="caption" className={styles.noteTimestamp} sx={{ color: 'text.secondary' }}>
+                      
+                      <Typography variant="caption" sx={{ 
+                        color: 'text.secondary',
+                        fontSize: '10px',
+                        fontFamily: 'monospace'
+                      }}>
                         {new Date(note.timestamp).toLocaleString('ko-KR', {
                           month: '2-digit',
                           day: '2-digit',
@@ -987,30 +1237,61 @@ ${currentFile?.status === 'extracting' ? `
                     </Box>
 
                     {/* 노트 내용 - 스크롤 가능 */}
-                    <Box className={styles.noteContentBox}>
-                      <Typography variant="body2" className={styles.noteContentText} sx={{ color: 'text.primary' }}>
+                    <Box sx={{
+                      maxHeight: '100px',
+                      overflowY: 'auto',
+                      bgcolor: '#fafafa',
+                      borderRadius: '6px',
+                      p: 1.5,
+                      border: '1px solid #f0f0f0',
+                      '&::-webkit-scrollbar': {
+                        width: '4px',
+                      },
+                      '&::-webkit-scrollbar-track': {
+                        bgcolor: '#f5f5f5',
+                        borderRadius: '2px',
+                      },
+                      '&::-webkit-scrollbar-thumb': {
+                        bgcolor: '#d0d0d0',
+                        borderRadius: '2px',
+                        '&:hover': {
+                          bgcolor: '#b0b0b0',
+                        },
+                      },
+                    }}>
+                      <Typography variant="body2" sx={{ 
+                        fontSize: 12,
+                        lineHeight: 1.5,
+                        color: 'text.primary',
+                        whiteSpace: 'pre-wrap',
+                        fontFamily: 'inherit'
+                      }}>
                         {note.content}
                       </Typography>
                     </Box>
 
                     {/* 컨텍스트 정보 (간단히) */}
                     {note.context && (
-                      <Box className={styles.noteContext} sx={{ mt: 1, pt: 1 }}>
-                        <Box className={styles.noteContextChips}>
+                      <Box sx={{ 
+                        mt: 1,
+                        pt: 1,
+                        borderTop: '1px dashed #e0e0e0'
+                      }}>
+                        <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
                           {note.context.상태 && (
-                            <Chip
-                              size="small"
+                            <Chip 
+                              size="small" 
                               label={`📊 ${note.context.상태}`}
                               variant="outlined"
-                              className={styles.contextChip}
+                              sx={{ fontSize: '9px', height: '16px' }}
                             />
                           )}
                           {note.context.파일크기 && (
-                            <Chip
-                              size="small"
+                            <Chip 
+                              size="small" 
                               label={`📄 ${note.context.파일크기}`}
                               variant="outlined"
-                              className={styles.contextChip}
+                              sx={{ fontSize: '9px', height: '16px' }}
                             />
                           )}
                         </Box>
@@ -1027,13 +1308,16 @@ ${currentFile?.status === 'extracting' ? `
           <Button onClick={() => setNoteDialogOpen(false)}>
             취소
           </Button>
-          <Button
-            variant="contained"
+          <Button 
+            variant="contained" 
             startIcon={<SendIcon />}
             onClick={handleNoteSubmit}
             disabled={!noteContent.trim()}
-            className={styles.noteSubmitBtn}
             sx={{
+              bgcolor: '#0064ff',
+              borderRadius: '8px',
+              textTransform: 'none',
+              fontWeight: 600,
               '&:hover': {
                 bgcolor: '#0056d3'
               }
@@ -1050,12 +1334,12 @@ ${currentFile?.status === 'extracting' ? `
         filters={searchFilters}
         onChange={setSearchFilters}
         onApply={() => setSearchDialogOpen(false)}
-        onReset={() => setSearchFilters({
-          documentName: '',
-          dateFrom: '',
-          dateTo: '',
-          uploader: '',
-          department: ''
+        onReset={() => setSearchFilters({ 
+          documentName: '', 
+          dateFrom: '', 
+          dateTo: '', 
+          uploader: '', 
+          department: '' 
         })}
         onClose={() => setSearchDialogOpen(false)}
       />

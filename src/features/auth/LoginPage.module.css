@@ -1,4 +1,4 @@
-/* LoginPage.module.css */
+/* LoginPage CSS Module — layout only */
 
 .container {
   min-height: 100vh;
@@ -27,12 +27,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.logoText {
-  color: #fff;
-  font-weight: 900;
-  font-size: 20px;
 }
 
 .alertBox {

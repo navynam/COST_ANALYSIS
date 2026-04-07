@@ -56,12 +56,12 @@ const SettingsPage: React.FC = () => {
   return (
     <Box className={styles.container}>
       <Box className={styles.pageHeader} sx={{ mb: 3 }}>
-        <SettingsIcon className={styles.settingsIcon} />
+        <SettingsIcon sx={{ color: '#e60012' }} />
         <Typography variant="h5" fontWeight={700}>설정</Typography>
       </Box>
 
       <Section title="프로필">
-        <Box className={styles.formColumn}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <TextField label="이름" size="small" value={profile.name} onChange={e => setProfile(p => ({ ...p, name: e.target.value }))} />
           <TextField label="부서" size="small" value={profile.department} onChange={e => setProfile(p => ({ ...p, department: e.target.value }))} />
           <TextField label="연락처" size="small" value={profile.phone} onChange={e => setProfile(p => ({ ...p, phone: e.target.value }))} />
@@ -69,7 +69,7 @@ const SettingsPage: React.FC = () => {
       </Section>
 
       <Section title="비밀번호 변경">
-        <Box className={styles.formColumn}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <TextField label="현재 비밀번호" type="password" size="small" value={password.current} onChange={e => setPassword(p => ({ ...p, current: e.target.value }))} />
           <TextField label="새 비밀번호" type="password" size="small" value={password.new_} onChange={e => setPassword(p => ({ ...p, new_: e.target.value }))} />
           <TextField label="비밀번호 확인" type="password" size="small" value={password.confirm} onChange={e => setPassword(p => ({ ...p, confirm: e.target.value }))} />
@@ -117,15 +117,17 @@ const SettingsPage: React.FC = () => {
           </ToggleButtonGroup>
 
           {/* 현재 테마 정보 */}
-          <Box className={styles.themeCards}>
+          <Box sx={{ display: 'flex', gap: 3 }}>
             {/* 현재 테마 카드 */}
-            <Card className={styles.themeCardActive} sx={{
+            <Card sx={{ 
+              flex: 1, 
+              border: '2px solid',
               borderColor: 'primary.main',
               bgcolor: 'primary.light',
               color: 'primary.contrastText'
             }}>
               <CardContent>
-                <Box className={styles.themeInfoRow} sx={{ mb: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                   <PaletteIcon />
                   <Typography variant="h6" fontWeight={600}>
                     현재 테마
@@ -161,11 +163,13 @@ const SettingsPage: React.FC = () => {
             </Card>
 
             {/* 다른 테마 미리보기 */}
-            <Card className={styles.themeCardOther} sx={{
+            <Card sx={{ 
+              flex: 1, 
+              border: '1px solid',
               borderColor: 'divider'
             }}>
               <CardContent>
-                <Box className={styles.themeInfoRow} sx={{ mb: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                   <PaletteIcon color="action" />
                   <Typography variant="h6" fontWeight={600} color="text.secondary">
                     다른 테마

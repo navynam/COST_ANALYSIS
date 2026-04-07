@@ -21,16 +21,16 @@ const LoginPage: React.FC = () => {
     <Box className={styles.container}>
       <Card className={styles.card}>
         <CardContent sx={{ p: 5 }}>
-          <Box className={styles.headerCenter} sx={{ mb: 4 }}>
-            <Box className={styles.logoBox} sx={{ mx: 'auto', mb: 2 }}>
-              <Typography className={styles.logoText}>M</Typography>
+          <Box sx={{ textAlign: 'center', mb: 4 }}>
+            <Box sx={{ width: 56, height: 56, mx: 'auto', mb: 2, background: 'linear-gradient(135deg, #003875, #0056A6)', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Typography sx={{ color: '#fff', fontWeight: 900, fontSize: 20 }}>M</Typography>
             </Box>
             <Typography variant="h5" fontWeight={700} color="#1a1a2e">견적서 분석 시스템</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>구매원가 AI 분석 플랫폼</Typography>
           </Box>
 
           {error && (
-            <Alert severity={locked ? 'error' : 'warning'} className={styles.alertBox} sx={{ mb: 2 }}>{error}</Alert>
+            <Alert severity={locked ? 'error' : 'warning'} sx={{ mb: 2, borderRadius: 2 }}>{error}</Alert>
           )}
 
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -57,7 +57,7 @@ const LoginPage: React.FC = () => {
             </Button>
           </form>
 
-          <Box className={styles.footerLinks}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
             <Link href="#" underline="hover" variant="body2" color="text.secondary">비밀번호 찾기</Link>
             <Typography variant="body2" color="text.disabled">|</Typography>
             <Link href="#" underline="hover" variant="body2" color="text.secondary">비밀번호 변경</Link>

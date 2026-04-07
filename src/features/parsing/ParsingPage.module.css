@@ -1,16 +1,6 @@
-/* ParsingPage.module.css */
-
-.pageTitle {
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.pageSubtitle {
-  font-size: 13px;
-}
+/* ParsingPage CSS Module — layout only */
 
 .dropZone {
-  padding: 32px;
   border: 2px dashed;
   border-radius: 12px;
   text-align: center;
@@ -18,30 +8,11 @@
   transition: all 0.3s;
 }
 
-.dropIcon {
-  font-size: 40px;
-}
-
-.dropText {
-  font-size: 14px;
-}
-
-.dropHint {
-  font-size: 11px;
-  color: #a1a1a6;
-}
-
 .uploadQueueItem {
   border-radius: 8px;
   display: flex;
   align-items: center;
   gap: 12px;
-}
-
-.uploadFileName {
-  flex: 1;
-  font-size: 13px;
-  font-weight: 500;
 }
 
 .uploadProgressBar {
@@ -57,33 +28,15 @@
   transition: width 0.3s;
 }
 
-.uploadProgressText {
-  font-size: 11px;
-  min-width: 30px;
-}
-
 .searchToolbar {
   display: flex;
   gap: 10px;
-}
-
-.filterBtn {
-  white-space: nowrap;
-  font-size: 12px;
 }
 
 .selectAllRow {
   display: flex;
   gap: 8px;
   align-items: center;
-}
-
-.selectAllLabel {
-  font-size: 12px;
-}
-
-.bulkBtn {
-  font-size: 12px;
 }
 
 .statusCardRow {
@@ -94,45 +47,15 @@
 .statusCard {
   flex: 1;
   border-radius: 10px;
-  padding: 16px;
   cursor: pointer;
   text-align: center;
   transition: all 0.2s;
 }
 
-.statusCardValue {
-  font-size: 28px;
-  font-weight: 700;
-}
-
-.statusCardLabel {
-  font-size: 12px;
-}
-
-/* Note Dialog */
 .noteDialogTitle {
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.noteDialogTitleText {
-  font-weight: 700;
-  font-size: 18px;
-}
-
-.aiAnalysisBtn {
-  text-transform: none;
-  font-size: 15px;
-  font-weight: 600;
-  border-radius: 12px;
-  border-color: #0064ff;
-  color: #0064ff;
-}
-
-.aiAnalysisBtn:hover {
-  border-color: #0056d3;
-  background-color: rgba(0, 100, 255, 0.04);
 }
 
 .noteHistoryHeader {
@@ -164,17 +87,10 @@
   gap: 4px;
 }
 
-.noteTimestamp {
-  font-size: 10px;
-  font-family: monospace;
-}
-
 .noteContentBox {
   max-height: 100px;
   overflow-y: auto;
-  background-color: #fafafa;
   border-radius: 6px;
-  padding: 12px;
   border: 1px solid #f0f0f0;
 }
 
@@ -197,9 +113,8 @@
 }
 
 .noteContentText {
-  font-size: 12px;
-  line-height: 1.5;
   white-space: pre-wrap;
+  line-height: 1.5;
   font-family: inherit;
 }
 
@@ -211,32 +126,4 @@
   display: flex;
   gap: 4px;
   flex-wrap: wrap;
-}
-
-.contextChip {
-  font-size: 9px;
-  height: 16px;
-}
-
-.resetBtn {
-  font-size: 10px;
-  min-width: auto;
-}
-
-.latestChip {
-  background-color: #ff5722;
-  color: white;
-  font-size: 9px;
-  height: 18px;
-}
-
-.noteSubmitBtn {
-  background-color: #0064ff;
-  border-radius: 8px;
-  text-transform: none;
-  font-weight: 600;
-}
-
-.noteSubmitBtn:hover {
-  background-color: #0056d3;
 }

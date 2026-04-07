@@ -1,36 +1,15 @@
-/* DashboardPage.module.css */
-
-.root {
-  padding: 24px;
-}
+/* DashboardPage CSS Module — layout only */
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-}
-
-.summaryGrid {
-  margin-bottom: 24px;
 }
 
 .summaryCardContent {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.summaryCardIcon {
-  font-size: 40px;
-}
-
-.chartGrid {
-  margin-bottom: 32px;
-}
-
-.sectionTitle {
-  margin-bottom: 16px;
 }
 
 .workItemsGrid {
@@ -46,15 +25,6 @@
 
 .workCardContent {
   text-align: center;
-}
-
-.workCardIcon {
-  font-size: 18px;
-}
-
-.workCardLabel {
-  font-size: 11px;
-  font-weight: 500;
 }
 
 .chartPaper {
@@ -86,11 +56,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
-}
-
-.alertChip {
-  font-weight: 600;
 }
 
 .alertItem {
@@ -106,7 +71,6 @@
 }
 
 .alertIcon {
-  font-size: 22px;
   line-height: 1;
   flex-shrink: 0;
 }
@@ -122,12 +86,6 @@
   gap: 8px;
 }
 
-.alertPriorityChip {
-  font-weight: 700;
-  font-size: 10px;
-  height: 20px;
-}
-
 .alertRight {
   display: flex;
   align-items: center;
@@ -141,7 +99,5 @@
 
 .alertActionBtn {
   white-space: nowrap;
-  font-size: 11px;
   text-transform: none;
-  font-weight: 600;
 }

@@ -1,4 +1,4 @@
-/* ParsedDataReviewPage.module.css */
+/* ParsedDataReviewPage CSS Module — layout only */
 
 .pageRoot {
   height: 100vh;
@@ -16,111 +16,25 @@
 .headerLeft {
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.breadcrumb {
-  font-size: 13px;
-  color: #86868b;
-}
-
-.headerTitle {
-  font-size: 16px;
-  font-weight: 700;
 }
 
 .headerRight {
   display: flex;
   align-items: center;
-  gap: 12px;
 }
 
 .headerActions {
   display: flex;
-  gap: 8px;
   border-right: 1px solid #e5e5e7;
-}
-
-.actionButton {
-  text-transform: none;
-  font-size: 12px;
-  font-weight: 600;
-  border-radius: 8px;
-  border-color: #e5e5e7;
-  color: #6b7280;
-  background-color: #fafafa;
-}
-
-.actionButton:hover {
-  border-color: #d1d5db;
-  background-color: #f3f4f6;
-  color: #374151;
 }
 
 .navButtons {
   display: flex;
   align-items: center;
-  gap: 6px;
-}
-
-.navBack {
-  text-transform: none;
-  font-size: 12px;
-  font-weight: 600;
-  border-radius: 8px;
-  color: #8b95a1;
-  min-width: 0;
-}
-
-.navBack:hover {
-  background-color: #f3f4f6;
-  color: #374151;
-}
-
-.badge {
-  border-radius: 10px;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1.6;
-}
-
-.badgeBlue {
-  background-color: #0064ff;
-  color: #fff;
-}
-
-.badgeOrange {
-  background-color: #ff9500;
-  color: #fff;
 }
 
 .infoCards {
   display: flex;
-  gap: 16px;
-  background-color: #f5f5f7;
-}
-
-.infoCard {
-  flex: 1;
-  border-radius: 8px;
-  border: 1px solid #e5e5e7;
-  box-shadow: none;
-}
-
-.infoCardLabel {
-  font-size: 10px;
-  color: #86868b;
-}
-
-.infoCardValue {
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.hintText {
-  font-size: 12px;
-  color: #0071e3;
-  font-weight: 600;
 }
 
 .mainContent {
@@ -154,7 +68,6 @@
 
 .excelHeader {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  background-color: white;
 }
 
 .excelHeaderRow {
@@ -174,7 +87,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: white;
 }
 
 .excelPlaceholderInner {
@@ -182,7 +94,6 @@
 }
 
 .categoryHeader {
-  color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -193,10 +104,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.tableHeaderCell {
-  font-weight: 600;
 }
 
 .sectionTitle {
@@ -231,7 +138,6 @@
 .noteContentBox {
   max-height: 100px;
   overflow-y: auto;
-  background-color: #fafafa;
   border-radius: 6px;
   border: 1px solid #f0f0f0;
 }
@@ -255,9 +161,8 @@
 }
 
 .noteText {
-  font-size: 12px;
-  line-height: 1.5;
   white-space: pre-wrap;
+  line-height: 1.5;
   font-family: inherit;
 }
 

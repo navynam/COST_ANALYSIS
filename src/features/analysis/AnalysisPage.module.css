@@ -1,11 +1,5 @@
-/* AnalysisPage CSS Module */
+/* AnalysisPage CSS Module — layout only */
 
-/* ── Layout ── */
-.pageRoot {
-  min-height: 100vh;
-}
-
-/* ── Header ── */
 .headerBar {
   display: flex;
   justify-content: space-between;
@@ -15,16 +9,6 @@
 .headerLeft {
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.breadcrumb {
-  font-size: 13px;
-}
-
-.pageTitle {
-  font-size: 16px;
-  font-weight: 700;
 }
 
 .headerRight {
@@ -36,119 +20,15 @@
   display: flex;
 }
 
-/* ── 공통 버튼 스타일 ── */
-.outlinedBtn {
-  text-transform: none;
-  font-size: 12px;
-  font-weight: 600;
-  border-radius: 8px;
-  border-color: #e5e5e7;
-  color: #6b7280;
-  background-color: #fafafa;
-}
-
-.outlinedBtn:hover {
-  border-color: #d1d5db;
-  background-color: #f3f4f6;
-  color: #374151;
-}
-
-.badgeBlue {
-  background-color: #0064ff;
-  color: #fff;
-  border-radius: 10px;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1.6;
-}
-
-.badgeOrange {
-  background-color: #ff9500;
-  color: #fff;
-  border-radius: 10px;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1.6;
-}
-
-/* ── 단계 이동 버튼 ── */
 .stepNavigation {
   display: flex;
   align-items: center;
 }
 
-.navBtn {
-  text-transform: none;
-  font-size: 12px;
-  font-weight: 600;
-  border-radius: 8px;
-  color: #8b95a1;
-  min-width: 0;
-}
-
-.completeBtn {
-  text-transform: none;
-  font-size: 12px;
-  font-weight: 700;
-  border-radius: 8px;
-  background-color: #0064ff;
-  box-shadow: none;
-}
-
-.completeBtn:hover {
-  background-color: #0056d3;
-  box-shadow: none;
-}
-
-.nextBtn {
-  text-transform: none;
-  font-size: 12px;
-  font-weight: 700;
-  border-radius: 8px;
-  background-color: #34c759;
-  box-shadow: none;
-}
-
-.nextBtn:hover {
-  background-color: #28a745;
-  box-shadow: none;
-}
-
-/* ── Info Cards ── */
 .infoCards {
   display: flex;
 }
 
-.infoCard {
-  border-radius: 8px;
-  border: 1px solid #e5e5e7;
-  box-shadow: none;
-}
-
-.infoCardLabel {
-  font-size: 10px;
-  color: #86868b;
-}
-
-.infoCardValue {
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.costCard {
-  flex: 0 0 140px;
-  border-radius: 8px;
-  border: 1px solid #e5e5e7;
-  box-shadow: none;
-}
-
-.costValue {
-  font-size: 16px;
-  font-weight: 700;
-  color: #0071e3;
-}
-
-/* ── Tab Bar ── */
 .tabBar {
   display: flex;
   justify-content: space-between;
@@ -164,16 +44,6 @@
   align-items: center;
 }
 
-.statusLabel {
-  font-size: 12px;
-}
-
-.statusValue {
-  font-size: 13px;
-  font-weight: 600;
-}
-
-/* ── Cost Group ── */
 .groupHeader {
   display: flex;
   justify-content: space-between;
@@ -192,13 +62,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.groupTitle {
-  font-size: 14px;
-  font-weight: 600;
 }
 
 .groupHeaderRight {
@@ -206,30 +69,12 @@
   align-items: center;
 }
 
-.groupTotalAmount {
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.anomalyBadge {
-  font-size: 10px;
-  font-weight: 600;
-  border-radius: 4px;
-  background-color: #f8d7da;
-}
-
-/* ── Table Rows ── */
 .cellClickable {
   cursor: pointer;
 }
 
 .cellName {
-  font-weight: 500;
   cursor: pointer;
-}
-
-.subLink {
-  font-size: 11px;
 }
 
 .amountBox {
@@ -238,11 +83,9 @@
 }
 
 .calculationHint {
-  font-size: 10px;
   cursor: pointer;
 }
 
-/* ── Summary ── */
 .summaryIcon {
   width: 26px;
   height: 26px;
@@ -250,19 +93,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-  color: #fff;
-}
-
-.summaryTitle {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.summaryTotal {
-  font-size: 18px;
-  font-weight: 700;
 }
 
 .barContainer {
@@ -270,40 +100,22 @@
   height: 8px;
   border-radius: 4px;
   overflow: hidden;
-  background-color: #e5e5e7;
 }
 
-/* ── List View ── */
 .listGroupHeader {
   display: flex;
   align-items: center;
 }
 
-/* ── Relation View ── */
 .relationContainer {
   display: flex;
   align-items: flex-start;
 }
 
-.relationHeader {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.relationSubheader {
-  font-size: 11px;
-}
-
-/* ── Detail Panel ── */
 .detailPanelHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.detailPanelTitle {
-  font-size: 13px;
-  font-weight: 700;
 }
 
 .detailStatusBadge {
@@ -311,51 +123,8 @@
   border-radius: 4px;
 }
 
-.detailStatusText {
-  font-size: 10px;
-  font-weight: 700;
-}
-
-.detailNodeLabel {
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 1.3;
-}
-
-.detailNodeSub {
-  font-size: 11px;
-}
-
-.amountSection {
-  border-radius: 8px;
-  background-color: #f9fafb;
-}
-
-.amountLabel {
-  font-size: 10px;
-}
-
-.amountValue {
-  font-size: 20px;
-  font-weight: 800;
-}
-
-.amountDetail {
-  font-size: 11px;
-}
-
-.confidenceLabel {
-  font-size: 11px;
-}
-
-.confidenceValue {
-  font-size: 11px;
-  font-weight: 700;
-}
-
 .confidenceBarBg {
   height: 6px;
-  background-color: #e5e7eb;
   border-radius: 3px;
   overflow: hidden;
 }
@@ -371,97 +140,10 @@
   justify-content: space-between;
 }
 
-.detailRowLabel {
-  font-size: 11px;
-}
-
-.detailRowValue {
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.aiReasonBox {
-  border-radius: 8px;
-  background-color: #fff5f5;
-  border: 1px solid rgba(252, 165, 165, 0.13);
-}
-
-.aiReasonTitle {
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.aiReasonText {
-  font-size: 11px;
-  line-height: 1.6;
-  color: #7f1d1d;
-}
-
-.viewOriginalBtn {
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: none;
-  border-radius: 8px;
-}
-
-/* ── Popover (Anomaly) ── */
-.anomalyPopover {
-  border-radius: 8px;
-  max-width: 260px;
-  font-size: 12px;
-  line-height: 1.5;
-  color: #fff;
-}
-
-.anomalyPopoverTitle {
-  font-weight: 600;
-  font-size: 12px;
-}
-
-.anomalyPopoverText {
-  font-size: 12px;
-  color: #ddd;
-}
-
-/* ── Popover (Calculation) ── */
 .calcPopover {
   max-width: 400px;
-  background-color: #fff;
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   overflow: hidden;
-}
-
-.calcHeader {
-  color: #fff;
-}
-
-.calcHeaderTitle {
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.calcGroupLabel {
-  font-size: 12px;
-}
-
-.calcItemName {
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.calcItemSpec {
-  font-size: 12px;
-}
-
-.calcSectionTitle {
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.calcDetailBox {
-  background-color: #f8f9fa;
-  border-radius: 8px;
 }
 
 .calcDetailRow {
@@ -469,56 +151,14 @@
   align-items: center;
 }
 
-.calcDetailLabel {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.calcDetailValue {
-  font-size: 14px;
-  font-family: monospace;
-}
-
 .calcResultBox {
-  background-color: #fff;
   border-radius: 6px;
   text-align: center;
-}
-
-.calcResultText {
-  font-size: 16px;
-  font-family: monospace;
-  font-weight: 700;
-}
-
-.calcFixedBox {
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  text-align: center;
-}
-
-.calcFixedText {
-  font-size: 16px;
-  font-family: monospace;
-  font-weight: 600;
-}
-
-.calcFixedNote {
-  font-size: 12px;
 }
 
 .calcFooterGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-}
-
-.calcFooterLabel {
-  font-size: 11px;
-}
-
-.calcFooterValue {
-  font-size: 14px;
-  font-weight: 600;
 }
 
 .calcConfBar {
@@ -529,27 +169,11 @@
 .calcConfBarBg {
   width: 40px;
   height: 6px;
-  background-color: #e0e0e0;
   border-radius: 3px;
   overflow: hidden;
 }
 
-.calcAnomalyBox {
-  border-radius: 8px;
-  background-color: #fff5f5;
-}
-
-.calcAnomalyTitle {
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.calcAnomalyText {
-  font-size: 12px;
-}
-
 .calcCloseText {
-  font-size: 10px;
   text-align: center;
   cursor: pointer;
 }
@@ -558,7 +182,6 @@
   text-decoration: underline;
 }
 
-/* ── Note Dialog ── */
 .noteDialogTitle {
   display: flex;
   align-items: center;
@@ -569,9 +192,4 @@
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.editInput input {
-  font-size: 12px;
-  padding: 4px 8px;
 }
