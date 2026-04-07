@@ -274,6 +274,7 @@ const GoldenSetView: React.FC = () => {
             인쇄
           </Button>
           <Button size="small" variant="contained" startIcon={<ExcelIcon sx={{ fontSize: 14 }} />}
+            data-excel-download
             onClick={handleExcelDownload}
             sx={{ textTransform: 'none', fontSize: 12, fontWeight: 700, borderRadius: '8px', bgcolor: '#217346', boxShadow: 'none', px: 1.5, '&:hover': { bgcolor: '#1a5c38', boxShadow: 'none' } }}>
             Excel 다운로드

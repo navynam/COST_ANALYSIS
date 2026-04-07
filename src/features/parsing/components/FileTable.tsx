@@ -24,7 +24,7 @@ interface FileTableProps {
   getNoteCount: (fileId: string) => number;
 }
 
-const thSx = { fontSize: 11, fontWeight: 600, color: '#86868b', py: 1.5 };
+const thSx = { fontSize: 12, fontWeight: 700, color: '#4e5968', py: 1.5, textAlign: 'center' as const };
 
 const SortIcon: React.FC<{ field: SortField; active: SortField | null; direction: SortDirection }> = ({ field, active, direction }) =>
   active === field ? (direction === 'asc' ? <ArrowUpward sx={{ fontSize: 14 }} /> : <ArrowDownward sx={{ fontSize: 14 }} />) : null;
@@ -56,11 +56,8 @@ const FileTable: React.FC<FileTableProps> = ({
                 <Checkbox size="small" checked={selectedIds.size === files.length && files.length > 0} onChange={onToggleAll} />
               </TableCell>
               {columns.map(col => (
-                <TableCell key={col.key} sx={{ ...thSx, width: col.width, cursor: col.sortKey ? 'pointer' : 'default' }} onClick={() => col.sortKey && onSort(col.sortKey)}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    {col.label}
-                    {col.sortKey && <SortIcon field={col.sortKey} active={sortField} direction={sortDirection} />}
-                  </Box>
+                <TableCell key={col.key} sx={{ ...thSx, width: col.width }}>
+                  {col.label}
                 </TableCell>
               ))}
               <TableCell sx={{ ...thSx, width: 220 }}>액션</TableCell>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Paper, IconButton, Tooltip } from '@mui/material';
-import { AutoFixHigh, GridOn } from '@mui/icons-material';
+import { AutoFixHigh } from '@mui/icons-material';
 import { C } from '../../../shared/constants/colors';
 import type { ListGroup } from '../types';
 import { useRelationView } from '../hooks/useRelationView';
@@ -25,11 +25,6 @@ const RelationView: React.FC<RelationViewProps> = ({ listData, onNodeClick, onNo
         <Tooltip title="자동 정렬">
           <IconButton onClick={autoArrange} sx={{ bgcolor: '#fff', boxShadow: 2, '&:hover': { bgcolor: '#f0f7ff' } }}>
             <AutoFixHigh />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="격자 표시">
-          <IconButton sx={{ bgcolor: '#fff', boxShadow: 2, '&:hover': { bgcolor: '#f0f7ff' } }}>
-            <GridOn />
           </IconButton>
         </Tooltip>
       </Box>
@@ -77,32 +72,31 @@ const RelationView: React.FC<RelationViewProps> = ({ listData, onNodeClick, onNo
               '&:hover': !isDragging ? { transform: 'scale(1.03)', boxShadow: '0 6px 24px rgba(0,0,0,0.2)', zIndex: 10 } : {},
             }}
           >
-            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5 }}>
                 {node.icon && (
-                  <Box sx={{ width: 24, height: 24, borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: node.iconBg, color: node.iconColor, fontSize: 12 }}>
+                  <Box sx={{ width: 20, height: 20, borderRadius: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: node.iconBg, color: node.iconColor, fontSize: 11, flexShrink: 0 }}>
                     {node.icon}
                   </Box>
                 )}
-                <Typography sx={{ fontSize: node.id === 'root' ? 16 : 13, fontWeight: 700, color: node.status === 'anomaly' ? C.red : node.id === 'root' ? C.blue : C.dark, flex: 1 }}>
+                <Typography sx={{ fontSize: node.id === 'root' ? 15 : 12, fontWeight: 700, color: node.status === 'anomaly' ? C.red : node.id === 'root' ? C.blue : C.dark, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {node.label}
                 </Typography>
                 {node.hasChildren && (
-                  <Box sx={{ width: 20, height: 20, borderRadius: '50%', bgcolor: node.level >= 3 ? C.purple : C.blue, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700 }}>
+                  <Box sx={{ width: 18, height: 18, borderRadius: '50%', bgcolor: node.level >= 3 ? C.purple : C.blue, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>
                     {expandedNodes.has(node.id) ? '−' : '+'}
                   </Box>
                 )}
               </Box>
-              <Typography sx={{ fontSize: 10, color: C.gray, mb: 0.5 }}>{node.sub}</Typography>
-              {node.detail && <Typography sx={{ fontSize: 9, color: C.gray, mb: 1 }}>{node.detail}</Typography>}
-              {node.spec && <Typography sx={{ fontSize: 9, color: C.gray, mb: 0.5 }}>규격: {node.spec}</Typography>}
-              {node.qty && node.unitPrice && <Typography sx={{ fontSize: 9, color: C.gray, mb: 0.5 }}>{node.qty} {node.unit} × ₩{node.unitPrice}</Typography>}
+              <Typography sx={{ fontSize: 9, color: C.gray, mb: 0.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{node.sub}</Typography>
+              {node.spec && <Typography sx={{ fontSize: 9, color: C.gray, mb: 0.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>규격: {node.spec}</Typography>}
+              {node.qty && node.unitPrice && <Typography sx={{ fontSize: 9, color: C.gray, mb: 0.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{node.qty} {node.unit} × ₩{node.unitPrice}</Typography>}
               <Box sx={{ mt: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography sx={{ fontSize: node.id === 'root' ? 18 : 14, fontWeight: 700, color: node.status === 'anomaly' ? C.red : C.dark }}>
+                <Typography sx={{ fontSize: node.id === 'root' ? 16 : 13, fontWeight: 700, color: node.status === 'anomaly' ? C.red : C.dark }}>
                   {node.amount}
                 </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <Box sx={{ width: 30, height: 4, bgcolor: '#e0e0e0', borderRadius: 2, overflow: 'hidden' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexShrink: 0 }}>
+                  <Box sx={{ width: 28, height: 4, bgcolor: '#e0e0e0', borderRadius: 2, overflow: 'hidden' }}>
                     <Box sx={{ width: `${node.confidence}%`, height: '100%', bgcolor: node.confidence >= 90 ? C.green : node.confidence >= 70 ? C.orange : C.red }} />
                   </Box>
                   <Typography sx={{ fontSize: 8, color: C.gray }}>{node.confidence}%</Typography>

@@ -86,13 +86,13 @@ export const useRelationView = (listData: ListGroup[], onNodeClick?: (name: stri
       const itemsPerRow = level === 2 ? 3 : 2;
       const col = itemIndex % itemsPerRow;
       const row = Math.floor(itemIndex / itemsPerRow);
-      const spacing = level === 2 ? 180 : 160;
+      const spacing = level === 2 ? 210 : 200;
       const nodeId = `${parentId}_${item.id}${level > 2 ? `_L${level}` : ''}`;
       const node = {
         id: nodeId, label: item.name, sub: item.category, spec: item.spec,
         amount: `₩${item.amount}`, detail: item.ratio, confidence: item.confidence,
-        x: parentX + (col * spacing) - spacing, y: parentY + 160 + (row * 120),
-        w: level === 2 ? 170 : 150, h: level === 2 ? 90 : 80,
+        x: parentX + (col * spacing) - spacing, y: parentY + 170 + (row * 160),
+        w: level === 2 ? 195 : 185, h: level === 2 ? 130 : 120,
         status: item.status, parent: parentId, qty: item.qty, unitPrice: item.unitPrice, unit: item.unit,
         anomalyReason: item.anomalyReason,
         level, hasChildren: item.children && item.children.length > 0,

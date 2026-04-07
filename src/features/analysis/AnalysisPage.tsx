@@ -92,6 +92,21 @@ const AnalysisPage: React.FC = () => {
 
   const [selectedRelationNode, setSelectedRelationNode] = React.useState<any>(null);
 
+  // 리스트뷰 인라인 편집 상태
+  const [listEditCell, setListEditCell] = React.useState<{ itemId: string; field: string } | null>(null);
+  const [listEditValue, setListEditValue] = React.useState('');
+
+  const handleListStartEdit = (itemId: string, field: string, currentValue: string) => {
+    setListEditCell({ itemId, field });
+    setListEditValue(currentValue);
+  };
+  const handleListCommitEdit = () => {
+    // TODO: 실제 데이터 업데이트 로직 연결
+    console.log('리스트뷰 편집 완료:', listEditCell, listEditValue);
+    setListEditCell(null);
+  };
+  const handleListCancelEdit = () => setListEditCell(null);
+
   // 📝 노트작성 관련 핸들러
   const handleNoteSubmit = () => {
     if (!noteContent.trim()) return;
@@ -131,6 +146,31 @@ const AnalysisPage: React.FC = () => {
 
           {/* ── 현재 페이지 기능 버튼 ── */}
           <Box sx={{ display: 'flex', gap: 1, pr: 1.5, borderRight: '1px solid #e5e5e7' }}>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => {
+                // 골든셋 탭으로 이동 후 다운로드
+                setActiveTab(3);
+                setTimeout(() => {
+                  const dlBtn = document.querySelector('[data-excel-download]') as HTMLButtonElement;
+                  if (dlBtn) dlBtn.click();
+                }, 300);
+              }}
+              sx={{
+                textTransform: 'none',
+                fontSize: 12,
+                fontWeight: 600,
+                borderRadius: '8px',
+                borderColor: '#217346',
+                color: '#217346',
+                bgcolor: '#f0fdf4',
+                px: 1.5,
+                '&:hover': { borderColor: '#1a5c38', bgcolor: '#dcfce7', color: '#1a5c38' }
+              }}
+            >
+              📥 엑셀다운로드
+            </Button>
             <Button
               variant="outlined"
               size="small"
@@ -421,7 +461,7 @@ const AnalysisPage: React.FC = () => {
                                   sx={{ '& input': { fontSize: 12, p: '4px 8px' } }} />
                               </ClickAwayListener>
                             ) : (
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
                                 {row.amount}
                                 <Typography
                                   component="span"
@@ -533,7 +573,8 @@ const AnalysisPage: React.FC = () => {
                   </TableHead>
                   <TableBody>
                     {group.items.map(item => (
-                      <ListViewRow key={item.id} item={item} onCellClick={handleCellClick} onAmountClick={handleAmountClick} onAnomalyClick={(el, reason) => setAnomalyAnchor({ el, reason })} groupTitle={group.title} />
+                      <ListViewRow key={item.id} item={item} onCellClick={handleCellClick} onAmountClick={handleAmountClick} onAnomalyClick={(el, reason) => setAnomalyAnchor({ el, reason })} groupTitle={group.title}
+                        editCell={listEditCell} editValue={listEditValue} onStartEdit={handleListStartEdit} onEditValueChange={setListEditValue} onCommitEdit={handleListCommitEdit} onCancelEdit={handleListCancelEdit} />
                     ))}
                   </TableBody>
                 </Table>
