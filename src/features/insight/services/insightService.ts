@@ -3,6 +3,8 @@
  * @description AI 대화 세션 및 메시지 처리 로직을 hooks에서 분리
  */
 
+import apiClient from '../../../shared/api/apiClient';
+import { USE_API } from '../../../shared/api/config';
 import type { Message, Session } from '../hooks/useInsightPage';
 
 // ── 더미 AI 응답 데이터 ──
@@ -57,4 +59,62 @@ export const addMessageToSession = (
   return sessions.map(s =>
     s.id === sessionId ? { ...s, messages: [...s.messages, message] } : s
   );
+};
+
+// ── API 호출 함수 ──
+
+/** 세션 목록 API 조회 */
+export const fetchSessionsApi = async (): Promise<Session[]> => {
+  const res = await apiClient.get('/insights/sessions');
+  return res.data.data || res.data;
+};
+
+/** 세션 생성 API */
+export const createSessionApi = async (): Promise<Session> => {
+  const res = await apiClient.post('/insights/sessions');
+  return res.data.data || res.data;
+};
+
+/** AI 메시지 전송 API */
+export const sendMessageApi = async (sessionId: string, content: string): Promise<Message> => {
+  const res = await apiClient.post(`/insights/sessions/${sessionId}/messages`, { content });
+  return res.data.data || res.data;
+};
+
+// ── 통합 함수 ──
+
+/** 세션 목록 조회 (API 우선, 실패 시 빈 배열 반환) */
+export const fetchSessions = async (): Promise<Session[]> => {
+  if (USE_API) {
+    try {
+      return await fetchSessionsApi();
+    } catch {
+      return [];
+    }
+  }
+  return [];
+};
+
+/** 세션 생성 (API 우선, 실패 시 로컬 생성) */
+export const createSession = async (): Promise<Session> => {
+  if (USE_API) {
+    try {
+      return await createSessionApi();
+    } catch {
+      return createNewSession();
+    }
+  }
+  return createNewSession();
+};
+
+/** AI 메시지 전송 (API 우선, 실패 시 더미 응답) */
+export const sendMessage = async (sessionId: string, content: string): Promise<Message> => {
+  if (USE_API) {
+    try {
+      return await sendMessageApi(sessionId, content);
+    } catch {
+      return fetchAiResponse(content);
+    }
+  }
+  return fetchAiResponse(content);
 };

@@ -3,6 +3,9 @@
  * @description 로그인 검증 로직을 hooks에서 분리, 향후 API 전환 대비
  */
 
+import apiClient from '../../../shared/api/apiClient';
+import { USE_API } from '../../../shared/api/config';
+
 // ── 인증 로직 ──
 
 const MAX_FAIL_COUNT = 5;
@@ -42,4 +45,37 @@ export const authenticate = async (
     errorMessage: `아이디 또는 비밀번호가 올바르지 않습니다. (${newCount}/${MAX_FAIL_COUNT})`,
     failCount: newCount,
   };
+};
+
+// ── API 호출 함수 ──
+
+/** 로그인 API 호출 */
+export const loginApi = async (
+  employeeId: string,
+  password: string
+): Promise<LoginResult> => {
+  const res = await apiClient.post('/auth/login', { employeeId, password });
+  const { token, ...result } = res.data.data || res.data;
+  if (token) {
+    localStorage.setItem('access_token', token);
+  }
+  return { success: true, locked: false, errorMessage: '', failCount: 0, ...result };
+};
+
+// ── 통합 함수 ──
+
+/** 로그인 (API 우선, 실패 시 로컬 fallback) */
+export const login = async (
+  employeeId: string,
+  password: string,
+  currentFailCount: number
+): Promise<LoginResult> => {
+  if (USE_API) {
+    try {
+      return await loginApi(employeeId, password);
+    } catch {
+      return authenticate(employeeId, password, currentFailCount);
+    }
+  }
+  return authenticate(employeeId, password, currentFailCount);
 };

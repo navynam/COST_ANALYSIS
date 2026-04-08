@@ -3,6 +3,8 @@
  * @description 수식 데이터의 localStorage 접근 및 데이터 변환 로직
  */
 
+import apiClient from '../../../shared/api/apiClient';
+import { USE_API } from '../../../shared/api/config';
 import type { Formula } from '../hooks/useModelManagement';
 
 // ── localStorage 키 ──
@@ -89,4 +91,94 @@ export const isCoreFormula = (formula: Formula): boolean => {
 /** 새 수식 ID 생성 */
 export const generateFormulaId = (): string => {
   return `f${Date.now()}`;
+};
+
+// ── API 호출 함수 ──
+
+/** 수식 목록 API 조회 */
+export const fetchFormulasApi = async (): Promise<Formula[]> => {
+  const res = await apiClient.get('/models/formulas');
+  return res.data.data || res.data;
+};
+
+/** 수식 생성 API */
+export const createFormulaApi = async (formula: Omit<Formula, 'id'>): Promise<Formula> => {
+  const res = await apiClient.post('/models/formulas', formula);
+  return res.data.data || res.data;
+};
+
+/** 수식 수정 API */
+export const updateFormulaApi = async (id: string, formula: Partial<Formula>): Promise<Formula> => {
+  const res = await apiClient.put(`/models/formulas/${id}`, formula);
+  return res.data.data || res.data;
+};
+
+/** 수식 삭제 API */
+export const deleteFormulaApi = async (id: string): Promise<void> => {
+  await apiClient.delete(`/models/formulas/${id}`);
+};
+
+// ── 통합 함수 ──
+
+/** 수식 목록 조회 (API 우선, 실패 시 localStorage fallback) */
+export const getFormulas = async (): Promise<Formula[]> => {
+  if (USE_API) {
+    try {
+      return await fetchFormulasApi();
+    } catch {
+      return loadFormulas();
+    }
+  }
+  return loadFormulas();
+};
+
+/** 수식 생성 (API 우선, 실패 시 localStorage fallback) */
+export const createFormula = async (formula: Omit<Formula, 'id'>): Promise<Formula> => {
+  if (USE_API) {
+    try {
+      return await createFormulaApi(formula);
+    } catch {
+      const newFormula = { ...formula, id: generateFormulaId() } as Formula;
+      const formulas = loadFormulas();
+      saveFormulas([...formulas, newFormula]);
+      return newFormula;
+    }
+  }
+  const newFormula = { ...formula, id: generateFormulaId() } as Formula;
+  const formulas = loadFormulas();
+  saveFormulas([...formulas, newFormula]);
+  return newFormula;
+};
+
+/** 수식 수정 (API 우선, 실패 시 localStorage fallback) */
+export const updateFormula = async (id: string, updates: Partial<Formula>): Promise<Formula> => {
+  if (USE_API) {
+    try {
+      return await updateFormulaApi(id, updates);
+    } catch {
+      const formulas = loadFormulas();
+      const updated = formulas.map(f => f.id === id ? { ...f, ...updates } : f);
+      saveFormulas(updated);
+      return updated.find(f => f.id === id)!;
+    }
+  }
+  const formulas = loadFormulas();
+  const updated = formulas.map(f => f.id === id ? { ...f, ...updates } : f);
+  saveFormulas(updated);
+  return updated.find(f => f.id === id)!;
+};
+
+/** 수식 삭제 (API 우선, 실패 시 localStorage fallback) */
+export const deleteFormula = async (id: string): Promise<void> => {
+  if (USE_API) {
+    try {
+      return await deleteFormulaApi(id);
+    } catch {
+      const formulas = loadFormulas();
+      saveFormulas(formulas.filter(f => f.id !== id));
+      return;
+    }
+  }
+  const formulas = loadFormulas();
+  saveFormulas(formulas.filter(f => f.id !== id));
 };

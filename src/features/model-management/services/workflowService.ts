@@ -3,6 +3,8 @@
  * @description 변경 요청 데이터의 localStorage 접근 및 통계 계산
  */
 
+import apiClient from '../../../shared/api/apiClient';
+import { USE_API } from '../../../shared/api/config';
 import type { CurrentUser, ChangeRequest } from '../hooks/useModelWorkflow';
 import { userPresets } from '../hooks/useModelWorkflow';
 
@@ -118,4 +120,136 @@ export const hasPendingByUser = (requests: ChangeRequest[], formulaId: string, u
 /** 사용자 프리셋에서 userId로 사용자 조회 */
 export const findUserPreset = (userId: string): CurrentUser | undefined => {
   return userPresets.find(u => u.id === userId);
+};
+
+// ── API 호출 함수 ──
+
+/** 변경 요청 목록 API 조회 */
+export const fetchChangeRequestsApi = async (): Promise<ChangeRequest[]> => {
+  const res = await apiClient.get('/models/change-requests');
+  return res.data.data || res.data;
+};
+
+/** 변경 요청 제출 API */
+export const submitChangeRequestApi = async (request: Omit<ChangeRequest, 'id' | 'status' | 'createdAt'>): Promise<ChangeRequest> => {
+  const res = await apiClient.post('/models/change-requests', request);
+  return res.data.data || res.data;
+};
+
+/** 변경 요청 승인 API */
+export const approveRequestApi = async (id: string, comment?: string, departments?: string[]): Promise<ChangeRequest> => {
+  const res = await apiClient.put(`/models/change-requests/${id}/approve`, { comment, departments });
+  return res.data.data || res.data;
+};
+
+/** 변경 요청 반려 API */
+export const rejectRequestApi = async (id: string, comment?: string): Promise<ChangeRequest> => {
+  const res = await apiClient.put(`/models/change-requests/${id}/reject`, { comment });
+  return res.data.data || res.data;
+};
+
+/** 변경 요청 취소 API */
+export const cancelRequestApi = async (id: string): Promise<void> => {
+  await apiClient.delete(`/models/change-requests/${id}`);
+};
+
+// ── 통합 함수 ──
+
+/** 변경 요청 목록 조회 (API 우선, 실패 시 localStorage fallback) */
+export const getChangeRequests = async (): Promise<ChangeRequest[]> => {
+  if (USE_API) {
+    try {
+      return await fetchChangeRequestsApi();
+    } catch {
+      return loadRequests();
+    }
+  }
+  return loadRequests();
+};
+
+/** 변경 요청 제출 (API 우선, 실패 시 localStorage fallback) */
+export const submitChangeRequest = async (request: Omit<ChangeRequest, 'id' | 'status' | 'createdAt'>): Promise<ChangeRequest> => {
+  if (USE_API) {
+    try {
+      return await submitChangeRequestApi(request);
+    } catch {
+      const newRequest: ChangeRequest = {
+        ...request,
+        id: `cr${Date.now()}`,
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+      } as ChangeRequest;
+      const requests = loadRequests();
+      saveRequests([newRequest, ...requests]);
+      return newRequest;
+    }
+  }
+  const newRequest: ChangeRequest = {
+    ...request,
+    id: `cr${Date.now()}`,
+    status: 'pending',
+    createdAt: new Date().toISOString(),
+  } as ChangeRequest;
+  const requests = loadRequests();
+  saveRequests([newRequest, ...requests]);
+  return newRequest;
+};
+
+/** 변경 요청 승인 (API 우선, 실패 시 localStorage fallback) */
+export const approveRequest = async (id: string, comment?: string, departments?: string[]): Promise<ChangeRequest> => {
+  if (USE_API) {
+    try {
+      return await approveRequestApi(id, comment, departments);
+    } catch {
+      const requests = loadRequests();
+      const updated = requests.map(r =>
+        r.id === id ? { ...r, status: 'approved' as const, reviewerComment: comment, approvedDepartments: departments, reviewedAt: new Date().toISOString() } : r
+      );
+      saveRequests(updated);
+      return updated.find(r => r.id === id)!;
+    }
+  }
+  const requests = loadRequests();
+  const updated = requests.map(r =>
+    r.id === id ? { ...r, status: 'approved' as const, reviewerComment: comment, approvedDepartments: departments, reviewedAt: new Date().toISOString() } : r
+  );
+  saveRequests(updated);
+  return updated.find(r => r.id === id)!;
+};
+
+/** 변경 요청 반려 (API 우선, 실패 시 localStorage fallback) */
+export const rejectRequest = async (id: string, comment?: string): Promise<ChangeRequest> => {
+  if (USE_API) {
+    try {
+      return await rejectRequestApi(id, comment);
+    } catch {
+      const requests = loadRequests();
+      const updated = requests.map(r =>
+        r.id === id ? { ...r, status: 'rejected' as const, reviewerComment: comment, reviewedAt: new Date().toISOString() } : r
+      );
+      saveRequests(updated);
+      return updated.find(r => r.id === id)!;
+    }
+  }
+  const requests = loadRequests();
+  const updated = requests.map(r =>
+    r.id === id ? { ...r, status: 'rejected' as const, reviewerComment: comment, reviewedAt: new Date().toISOString() } : r
+  );
+  saveRequests(updated);
+  return updated.find(r => r.id === id)!;
+};
+
+/** 변경 요청 취소 (API 우선, 실패 시 localStorage fallback) */
+export const cancelRequest = async (id: string): Promise<void> => {
+  if (USE_API) {
+    try {
+      return await cancelRequestApi(id);
+    } catch {
+      const requests = loadRequests();
+      saveRequests(requests.filter(r => r.id !== id));
+      return;
+    }
+  }
+  const requests = loadRequests();
+  saveRequests(requests.filter(r => r.id !== id));
 };

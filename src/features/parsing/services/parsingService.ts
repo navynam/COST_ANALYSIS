@@ -3,6 +3,8 @@
  * @description 파일 필터링, 정렬, 카운트 등 순수 데이터 로직
  */
 
+import apiClient from '../../../shared/api/apiClient';
+import { USE_API } from '../../../shared/api/config';
 import type { FileItem, FileStatus, SearchFilters, SortField, SortDirection } from '../types';
 
 // ── 데이터 필터 및 정렬 로직 ──
@@ -63,4 +65,47 @@ export const isSearchActive = (searchFilters: SearchFilters): boolean => {
 /** 파일 업로드 처리 (현재 mock - 향후 API 전환) */
 export const uploadFiles = async (_files: File[]): Promise<void> => {
   // TODO: 실제 API 연동 시 서버에 파일 업로드
+};
+
+// ── API 호출 함수 ──
+
+/** 견적서 목록 API 조회 */
+export const fetchQuotationsApi = async (filters?: Record<string, string>): Promise<FileItem[]> => {
+  const res = await apiClient.get('/quotations', { params: filters });
+  return res.data.data || res.data;
+};
+
+/** 파일 업로드 API */
+export const uploadFilesApi = async (files: File[]): Promise<void> => {
+  const formData = new FormData();
+  files.forEach(file => formData.append('files', file));
+  await apiClient.post('/quotations/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+};
+
+// ── 통합 함수 ──
+
+/** 견적서 목록 조회 (API 우선, 실패 시 빈 배열 반환) */
+export const fetchQuotations = async (filters?: Record<string, string>): Promise<FileItem[]> => {
+  if (USE_API) {
+    try {
+      return await fetchQuotationsApi(filters);
+    } catch {
+      return []; // fallback - 로컬 데이터는 호출 측에서 관리
+    }
+  }
+  return [];
+};
+
+/** 파일 업로드 통합 (API 우선, 실패 시 로컬 mock) */
+export const uploadQuotationFiles = async (files: File[]): Promise<void> => {
+  if (USE_API) {
+    try {
+      return await uploadFilesApi(files);
+    } catch {
+      return uploadFiles(files);
+    }
+  }
+  return uploadFiles(files);
 };
