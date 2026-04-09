@@ -116,7 +116,7 @@ const DashboardPage: React.FC = () => {
         <Grid item xs={12} md={6}>
           <Typography variant="subtitle1" fontWeight={600} gutterBottom sx={{ mb: 2 }}>내가 해야할 작업</Typography>
           <Paper sx={{ p: 2, borderRadius: 2 }}>
-            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1.25 }}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 1.25 }}>
               {workItems.map((item) => (
                 <Card key={item.status}
                   sx={{

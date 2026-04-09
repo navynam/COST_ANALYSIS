@@ -16,6 +16,7 @@ import { useModelManagement, badgeConfig, Formula, ALL_DEPARTMENTS } from './hoo
 import { useModelWorkflow, userPresets, ChangeRequest } from './hooks/useModelWorkflow';
 import SimpleKnowledgeGraphTab from './components/SimpleKnowledgeGraphTab';
 import styles from './ModelManagementPage.module.css';
+import { useMessageDialog } from '../../shared/components/MessageDialog';
 
 // ── 상태 배지 설정 ──
 const statusBadge: Record<string, { label: string; color: string; bg: string }> = {
@@ -25,6 +26,7 @@ const statusBadge: Record<string, { label: string; color: string; bg: string }> 
 };
 
 const ModelManagementPage: React.FC = () => {
+  const { showConfirm } = useMessageDialog();
   const [currentTab, setCurrentTab] = useState(0);
   const {
     formulas, modalOpen, setModalOpen,
@@ -301,7 +303,7 @@ const ModelManagementPage: React.FC = () => {
                       <>
                         <Button size="small" startIcon={<Edit sx={{ fontSize: 14 }} />} onClick={() => openEdit(f)}
                           sx={{ color: '#003875', fontSize: 12, textTransform: 'none' }}>편집</Button>
-                        <Button size="small" startIcon={<Delete sx={{ fontSize: 14 }} />} onClick={() => handleDelete(f)}
+                        <Button size="small" startIcon={<Delete sx={{ fontSize: 14 }} />} onClick={() => handleDelete(f, async (doDelete) => { const ok = await showConfirm('삭제하시겠습니까?', '이 수식을 삭제합니다.'); if (ok) doDelete(); })}
                           sx={{ color: '#999', fontSize: 12, textTransform: 'none', '&:hover': { color: '#d32f2f' } }}>삭제</Button>
                       </>
                     ) : (
@@ -458,11 +460,10 @@ const ModelManagementPage: React.FC = () => {
                         <Box sx={{ mt: 1 }}>
                           <Button size="small" variant="outlined" startIcon={<Cancel sx={{ fontSize: 14 }} />}
                             onClick={() => {
-                              if (window.confirm('이 수정 요청을 취소하시겠습니까?')) {
+                              showConfirm('이 수정 요청을 취소하시겠습니까?', '대기 중인 요청이 삭제됩니다.').then(ok => { if (ok) {
                                 cancelRequest(cr.id);
                                 setToast({ open: true, severity: 'info', message: '수정 요청이 취소되었습니다.' });
-                              }
-                            }}
+                              } }); }}
                             sx={{ color: '#999', borderColor: '#ccc', fontSize: 12, textTransform: 'none', '&:hover': { color: '#c62828', borderColor: '#c62828' } }}>
                             요청 취소
                           </Button>

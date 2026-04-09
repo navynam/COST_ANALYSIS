@@ -92,46 +92,53 @@ const FileCard: React.FC<{
   const getStatusConfig = (status: string) => {
     switch (status) {
       case 'extracting':
-        return { 
-          color: '#ff9800', 
-          icon: <Schedule sx={{ fontSize: 16 }} />, 
-          label: '추출중', 
-          bgColor: '#fff3e0' 
+        return {
+          color: '#F59E0B',
+          icon: <Schedule sx={{ fontSize: 16 }} />,
+          label: '추출중(자동)', 
+          bgColor: '#FEF3C7'
         };
       case 'verifying':
-        return { 
-          color: '#2196f3', 
-          icon: <Schedule sx={{ fontSize: 16 }} />, 
-          label: '검증중', 
-          bgColor: '#e3f2fd' 
+        return {
+          color: '#3B82F6',
+          icon: <Schedule sx={{ fontSize: 16 }} />,
+          label: '검증중',
+          bgColor: '#DBEAFE'
         };
       case 'verified':
-        return { 
-          color: '#4caf50', 
-          icon: <CheckCircle sx={{ fontSize: 16 }} />, 
-          label: '검증완료', 
-          bgColor: '#e8f5e8' 
+        return {
+          color: '#0D9488',
+          icon: <CheckCircle sx={{ fontSize: 16 }} />,
+          label: '검증완료',
+          bgColor: '#CCFBF1'
         };
       case 'analyzing':
-        return { 
-          color: '#9c27b0', 
-          icon: <Analytics sx={{ fontSize: 16 }} />, 
-          label: '분석중', 
-          bgColor: '#f3e5f5' 
+        return {
+          color: '#8B5CF6',
+          icon: <Analytics sx={{ fontSize: 16 }} />,
+          label: '분석중(자동)',
+          bgColor: '#EDE9FE'
+        };
+      case 'inAnalysis':
+        return {
+          color: '#6366F1',
+          icon: <Analytics sx={{ fontSize: 16 }} />,
+          label: '분석중',
+          bgColor: '#E0E7FF'
         };
       case 'analyzed':
-        return { 
-          color: '#34c759', 
-          icon: <CheckCircle sx={{ fontSize: 16 }} />, 
-          label: '분석완료', 
-          bgColor: '#e8f5e9' 
+        return {
+          color: '#10B981',
+          icon: <CheckCircle sx={{ fontSize: 16 }} />,
+          label: '분석완료',
+          bgColor: '#D1FAE5'
         };
       case 'failed':
-        return { 
-          color: '#f44336', 
-          icon: <Error sx={{ fontSize: 16 }} />, 
-          label: '실패', 
-          bgColor: '#ffebee' 
+        return {
+          color: '#EF4444',
+          icon: <Error sx={{ fontSize: 16 }} />,
+          label: '실패',
+          bgColor: '#FEE2E2' 
         };
       default:
         return { 
@@ -248,36 +255,71 @@ const FileCard: React.FC<{
             </Box>
           )}
 
-          {/* ✅ Toss 스타일 추출 결과 (완료, 분석중, 검증 단계) - 컴팩트 */}
-          {(file.status === 'verifying' || file.status === 'verified' || file.status === 'analyzing' || file.status === 'analyzed') && (
-            <Box sx={{ p: 2, bgcolor: '#f0fdf4', borderRadius: '10px', border: '1px solid #dcfce7' }}>
-              <Typography sx={{ 
-                fontSize: 12, 
-                color: '#15803d', 
+          {/* 🔄 분석중(자동) - 프로그래스바 */}
+          {file.status === 'analyzing' && (
+            <Box sx={{ p: 2.5, bgcolor: '#EDE9FE', borderRadius: '12px', border: '1px solid #C4B5FD' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
+                <Typography sx={{ fontSize: 14, color: '#7C3AED', fontWeight: 600 }}>
+                  자동 분석 진행 중
+                </Typography>
+                <Typography sx={{ fontSize: 14, color: '#8B5CF6', fontWeight: 700 }}>
+                  {file.progress || 0}%
+                </Typography>
+              </Box>
+              <LinearProgress
+                variant="determinate"
+                value={file.progress || 0}
+                sx={{
+                  height: 8,
+                  borderRadius: 4,
+                  backgroundColor: '#C4B5FD',
+                  '& .MuiLinearProgress-bar': {
+                    backgroundColor: '#8B5CF6',
+                    borderRadius: 4
+                  }
+                }}
+              />
+              <Typography sx={{
+                fontSize: 12,
+                color: '#8b95a1',
+                mt: 1,
+                textAlign: 'center'
+              }}>
+                검증된 데이터를 기반으로 원가 분석을 진행하고 있어요
+              </Typography>
+            </Box>
+          )}
+
+          {/* ✅ 추출/분석 결과 (검증중, 검증완료, 분석중, 분석완료) - 컴팩트 */}
+          {(file.status === 'verifying' || file.status === 'verified' || file.status === 'inAnalysis' || file.status === 'analyzed') && (
+            <Box sx={{ p: 2, bgcolor: `${statusConfig.color}08`, borderRadius: '10px', border: `1px solid ${statusConfig.color}25` }}>
+              <Typography sx={{
+                fontSize: 12,
+                color: statusConfig.color,
                 fontWeight: 700,
                 mb: 1.5,
                 textAlign: 'center'
               }}>
-                ✨ 추출 완료
+                {(file.status === 'inAnalysis' || file.status === 'analyzed') ? '📊 분석 완료' : '✨ 추출 완료'}
               </Typography>
-              
-              {/* 📊 추출 결과 요약 - 축소 */}
+
+              {/* 📊 결과 요약 - 축소 */}
               <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1.5 }}>
                 <Box sx={{ textAlign: 'center', flex: 1 }}>
-                  <Typography sx={{ 
-                    fontSize: 16, 
-                    fontWeight: 800, 
+                  <Typography sx={{
+                    fontSize: 16,
+                    fontWeight: 800,
                     color: '#0064ff',
                     lineHeight: 1
                   }}>
                     {file.parsedItems || 156}
                   </Typography>
-                  <Typography sx={{ 
-                    fontSize: 10, 
-                    color: '#15803d',
+                  <Typography sx={{
+                    fontSize: 10,
+                    color: statusConfig.color,
                     fontWeight: 500
                   }}>
-                    파싱 항목
+                    {(file.status === 'inAnalysis' || file.status === 'analyzed') ? '분석 항목' : '파싱 항목'}
                   </Typography>
                 </Box>
                 
@@ -295,7 +337,7 @@ const FileCard: React.FC<{
                   </Typography>
                   <Typography sx={{ 
                     fontSize: 10, 
-                    color: '#15803d',
+                    color: statusConfig.color,
                     fontWeight: 500
                   }}>
                     신뢰도
@@ -313,7 +355,7 @@ const FileCard: React.FC<{
                   </Typography>
                   <Typography sx={{ 
                     fontSize: 10, 
-                    color: '#15803d',
+                    color: statusConfig.color,
                     fontWeight: 500
                   }}>
                     이상치
@@ -322,7 +364,7 @@ const FileCard: React.FC<{
               </Box>
 
               {/* 📋 추출된 카테고리 - 축소 */}
-              <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px solid #dcfce7' }}>
+              <Box sx={{ mt: 1.5, pt: 1.5, borderTop: `1px solid ${statusConfig.color}25` }}>
                 <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', justifyContent: 'center' }}>
                   <Chip 
                     label="재료비 (4건)" 
@@ -392,21 +434,21 @@ const FileCard: React.FC<{
 
           {/* ⚠️ 오류 상태 - 간소화 (오류 사유만) */}
           {file.status === 'failed' && (
-            <Box sx={{ p: 2, bgcolor: '#fff5f5', borderRadius: '10px', border: '1px solid #fee2e2' }}>
-              <Typography sx={{ 
-                fontSize: 12, 
-                color: '#dc2626',
+            <Box sx={{ p: 2, bgcolor: '#FEF2F2', borderRadius: '10px', border: '1px solid #FECACA' }}>
+              <Typography sx={{
+                fontSize: 12,
+                color: '#EF4444',
                 fontWeight: 600,
                 mb: 1.5
               }}>
                 오류 사유
               </Typography>
-              <Typography sx={{ 
-                fontSize: 13, 
-                color: '#991b1b',
+              <Typography sx={{
+                fontSize: 13,
+                color: '#B91C1C',
                 lineHeight: 1.4,
                 fontWeight: 500,
-                bgcolor: '#fee2e2',
+                bgcolor: '#FECACA',
                 p: 1.5,
                 borderRadius: '8px'
               }}>
@@ -451,19 +493,19 @@ const FileCard: React.FC<{
               variant="contained" 
               fullWidth
               onClick={(e) => { e.stopPropagation(); onVerify(); }}
-              sx={{ 
-                fontSize: 16, 
+              sx={{
+                fontSize: 16,
                 fontWeight: 700,
-                textTransform: 'none', 
-                bgcolor: '#0064ff', 
-                borderRadius: '12px', 
+                textTransform: 'none',
+                bgcolor: '#3B82F6',
+                borderRadius: '12px',
                 py: 1.25,
                 boxShadow: 'none',
                 letterSpacing: '-0.3px',
-                '&:hover': { 
-                  bgcolor: '#0056d3',
+                '&:hover': {
+                  bgcolor: '#2563EB',
                   boxShadow: 'none'
-                } 
+                }
               }}
             >
               검증하기
@@ -499,19 +541,19 @@ const FileCard: React.FC<{
               variant="contained" 
               fullWidth
               onClick={(e) => { e.stopPropagation(); onAnalysis(); }}
-              sx={{ 
-                fontSize: 16, 
+              sx={{
+                fontSize: 16,
                 fontWeight: 700,
-                textTransform: 'none', 
-                bgcolor: '#4caf50', 
-                borderRadius: '12px', 
+                textTransform: 'none',
+                bgcolor: '#0D9488',
+                borderRadius: '12px',
                 py: 1.25,
                 boxShadow: 'none',
                 letterSpacing: '-0.3px',
-                '&:hover': { 
-                  bgcolor: '#388e3c',
+                '&:hover': {
+                  bgcolor: '#0F766E',
                   boxShadow: 'none'
-                } 
+                }
               }}
             >
               분석하기
@@ -597,11 +639,11 @@ const FileCard: React.FC<{
                 textTransform: 'none', 
                 borderRadius: '12px',
                 py: 1.25,
-                bgcolor: '#ff5a5a',
+                bgcolor: '#EF4444',
                 boxShadow: 'none',
                 letterSpacing: '-0.3px',
-                '&:hover': { 
-                  bgcolor: '#ff4444',
+                '&:hover': {
+                  bgcolor: '#DC2626',
                   boxShadow: 'none'
                 }
               }}
@@ -613,21 +655,21 @@ const FileCard: React.FC<{
         
         {file.status === 'analyzing' && (
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button 
+            <Button
               variant="outlined"
               onClick={(e) => { e.stopPropagation(); onNoteClick(file.id.toString()); }}
-              sx={{ 
-                fontSize: 12, 
+              sx={{
+                fontSize: 12,
                 fontWeight: 600,
-                textTransform: 'none', 
-                borderRadius: '8px', 
+                textTransform: 'none',
+                borderRadius: '8px',
                 py: 1,
                 px: 3,
                 minWidth: 120,
                 whiteSpace: 'nowrap',
                 borderColor: '#0064ff',
                 color: '#0064ff',
-                '&:hover': { 
+                '&:hover': {
                   borderColor: '#0056d3',
                   bgcolor: 'rgba(0, 100, 255, 0.04)'
                 }
@@ -635,21 +677,65 @@ const FileCard: React.FC<{
             >
               📝 노트({getNoteCount(file.id.toString())})
             </Button>
-            <Button 
-              variant="contained" 
+            <Button
+              variant="outlined"
+              fullWidth
+              disabled
+              sx={{
+                fontSize: 16,
+                fontWeight: 700,
+                textTransform: 'none',
+                borderRadius: '12px',
+                py: 1.25,
+                borderColor: '#C4B5FD',
+                color: '#8B5CF6',
+                letterSpacing: '-0.3px'
+              }}
+            >
+              분석중...
+            </Button>
+          </Box>
+        )}
+
+        {file.status === 'inAnalysis' && (
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button
+              variant="outlined"
+              onClick={(e) => { e.stopPropagation(); onNoteClick(file.id.toString()); }}
+              sx={{
+                fontSize: 12,
+                fontWeight: 600,
+                textTransform: 'none',
+                borderRadius: '8px',
+                py: 1,
+                px: 3,
+                minWidth: 120,
+                whiteSpace: 'nowrap',
+                borderColor: '#0064ff',
+                color: '#0064ff',
+                '&:hover': {
+                  borderColor: '#0056d3',
+                  bgcolor: 'rgba(0, 100, 255, 0.04)'
+                }
+              }}
+            >
+              📝 노트({getNoteCount(file.id.toString())})
+            </Button>
+            <Button
+              variant="contained"
               fullWidth
               onClick={(e) => { e.stopPropagation(); onAnalysis(); }}
-              sx={{ 
-                fontSize: 16, 
+              sx={{
+                fontSize: 16,
                 fontWeight: 700,
-                textTransform: 'none', 
-                bgcolor: '#9c27b0', 
+                textTransform: 'none',
+                bgcolor: '#6366F1',
                 borderRadius: '12px',
                 py: 1.25,
                 boxShadow: 'none',
                 letterSpacing: '-0.3px',
-                '&:hover': { 
-                  bgcolor: '#7b1fa2',
+                '&:hover': {
+                  bgcolor: '#4F46E5',
                   boxShadow: 'none'
                 }
               }}
@@ -691,13 +777,13 @@ const FileCard: React.FC<{
                 fontSize: 16, 
                 fontWeight: 700,
                 textTransform: 'none', 
-                bgcolor: '#34c759', 
+                bgcolor: '#10B981',
                 borderRadius: '12px',
                 py: 1.25,
                 boxShadow: 'none',
                 letterSpacing: '-0.3px',
-                '&:hover': { 
-                  bgcolor: '#2da44e',
+                '&:hover': {
+                  bgcolor: '#059669',
                   boxShadow: 'none'
                 }
               }}

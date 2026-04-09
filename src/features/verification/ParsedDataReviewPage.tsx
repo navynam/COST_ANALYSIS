@@ -63,6 +63,7 @@ import {
   Close as CloseIcon
 } from '@mui/icons-material';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useMessageDialog } from '../../shared/components/MessageDialog';
 import ExcelViewerDialog from '../analysis/components/ExcelViewerDialog';
 import styles from './ParsedDataReviewPage.module.css';
 
@@ -125,6 +126,10 @@ interface CostGroup {
 const ParsedDataReviewPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
+  // 검증 완료 상태
+  const [isVerified, setIsVerified] = useState(false);
+  const { showAlert, showConfirm } = useMessageDialog();
 
   // 📄 파일 정보 (URL 파라미터에서 가져옴)
   const fileId = searchParams.get('fileId') || 'demo_file_001';
@@ -863,7 +868,7 @@ const ParsedDataReviewPage: React.FC = () => {
     console.log(`💾 전체 저장 시작: ${modifiedCount}개 항목`);
 
     // 성공 피드백 (임시)
-    alert(`✅ ${modifiedCount}개 항목이 성공적으로 저장되었습니다!`);
+    showAlert(`${modifiedCount}개 항목이 성공적으로 저장되었습니다.`, 'success');
 
     console.log(`✅ 전체 저장 완료: ${modifiedCount}개 항목`);
   };
@@ -1450,67 +1455,80 @@ const ParsedDataReviewPage: React.FC = () => {
             </Button>
           </Box>
 
-          {/* ── 단계 이동 버튼 ── */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-            {/* 이전 단계로 */}
+          {/* ── 단계 이동 버튼 (균일 사이즈) ── */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {/* ← 목록 */}
             <Button
-              variant="text"
+              variant="outlined"
               size="small"
               startIcon={<NavigateBefore sx={{ fontSize: 16 }} />}
               onClick={() => navigate('/parsing_card')}
               sx={{
                 textTransform: 'none',
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: 600,
                 borderRadius: '8px',
-                color: '#8b95a1',
-                px: 1.2,
-                minWidth: 0,
-                '&:hover': { bgcolor: '#f3f4f6', color: '#374151' }
+                minWidth: 100,
+                py: 0.75,
+                color: '#6B7280',
+                borderColor: '#D1D5DB',
+                '&:hover': { bgcolor: '#F3F4F6', borderColor: '#9CA3AF' }
               }}
             >
               목록
             </Button>
 
-            {/* 현재 단계 완료 */}
+            {/* 검증 완료 */}
             <Button
               variant="contained"
               size="small"
-              onClick={() => {
-                console.log('✅ 검증완료: 파일 상태 → verified');
-                alert('✅ 검증이 완료되었습니다.');
+              onClick={async () => {
+                const ok = await showConfirm('검증을 완료하시겠습니까?', '검증 완료 후 분석 단계로 진행할 수 있습니다.');
+                if (ok) {
+                  setIsVerified(true);
+                  await showAlert('검증이 완료되었습니다.\n분석 버튼이 활성화됩니다.', 'success');
+                }
               }}
+              disabled={isVerified}
               sx={{
                 textTransform: 'none',
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: 700,
                 borderRadius: '8px',
-                bgcolor: '#0064ff',
+                minWidth: 120,
+                py: 0.75,
                 boxShadow: 'none',
-                px: 2,
-                '&:hover': { bgcolor: '#0056d3', boxShadow: 'none' }
+                bgcolor: isVerified ? '#D1D5DB' : '#3B82F6',
+                '&:hover': { bgcolor: '#2563EB', boxShadow: 'none' },
+                '&.Mui-disabled': { bgcolor: '#E5E7EB', color: '#9CA3AF' }
               }}
             >
-              검증 완료
+              {isVerified ? '검증 완료됨' : '검증 완료'}
             </Button>
 
-            {/* 다음 단계로 */}
+            {/* 분석 → */}
             <Button
               variant="contained"
               size="small"
-              onClick={() => {
-                console.log('📊 분석으로 이동: 파일 상태 → analyzing');
-                navigate('/analysis');
+              disabled={!isVerified}
+              onClick={async () => {
+                const ok = await showConfirm('분석을 진행하시겠습니까?', '자동 분석이 시작되며, 완료까지 시간이 소요됩니다.');
+                if (ok) {
+                  await showAlert('분석이 시작되었습니다.\n목록으로 이동합니다.', 'info');
+                  navigate('/parsing_card');
+                }
               }}
               sx={{
                 textTransform: 'none',
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: 700,
                 borderRadius: '8px',
-                bgcolor: '#34c759',
+                minWidth: 120,
+                py: 0.75,
                 boxShadow: 'none',
-                px: 2,
-                '&:hover': { bgcolor: '#28a745', boxShadow: 'none' }
+                bgcolor: '#0D9488',
+                '&:hover': { bgcolor: '#0F766E', boxShadow: 'none' },
+                '&.Mui-disabled': { bgcolor: '#E5E7EB', color: '#9CA3AF' }
               }}
             >
               분석 →

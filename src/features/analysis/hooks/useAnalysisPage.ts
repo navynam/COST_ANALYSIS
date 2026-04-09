@@ -29,12 +29,12 @@ export const useAnalysisPage = () => {
 
   const getModifiedCount = () => Object.keys(modifiedCells).length;
 
-  const handleSaveAllChanges = async () => {
+  const handleSaveAllChanges = async (onComplete?: (count: number) => void) => {
     const count = getModifiedCount();
     if (count === 0) return;
     await saveModifiedCells(modifiedCells);
     setModifiedCells({});
-    alert(`✅ ${count}개 항목이 저장되었습니다.`);
+    if (onComplete) onComplete(count);
   };
   const [anomalyAnchor, setAnomalyAnchor] = useState<{ el: HTMLElement; reason: string } | null>(null);
   const [originalViewOpen, setOriginalViewOpen] = useState(false);

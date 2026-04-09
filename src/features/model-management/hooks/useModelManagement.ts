@@ -70,12 +70,17 @@ export const useModelManagement = () => {
     setModalOpen(false);
   };
 
-  const handleDelete = (f: Formula) => {
+  const handleDelete = (f: Formula, onConfirmDelete?: (doDelete: () => void) => void) => {
     if (isCoreFormula(f)) {
       setToast({ open: true, severity: 'error', message: '핵심 수식은 삭제할 수 없습니다.' });
       return;
     }
-    if (window.confirm('삭제하시겠습니까?')) {
+    if (onConfirmDelete) {
+      onConfirmDelete(() => {
+        setFormulas(prev => prev.filter(item => item.id !== f.id));
+        setToast({ open: true, severity: 'success', message: '수식이 삭제되었습니다.' });
+      });
+    } else {
       setFormulas(prev => prev.filter(item => item.id !== f.id));
       setToast({ open: true, severity: 'success', message: '수식이 삭제되었습니다.' });
     }

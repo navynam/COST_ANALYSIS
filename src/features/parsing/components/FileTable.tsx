@@ -73,17 +73,27 @@ const FileTable: React.FC<FileTableProps> = ({
                   </TableCell>
                   <TableCell sx={{ fontSize: 13, fontWeight: 500 }}>{f.name}</TableCell>
                   <TableCell>
-                    <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 12, fontWeight: 600, px: 1.25, py: 0.375, borderRadius: '12px', color: sc.color, bgcolor: sc.color + '15' }}>
-                      {sc.emoji} {sc.label}
+                    <Box sx={{
+                      display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 11, fontWeight: 600,
+                      px: 1.5, py: 0.4, borderRadius: '20px', minWidth: 90, justifyContent: 'center',
+                      color: f.status === 'analyzed' ? '#fff' : sc.color,
+                      bgcolor: f.status === 'analyzed' ? '#10B981' : `${sc.color}10`,
+                      border: `1px solid ${f.status === 'analyzed' ? '#10B981' : sc.color + '25'}`,
+                    }}>
+                      {sc.label}
                     </Box>
                   </TableCell>
                   <TableCell>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Box sx={{ width: 80, height: 6, bgcolor: '#e5e5e7', borderRadius: 3, overflow: 'hidden' }}>
-                        <Box sx={{ width: `${f.progress}%`, height: '100%', bgcolor: progressColor[f.status], borderRadius: 3 }} />
+                    {(f.status === 'extracting' || f.status === 'analyzing') ? (
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box sx={{ width: 80, height: 6, bgcolor: '#e5e5e7', borderRadius: 3, overflow: 'hidden' }}>
+                          <Box sx={{ width: `${f.progress}%`, height: '100%', bgcolor: progressColor[f.status], borderRadius: 3 }} />
+                        </Box>
+                        <Typography sx={{ fontSize: 11, color: progressColor[f.status], fontWeight: 600 }}>{f.progress}%</Typography>
                       </Box>
-                      <Typography sx={{ fontSize: 11, color: C.gray }}>{f.progress}%</Typography>
-                    </Box>
+                    ) : (
+                      <Typography sx={{ fontSize: 11, color: C.gray }}>—</Typography>
+                    )}
                   </TableCell>
                   <TableCell sx={{ fontSize: 13, color: f.parsedItems != null ? C.dark : C.gray }}>
                     {f.parsedItems != null ? `${f.parsedItems}건` : '—'}
@@ -100,59 +110,50 @@ const FileTable: React.FC<FileTableProps> = ({
                   <TableCell sx={{ fontSize: 13 }}>{f.department || '—'}</TableCell>
                   <TableCell sx={{ fontSize: 13 }}>{f.uploadDate}</TableCell>
                   <TableCell onClick={e => e.stopPropagation()}>
-                    <Box sx={{ display: 'flex', gap: 0.5 }}>
+                    <Box sx={{ display: 'flex', gap: 1.5 }}>
                       {/* 📝 노트 버튼 - 모든 상태에서 표시 */}
-                      <Button 
-                        size="small" 
+                      <Button
+                        size="small"
                         variant="outlined"
                         onClick={() => onNoteClick(f.id.toString())}
-                        sx={{ 
+                        sx={{
                           fontSize: 11,
-                          minWidth: 'auto',
-                          px: 1,
-                          py: 0.5,
+                          minWidth: 70,
+                          py: 0.4,
                           textTransform: 'none',
                           borderRadius: '6px',
-                          borderColor: C.blue,
-                          color: C.blue,
-                          '&:hover': {
-                            borderColor: '#0077ED',
-                            bgcolor: 'rgba(0, 100, 255, 0.04)'
-                          }
+                          fontWeight: 600,
+                          borderColor: '#D1D5DB',
+                          color: '#6B7280',
+                          '&:hover': { borderColor: '#9CA3AF', bgcolor: '#F9FAFB' }
                         }}
                       >
-                        📝 노트({getNoteCount(f.id.toString())})
+                        노트({getNoteCount(f.id.toString())})
                       </Button>
 
-                      {/* 메인 액션 버튼 */}
-                      {f.status === 'extracting' && (
-                        <Button size="small" variant="outlined" disabled sx={{ fontSize: 12, textTransform: 'none', borderRadius: '6px' }}>추출중</Button>
-                      )}
-                      {f.status === 'verifying' && (
-                        <Button size="small" variant="contained"
-                          sx={{ fontSize: 12, textTransform: 'none', bgcolor: C.blue, borderRadius: '6px', boxShadow: 'none', '&:hover': { bgcolor: '#0077ED' } }}
-                          onClick={() => onVerify(f.id.toString(), f.name)}>검증하기</Button>
-                      )}
-                      {f.status === 'verified' && (
-                        <Button size="small" variant="contained"
-                          sx={{ fontSize: 12, textTransform: 'none', bgcolor: C.green, borderRadius: '6px', boxShadow: 'none', '&:hover': { bgcolor: '#2d9d3f' } }}
-                          onClick={onAnalysis}>분석하기</Button>
-                      )}
-                      {f.status === 'analyzing' && (
-                        <Button size="small" variant="contained"
-                          sx={{ fontSize: 12, textTransform: 'none', bgcolor: C.purple, borderRadius: '6px', boxShadow: 'none' }}
-                          onClick={onAnalysis}>분석중</Button>
-                      )}
-                      {f.status === 'analyzed' && (
-                        <Button size="small" variant="contained"
-                          sx={{ fontSize: 12, textTransform: 'none', bgcolor: '#34c759', borderRadius: '6px', boxShadow: 'none' }}
-                          onClick={onAnalysis}>결과보기</Button>
-                      )}
-                      {f.status === 'failed' && (
-                        <Button size="small" variant="outlined"
-                          sx={{ fontSize: 12, textTransform: 'none', borderRadius: '6px', color: C.red, borderColor: C.red }}
-                          onClick={e => { e.stopPropagation(); onFailedDetail(f); }}>실패 상세</Button>
-                      )}
+                      {/* 메인 액션 버튼 — 통일 너비, 차분한 아웃라인 스타일 */}
+                      {(() => {
+                        const btnBase = { fontSize: 11, textTransform: 'none' as const, borderRadius: '6px', minWidth: 110, py: 0.4, boxShadow: 'none', fontWeight: 600 };
+                        const sc2 = statusConfig[f.status];
+                        switch (f.status) {
+                          case 'extracting':
+                            return <Button size="small" variant="outlined" disabled sx={{ ...btnBase, borderColor: `${sc2.color}40`, color: sc2.color }}>처리중</Button>;
+                          case 'verifying':
+                            return <Button size="small" variant="outlined" sx={{ ...btnBase, color: sc2.color, borderColor: `${sc2.color}50`, '&:hover': { bgcolor: `${sc2.color}08`, borderColor: sc2.color } }} onClick={() => onVerify(f.id.toString(), f.name)}>검증하기</Button>;
+                          case 'verified':
+                            return <Button size="small" variant="outlined" sx={{ ...btnBase, color: sc2.color, borderColor: `${sc2.color}50`, '&:hover': { bgcolor: `${sc2.color}08`, borderColor: sc2.color } }} onClick={onAnalysis}>분석하기</Button>;
+                          case 'analyzing':
+                            return <Button size="small" variant="outlined" disabled sx={{ ...btnBase, borderColor: `${sc2.color}40`, color: sc2.color }}>분석중...</Button>;
+                          case 'inAnalysis':
+                            return <Button size="small" variant="outlined" sx={{ ...btnBase, color: sc2.color, borderColor: `${sc2.color}50`, '&:hover': { bgcolor: `${sc2.color}08`, borderColor: sc2.color } }} onClick={onAnalysis}>분석 상세보기</Button>;
+                          case 'analyzed':
+                            return <Button size="small" variant="outlined" sx={{ ...btnBase, color: sc2.color, borderColor: `${sc2.color}50`, '&:hover': { bgcolor: `${sc2.color}08`, borderColor: sc2.color } }} onClick={onAnalysis}>분석 결과 보기</Button>;
+                          case 'failed':
+                            return <Button size="small" variant="outlined" sx={{ ...btnBase, color: sc2.color, borderColor: `${sc2.color}50`, '&:hover': { bgcolor: `${sc2.color}08`, borderColor: sc2.color } }} onClick={e => { e.stopPropagation(); onFailedDetail(f); }}>오류 확인</Button>;
+                          default:
+                            return null;
+                        }
+                      })()}
                     </Box>
                   </TableCell>
                 </TableRow>

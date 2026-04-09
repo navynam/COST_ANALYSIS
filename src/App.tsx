@@ -23,6 +23,7 @@ import { CssBaseline } from '@mui/material';
 import MainLayout from './shared/layouts/MainLayout';
 import { AuthProvider } from './features/auth/AuthContext';
 import { ThemeProvider } from './shared/contexts/ThemeContext';
+import { MessageDialogProvider } from './shared/components/MessageDialog';
 
 // 📊 메인 워크플로우 페이지들 (견적서 처리 4단계)
 import ParsingCardPage from './features/parsing/ParsingCardPage';       // 1단계: 파싱/업로드
@@ -58,6 +59,7 @@ export default function App() {
       
       {/* 🔐 인증 상태를 전역에서 관리 (로그인/로그아웃) */}
       <AuthProvider>
+        <MessageDialogProvider>
         {/* 🗂️ 해시 라우터: URL 변경 시 페이지 전환 관리 */}
         <HashRouter>
           <Routes>
@@ -87,6 +89,7 @@ export default function App() {
             </Route>
           </Routes>
         </HashRouter>
+        </MessageDialogProvider>
       </AuthProvider>
     </ThemeProvider>
   );

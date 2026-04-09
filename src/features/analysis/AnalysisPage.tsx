@@ -68,8 +68,10 @@ import {
   tableCellNumSx as tdNumSx,
 } from '../../shared/styles';
 import styles from './AnalysisPage.module.css';
+import { useMessageDialog } from '../../shared/components/MessageDialog';
 
 const AnalysisPage: React.FC = () => {
+  const { showAlert, showConfirm } = useMessageDialog();
   const {
     navigate,
     activeTab, setActiveTab,
@@ -91,6 +93,7 @@ const AnalysisPage: React.FC = () => {
   } = useAnalysisPage();
 
   const [selectedRelationNode, setSelectedRelationNode] = React.useState<any>(null);
+  const [isAnalysisCompleted, setIsAnalysisCompleted] = React.useState(false);
 
   // 리스트뷰 인라인 편집 상태
   const [listEditCell, setListEditCell] = React.useState<{ itemId: string; field: string } | null>(null);
@@ -220,7 +223,7 @@ const AnalysisPage: React.FC = () => {
               variant="outlined"
               size="small"
               startIcon={<SaveIcon sx={{ fontSize: 14 }} />}
-              onClick={handleSaveAllChanges}
+              onClick={() => handleSaveAllChanges((count) => showAlert(`${count}개 항목이 저장되었습니다.`, 'success'))}
               disabled={getModifiedCount() === 0}
               sx={{
                 textTransform: 'none',
@@ -247,83 +250,76 @@ const AnalysisPage: React.FC = () => {
             </Button>
           </Box>
 
-          {/* ── 단계 이동 버튼 ── */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-            {/* 이전 단계로 */}
+          {/* ── 단계 이동 버튼 (균일 사이즈) ── */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {/* ← 목록 */}
             <Button
-              variant="text"
+              variant="outlined"
               size="small"
               startIcon={<NavigateBefore sx={{ fontSize: 16 }} />}
               onClick={() => navigate('/parsing_card')}
               sx={{
-                textTransform: 'none',
-                fontSize: 12,
-                fontWeight: 600,
-                borderRadius: '8px',
-                color: '#8b95a1',
-                px: 1.2,
-                minWidth: 0,
-                '&:hover': { bgcolor: '#f3f4f6', color: '#374151' }
+                textTransform: 'none', fontSize: 13, fontWeight: 600, borderRadius: '8px',
+                minWidth: 100, py: 0.75,
+                color: '#6B7280', borderColor: '#D1D5DB',
+                '&:hover': { bgcolor: '#F3F4F6', borderColor: '#9CA3AF' }
               }}
             >
               목록
             </Button>
+
+            {/* ← 검증 */}
             <Button
-              variant="text"
+              variant="outlined"
               size="small"
               startIcon={<NavigateBefore sx={{ fontSize: 16 }} />}
               onClick={() => navigate('/verification')}
               sx={{
-                textTransform: 'none',
-                fontSize: 12,
-                fontWeight: 600,
-                borderRadius: '8px',
-                color: '#8b95a1',
-                px: 1.2,
-                minWidth: 0,
-                '&:hover': { bgcolor: '#f3f4f6', color: '#374151' }
+                textTransform: 'none', fontSize: 13, fontWeight: 600, borderRadius: '8px',
+                minWidth: 100, py: 0.75,
+                color: '#3B82F6', borderColor: '#93C5FD',
+                '&:hover': { bgcolor: '#EFF6FF', borderColor: '#3B82F6' }
               }}
             >
               검증
             </Button>
 
-            {/* 현재 단계 완료 */}
+            {/* 분석 완료 */}
             <Button
               variant="contained"
               size="small"
-              onClick={() => {
-                console.log('✅ 분석완료: 파일 상태 → analyzed');
-                alert('✅ 분석이 완료되었습니다. 상태가 "분석완료"로 변경되었습니다.');
+              disabled={isAnalysisCompleted}
+              onClick={async () => {
+                const ok = await showConfirm('분석을 완료하시겠습니까?', '분석 결과가 확정됩니다.');
+                if (ok) {
+                  setIsAnalysisCompleted(true);
+                  await showAlert('분석이 완료되었습니다.\n비교 버튼이 활성화됩니다.', 'success');
+                }
               }}
               sx={{
-                textTransform: 'none',
-                fontSize: 12,
-                fontWeight: 700,
-                borderRadius: '8px',
-                bgcolor: '#0064ff',
-                boxShadow: 'none',
-                px: 2,
-                '&:hover': { bgcolor: '#0056d3', boxShadow: 'none' }
+                textTransform: 'none', fontSize: 13, fontWeight: 700, borderRadius: '8px',
+                minWidth: 120, py: 0.75, boxShadow: 'none',
+                bgcolor: isAnalysisCompleted ? '#D1D5DB' : '#6366F1',
+                '&:hover': { bgcolor: '#4F46E5', boxShadow: 'none' },
+                '&.Mui-disabled': { bgcolor: '#E5E7EB', color: '#9CA3AF' }
               }}
             >
-              분석 완료
+              {isAnalysisCompleted ? '분석 완료됨' : '분석 완료'}
             </Button>
 
-            {/* 다음 단계로 */}
+            {/* 비교 → */}
             <Button
               variant="contained"
               size="small"
+              disabled={!isAnalysisCompleted}
               endIcon={<NavigateNext sx={{ fontSize: 16 }} />}
               onClick={() => navigate('/comparison')}
               sx={{
-                textTransform: 'none',
-                fontSize: 12,
-                fontWeight: 700,
-                borderRadius: '8px',
-                bgcolor: '#34c759',
-                boxShadow: 'none',
-                px: 2,
-                '&:hover': { bgcolor: '#28a745', boxShadow: 'none' }
+                textTransform: 'none', fontSize: 13, fontWeight: 700, borderRadius: '8px',
+                minWidth: 120, py: 0.75, boxShadow: 'none',
+                bgcolor: '#10B981',
+                '&:hover': { bgcolor: '#059669', boxShadow: 'none' },
+                '&.Mui-disabled': { bgcolor: '#E5E7EB', color: '#9CA3AF' }
               }}
             >
               비교

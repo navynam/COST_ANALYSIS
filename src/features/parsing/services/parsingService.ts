@@ -52,6 +52,7 @@ export const calculateCounts = (files: FileItem[]) => ({
   verifying: files.filter(f => f.status === 'verifying').length,
   verified: files.filter(f => f.status === 'verified').length,
   analyzing: files.filter(f => f.status === 'analyzing').length,
+  inAnalysis: files.filter(f => f.status === 'inAnalysis').length,
   analyzed: files.filter(f => f.status === 'analyzed').length,
   failed: files.filter(f => f.status === 'failed').length,
 });

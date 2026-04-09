@@ -17,54 +17,21 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
   const getStatusConfig = (status: string) => {
     switch (status) {
       case 'extracting':
-        return { 
-          color: '#ff9800', 
-          icon: <Schedule sx={{ fontSize: 16 }} />, 
-          label: '추출중', 
-          bgColor: '#fff3e0' 
-        };
+        return { color: '#F59E0B', icon: <Schedule sx={{ fontSize: 16 }} />, label: '추출중(자동)', bgColor: '#FEF3C7' };
       case 'verifying':
-        return { 
-          color: '#2196f3', 
-          icon: <Schedule sx={{ fontSize: 16 }} />, 
-          label: '검증중', 
-          bgColor: '#e3f2fd' 
-        };
+        return { color: '#3B82F6', icon: <Schedule sx={{ fontSize: 16 }} />, label: '검증중', bgColor: '#DBEAFE' };
       case 'verified':
-        return { 
-          color: '#4caf50', 
-          icon: <CheckCircle sx={{ fontSize: 16 }} />, 
-          label: '검증완료', 
-          bgColor: '#e8f5e8' 
-        };
+        return { color: '#0D9488', icon: <CheckCircle sx={{ fontSize: 16 }} />, label: '검증완료', bgColor: '#CCFBF1' };
       case 'analyzing':
-        return { 
-          color: '#9c27b0', 
-          icon: <CheckCircle sx={{ fontSize: 16 }} />, 
-          label: '분석중', 
-          bgColor: '#f3e5f5' 
-        };
+        return { color: '#8B5CF6', icon: <Schedule sx={{ fontSize: 16 }} />, label: '분석중(자동)', bgColor: '#EDE9FE' };
+      case 'inAnalysis':
+        return { color: '#6366F1', icon: <CheckCircle sx={{ fontSize: 16 }} />, label: '분석중', bgColor: '#E0E7FF' };
       case 'analyzed':
-        return { 
-          color: '#34c759', 
-          icon: <CheckCircle sx={{ fontSize: 16 }} />, 
-          label: '분석완료', 
-          bgColor: '#e8f5e9' 
-        };
+        return { color: '#10B981', icon: <CheckCircle sx={{ fontSize: 16 }} />, label: '분석완료', bgColor: '#D1FAE5' };
       case 'failed':
-        return { 
-          color: '#f44336', 
-          icon: <Error sx={{ fontSize: 16 }} />, 
-          label: '실패', 
-          bgColor: '#ffebee' 
-        };
+        return { color: '#EF4444', icon: <Error sx={{ fontSize: 16 }} />, label: '실패', bgColor: '#FEE2E2' };
       default:
-        return { 
-          color: '#9e9e9e', 
-          icon: <Schedule sx={{ fontSize: 16 }} />, 
-          label: '알 수 없음', 
-          bgColor: '#f5f5f5' 
-        };
+        return { color: '#9e9e9e', icon: <Schedule sx={{ fontSize: 16 }} />, label: '알 수 없음', bgColor: '#f5f5f5' };
     }
   };
 
@@ -274,32 +241,32 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
               </Box>
             )}
 
-            {/* ✅ 추출 완료 상태 — 3개 섹션 독립 분리 */}
-            {(file.status === 'verifying' || file.status === 'verified' || file.status === 'analyzing' || file.status === 'analyzed') && (
+            {/* ✅ 추출/분석 완료 상태 — 3개 섹션 독립 분리 */}
+            {(file.status === 'verifying' || file.status === 'verified' || file.status === 'analyzing' || file.status === 'inAnalysis' || file.status === 'analyzed') && (
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
 
-                {/* ── 섹션 1: 추출 완료 요약 ── */}
-                <Box sx={{ p: 2.5, bgcolor: '#f0fdf4', borderRadius: '12px', border: '1px solid #bbf7d0' }}>
+                {/* ── 섹션 1: 추출/분석 완료 요약 ── */}
+                <Box sx={{ p: 2.5, bgcolor: `${statusConf.color}08`, borderRadius: '12px', border: `1px solid ${statusConf.color}30` }}>
                   <Typography sx={{
                     fontSize: 13,
-                    color: '#15803d',
+                    color: statusConf.color,
                     fontWeight: 700,
                     mb: 2,
                     textAlign: 'center',
                     letterSpacing: '-0.2px'
                   }}>
-                    ✨ 추출 완료
+                    {(file.status === 'inAnalysis' || file.status === 'analyzed') ? '📊 분석 완료' : '✨ 추출 완료'}
                   </Typography>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
                     <Box sx={{ textAlign: 'center', flex: 1 }}>
-                      <Typography sx={{ fontSize: 22, fontWeight: 800, color: '#0064ff', lineHeight: 1 }}>
+                      <Typography sx={{ fontSize: 22, fontWeight: 800, color: statusConf.color, lineHeight: 1 }}>
                         {file.parsedItems || 156}
                       </Typography>
                       <Typography sx={{ fontSize: 11, color: '#6b7280', fontWeight: 500, mt: 0.5 }}>
-                        파싱 항목
+                        {(file.status === 'inAnalysis' || file.status === 'analyzed') ? '분석 항목' : '파싱 항목'}
                       </Typography>
                     </Box>
-                    <Box sx={{ width: '1px', bgcolor: '#dcfce7' }} />
+                    <Box sx={{ width: '1px', bgcolor: `${statusConf.color}25` }} />
                     <Box sx={{ textAlign: 'center', flex: 1 }}>
                       <Typography sx={{ fontSize: 22, fontWeight: 800, color: '#00c896', lineHeight: 1 }}>
                         {(file.parsedItems && file.anomalies)
@@ -310,7 +277,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                         신뢰도
                       </Typography>
                     </Box>
-                    <Box sx={{ width: '1px', bgcolor: '#dcfce7' }} />
+                    <Box sx={{ width: '1px', bgcolor: `${statusConf.color}25` }} />
                     <Box sx={{ textAlign: 'center', flex: 1 }}>
                       <Typography sx={{
                         fontSize: 22,
@@ -526,93 +493,58 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
             bgcolor: 'white',
             borderTop: '1px solid #f2f4f6'
           }}>
-            {(file.status === 'verifying' || file.status === 'verified' || file.status === 'analyzing') && (
-              <Button
-                fullWidth
-                variant="contained"
-                onClick={() => { onClose(); onVerify(); }}
-                sx={{
-                  fontSize: 16,
-                  fontWeight: 700,
-                  textTransform: 'none',
-                  bgcolor: '#0064ff',
-                  borderRadius: '12px',
-                  py: 1.5,
-                  boxShadow: 'none',
-                  letterSpacing: '-0.3px',
-                  '&:hover': {
-                    bgcolor: '#0056d3',
-                    boxShadow: 'none'
-                  }
-                }}
-              >
+            {/* 추출중(자동) — 비활성 */}
+            {file.status === 'extracting' && (
+              <Button fullWidth variant="outlined" disabled
+                sx={{ fontSize: 16, fontWeight: 700, textTransform: 'none', borderRadius: '12px', py: 1.5, borderColor: '#FDE68A', color: '#F59E0B' }}>
+                추출 진행중...
+              </Button>
+            )}
+
+            {/* 검증중 — 검증하기 */}
+            {file.status === 'verifying' && (
+              <Button fullWidth variant="contained" onClick={() => { onClose(); onVerify(); }}
+                sx={{ fontSize: 16, fontWeight: 700, textTransform: 'none', borderRadius: '12px', py: 1.5, boxShadow: 'none', bgcolor: '#3B82F6', '&:hover': { bgcolor: '#2563EB', boxShadow: 'none' } }}>
                 검증하기
               </Button>
             )}
 
-            {file.status === 'analyzed' && (
-              <Button
-                fullWidth
-                variant="contained"
-                onClick={() => { onClose(); onAnalysis ? onAnalysis() : onVerify(); }}
-                sx={{
-                  fontSize: 16,
-                  fontWeight: 700,
-                  textTransform: 'none',
-                  bgcolor: '#34c759',
-                  borderRadius: '12px',
-                  py: 1.5,
-                  boxShadow: 'none',
-                  letterSpacing: '-0.3px',
-                  '&:hover': {
-                    bgcolor: '#28a745',
-                    boxShadow: 'none'
-                  }
-                }}
-              >
+            {/* 검증완료 — 분석하기 */}
+            {file.status === 'verified' && (
+              <Button fullWidth variant="contained" onClick={() => { onClose(); onAnalysis ? onAnalysis() : onVerify(); }}
+                sx={{ fontSize: 16, fontWeight: 700, textTransform: 'none', borderRadius: '12px', py: 1.5, boxShadow: 'none', bgcolor: '#0D9488', '&:hover': { bgcolor: '#0F766E', boxShadow: 'none' } }}>
                 분석하기
               </Button>
             )}
-            
-            {file.status === 'extracting' && (
-              <Button 
-                fullWidth
-                variant="outlined" 
-                disabled 
-                sx={{ 
-                  fontSize: 16, 
-                  fontWeight: 700,
-                  textTransform: 'none', 
-                  borderRadius: '12px',
-                  py: 1.5,
-                  borderColor: '#e5e8eb',
-                  color: '#8b95a1'
-                }}
-              >
-                처리중
+
+            {/* 분석중(자동) — 비활성 */}
+            {file.status === 'analyzing' && (
+              <Button fullWidth variant="outlined" disabled
+                sx={{ fontSize: 16, fontWeight: 700, textTransform: 'none', borderRadius: '12px', py: 1.5, borderColor: '#C4B5FD', color: '#8B5CF6' }}>
+                분석 진행중...
               </Button>
             )}
-            
+
+            {/* 분석중 — 분석 상세보기 */}
+            {file.status === 'inAnalysis' && (
+              <Button fullWidth variant="contained" onClick={() => { onClose(); onAnalysis ? onAnalysis() : onVerify(); }}
+                sx={{ fontSize: 16, fontWeight: 700, textTransform: 'none', borderRadius: '12px', py: 1.5, boxShadow: 'none', bgcolor: '#6366F1', '&:hover': { bgcolor: '#4F46E5', boxShadow: 'none' } }}>
+                분석 상세보기
+              </Button>
+            )}
+
+            {/* 분석완료 — 분석 결과 보기 */}
+            {file.status === 'analyzed' && (
+              <Button fullWidth variant="contained" onClick={() => { onClose(); onAnalysis ? onAnalysis() : onVerify(); }}
+                sx={{ fontSize: 16, fontWeight: 700, textTransform: 'none', borderRadius: '12px', py: 1.5, boxShadow: 'none', bgcolor: '#10B981', '&:hover': { bgcolor: '#059669', boxShadow: 'none' } }}>
+                분석 결과 보기
+              </Button>
+            )}
+
+            {/* 실패 — 오류 확인 */}
             {file.status === 'failed' && (
-              <Button 
-                fullWidth
-                variant="contained" 
-                onClick={() => { onClose(); }}
-                sx={{ 
-                  fontSize: 16, 
-                  fontWeight: 700,
-                  textTransform: 'none', 
-                  borderRadius: '12px',
-                  py: 1.5,
-                  bgcolor: '#ff5a5a',
-                  boxShadow: 'none',
-                  letterSpacing: '-0.3px',
-                  '&:hover': { 
-                    bgcolor: '#ff4444',
-                    boxShadow: 'none'
-                  }
-                }}
-              >
+              <Button fullWidth variant="contained" onClick={() => { onClose(); }}
+                sx={{ fontSize: 16, fontWeight: 700, textTransform: 'none', borderRadius: '12px', py: 1.5, boxShadow: 'none', bgcolor: '#EF4444', '&:hover': { bgcolor: '#DC2626', boxShadow: 'none' } }}>
                 오류 확인
               </Button>
             )}

@@ -1,4 +1,4 @@
-export type FileStatus = 'extracting' | 'verifying' | 'verified' | 'analyzing' | 'analyzed' | 'failed';
+export type FileStatus = 'extracting' | 'verifying' | 'verified' | 'analyzing' | 'inAnalysis' | 'analyzed' | 'failed';
 
 export interface FileItem {
   id: number;
@@ -28,4 +28,5 @@ export interface SearchFilters {
 }
 
 export type SortField = 'name' | 'status' | 'progress' | 'parsedItems' | 'anomalies' | 'uploader' | 'department' | 'uploadDate';
+export const STATUS_ORDER: FileStatus[] = ['extracting', 'verifying', 'verified', 'analyzing', 'inAnalysis', 'analyzed', 'failed'];
 export type SortDirection = 'asc' | 'desc';

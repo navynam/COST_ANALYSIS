@@ -107,8 +107,8 @@ export const statusColorMap: Record<string, 'success' | 'warning' | 'error' | 'i
 
 const getCounts = () => {
   const c: Record<string, number> = {
-    extracting: 0, verifying: 0, verified: 0,
-    analyzing: 0, analyzed: 0, failed: 0,
+    verifying: 0, verified: 0,
+    inAnalysis: 0, analyzed: 0, failed: 0,
   };
   initialFiles.forEach(f => { if (f.status in c) c[f.status]++; });
   return c;
@@ -117,12 +117,11 @@ const getCounts = () => {
 export const workItems = (() => {
   const c = getCounts();
   return [
-    { status: 'extracting', label: '추출중',   count: c.extracting, icon: '⏳', color: '#ff9800', filter: 'extracting' },
-    { status: 'verifying',  label: '검증중',   count: c.verifying,  icon: '🔍', color: '#2196f3', filter: 'verifying'  },
-    { status: 'verified',   label: '검증완료', count: c.verified,   icon: '✅', color: '#4caf50', filter: 'verified'   },
-    { status: 'analyzing',  label: '분석중',   count: c.analyzing,  icon: '🔬', color: '#9c27b0', filter: 'analyzing'  },
-    { status: 'analyzed',   label: '분석완료', count: c.analyzed,   icon: '📊', color: '#34c759', filter: 'analyzed'   },
-    { status: 'failed',     label: '실패',     count: c.failed,     icon: '❌', color: '#f44336', filter: 'failed'     },
+    { status: 'verifying',   label: '검증중',   count: c.verifying,   icon: '🔍', color: '#3B82F6', filter: 'verifying'   },
+    { status: 'verified',    label: '검증완료', count: c.verified,    icon: '✅', color: '#0D9488', filter: 'verified'    },
+    { status: 'inAnalysis',  label: '분석중',   count: c.inAnalysis,  icon: '🔬', color: '#6366F1', filter: 'inAnalysis'  },
+    { status: 'analyzed',    label: '분석완료', count: c.analyzed,    icon: '📊', color: '#10B981', filter: 'analyzed'    },
+    { status: 'failed',      label: '실패',     count: c.failed,      icon: '❌', color: '#EF4444', filter: 'failed'      },
   ];
 })();
 
