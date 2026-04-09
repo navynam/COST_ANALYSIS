@@ -15,12 +15,13 @@ import {
   Business as BusinessIcon,
   Favorite as FavoriteIcon,
   Lightbulb,
+  Palette,
 } from '@mui/icons-material';
 import { useSettingsPage } from './hooks/useSettingsPage';
 import { useTheme, ThemeType, getThemeInfo } from '../../shared/contexts/ThemeContext';
 import styles from './SettingsPage.module.css';
 
-const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
+const Section: React.FC<{ title: React.ReactNode; children: React.ReactNode }> = ({ title, children }) => (
   <Paper sx={{ p: 3, mb: 2 }}>
     <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 2 }}>{title}</Typography>
     {children}
@@ -93,7 +94,7 @@ const SettingsPage: React.FC = () => {
         </FormControl>
       </Section>
 
-      <Section title="🎨 테마 설정">
+      <Section title={<><Palette sx={{ fontSize: 'inherit', color: '#8B5CF6' }} /> 테마 설정</>}>
         <Box sx={{ mb: 3 }}>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
             견적서 분석 시스템의 테마를 선택하세요. 언제든지 변경할 수 있습니다.

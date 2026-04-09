@@ -26,8 +26,9 @@ import {
   Paper, ButtonGroup, Button, Tooltip,
 } from '@mui/material';
 import { 
-  Close, GridOn, ViewCompact, ZoomIn, ZoomOut, 
+  Close, GridOn, ViewCompact, ZoomIn, ZoomOut,
   FindInPage, Download, Print, Description, CheckCircle, Warning,
+  PinDrop, Mouse,
 } from '@mui/icons-material';
 import { C } from '../../../shared/constants/colors';
 import { excelData } from '../data/excelData';
@@ -395,7 +396,7 @@ const OriginalViewDialog: React.FC<OriginalViewDialogProps> = ({ open, onClose, 
                 border: `1px solid ${C.orange}` 
               }} />
               <Typography sx={{ fontSize: 11, color: C.gray }}>
-                📍 매핑된 셀
+                <PinDrop sx={{ fontSize: 'inherit', color: '#EF4444' }} /> 매핑된 셀
               </Typography>
             </Box>
             
@@ -408,7 +409,7 @@ const OriginalViewDialog: React.FC<OriginalViewDialogProps> = ({ open, onClose, 
                 border: `1px solid ${C.blue}` 
               }} />
               <Typography sx={{ fontSize: 11, color: C.gray }}>
-                🖱️ 선택된 셀
+                <Mouse sx={{ fontSize: 'inherit', color: '#3B82F6' }} /> 선택된 셀
               </Typography>
             </Box>
           </Box>

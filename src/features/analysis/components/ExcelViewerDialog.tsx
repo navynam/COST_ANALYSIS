@@ -74,6 +74,9 @@ import {
   Work,
   Factory,
   CalendarToday,
+  SyncAlt,
+  RocketLaunch,
+  TrackChanges,
 } from '@mui/icons-material';
 
 // 간단한 테이블 컴포넌트로 대체 (Handsontable 설치 문제 해결용)
@@ -509,7 +512,7 @@ const ExcelViewerDialog: React.FC<ExcelViewerDialogProps> = ({
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <TableChart sx={{ color: '#4472C4' }} />
             <Typography variant="h6">
-              {title || (isRemappingMode ? '🔄 Excel 셀 재매핑' : '🚀 Excel 원본 뷰어')}
+              {title || (isRemappingMode ? <><SyncAlt sx={{ fontSize: 'inherit', mr: 0.5 }} /> Excel 셀 재매핑</> : <><RocketLaunch sx={{ fontSize: 'inherit', mr: 0.5 }} /> Excel 원본 뷰어</>)}
             </Typography>
             {isRemappingMode && (
               <Chip 
@@ -613,7 +616,7 @@ const ExcelViewerDialog: React.FC<ExcelViewerDialogProps> = ({
                   disabled={!highlightedCell}
                   sx={{ minWidth: 40 }}
                 >
-                  🎯
+                  <TrackChanges sx={{ fontSize: 'inherit', color: '#EF4444' }} />
                 </Button>
               </Tooltip>
               

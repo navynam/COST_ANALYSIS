@@ -10,7 +10,7 @@ import {
   Dialog, DialogTitle, DialogContent, TextField, IconButton,
   Popover,
 } from '@mui/material';
-import { SwapHoriz, Search, Close, Lightbulb, Warning, AttachMoney, ListAlt, BarChart } from '@mui/icons-material';
+import { SwapHoriz, Search, Close, Lightbulb, Warning, AttachMoney, ListAlt, BarChart, Calculate } from '@mui/icons-material';
 import { mockProducts } from './data/mockData';
 import { useQuotationComparison } from './hooks/useQuotationComparison';
 import styles from './QuotationComparisonPage.module.css';
@@ -421,7 +421,7 @@ const QuotationComparisonPage: React.FC = () => {
               gap: 1
             }}>
               <Typography sx={{ fontSize: 16, fontWeight: 700 }}>
-                🧮 견적서별 계산식 비교
+                <Calculate sx={{ fontSize: 'inherit', color: '#6366F1' }} /> 견적서별 계산식 비교
               </Typography>
             </Box>
 

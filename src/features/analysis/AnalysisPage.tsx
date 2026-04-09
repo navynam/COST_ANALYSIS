@@ -52,6 +52,7 @@ import {
 import {
   NavigateNext, NavigateBefore, NoteAdd as NoteAddIcon, Close as CloseIcon, Save as SaveIcon,
   FileDownload, Description, Lightbulb, Warning, CheckCircle, SmartToy, AttachMoney, BarChart, EditNote,
+  AttachFile, AccountTree, Calculate,
 } from '@mui/icons-material';
 import { C } from '../../shared/constants/colors';
 import { costGroups, summaryRows } from './data/costGroups';
@@ -97,6 +98,7 @@ const AnalysisPage: React.FC = () => {
 
   const [selectedRelationNode, setSelectedRelationNode] = React.useState<any>(null);
   const [isAnalysisCompleted, setIsAnalysisCompleted] = React.useState(false);
+  const [analysisSheet, setAnalysisSheet] = React.useState('Sheet1 - 원가계산서');
 
   // 리스트뷰 인라인 편집 상태
   const [listEditCell, setListEditCell] = React.useState<{ itemId: string; field: string } | null>(null);
@@ -333,7 +335,21 @@ const AnalysisPage: React.FC = () => {
       </Box>
 
       {/* Info Cards - Verification 스타일 */}
-      <Box sx={{ display: 'flex', gap: 2, px: 3, py: 2, bgcolor: '#f5f5f7' }}>
+      <Box sx={{ display: 'flex', gap: 2, px: 3, py: 2, bgcolor: '#f5f5f7', alignItems: 'center' }}>
+        <Paper sx={{ minWidth: 200, px: 1.5, height: 62.5, borderRadius: '8px', border: '1px solid #e5e5e7', boxShadow: 'none', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <Typography sx={{ fontSize: 10, color: '#86868b', lineHeight: 1 }}>Sheet Name</Typography>
+          <Select
+            value={analysisSheet}
+            onChange={(e) => setAnalysisSheet(e.target.value as string)}
+            size="small"
+            fullWidth
+            sx={{ fontSize: 13, fontWeight: 600, mt: 0.25, '& .MuiSelect-select': { py: 0, px: 0 }, '& .MuiOutlinedInput-notchedOutline': { border: 'none' }, '& .MuiInputBase-root': { minHeight: 0 } }}
+          >
+            {['Sheet1 - 원가계산서', 'Sheet2 - 재료비내역', 'Sheet3 - 가공비내역', 'Sheet4 - 제경비내역'].map(s => (
+              <MenuItem key={s} value={s} sx={{ fontSize: 13 }}>{s}</MenuItem>
+            ))}
+          </Select>
+        </Paper>
         {[
           { label: 'E.O. NO.', value: 'EO-2024-1201' },
           { label: '품번 / 품명', value: 'HL-2024-001 · HEAD LINING' },
@@ -431,7 +447,7 @@ const AnalysisPage: React.FC = () => {
                             onClick={() => handleCellClick(row.name)}
                           >
                             {row.name}
-                            {row.hasSub && <Typography component="span" sx={{ fontSize: 11, ml: 1, color: C.blue }}>📎 하위 견적서</Typography>}
+                            {row.hasSub && <Typography component="span" sx={{ fontSize: 11, ml: 1, color: C.blue }}><AttachFile sx={{ fontSize: 'inherit', color: '#3B82F6' }} /> 하위 견적서</Typography>}
                           </TableCell>
                           {!isOverhead(group.id) && <TableCell sx={tdSx}>{row.spec}</TableCell>}
                           {!isOverhead(group.id) && <TableCell sx={tdSx}>{row.unit}</TableCell>}
@@ -587,7 +603,7 @@ const AnalysisPage: React.FC = () => {
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
             <Paper sx={{ flex: 1, borderRadius: '10px', border: `1px solid ${C.border}`, boxShadow: 'none', overflow: 'hidden', minWidth: 0 }}>
               <Box sx={{ px: 2.5, py: 1.75, bgcolor: '#f9f9fb', borderBottom: `1px solid ${C.border}` }}>
-                <Typography sx={{ fontSize: 14, fontWeight: 600 }}>🔗 원가 구조 관계도</Typography>
+                <Typography sx={{ fontSize: 14, fontWeight: 600 }}><AccountTree sx={{ fontSize: 'inherit', color: '#6366F1' }} /> 원가 구조 관계도</Typography>
                 <Typography sx={{ fontSize: 11, color: C.gray }}>노드 간 관계와 이상치를 시각적으로 확인합니다</Typography>
               </Box>
               <Box sx={{ p: 3 }}>
@@ -787,7 +803,7 @@ const AnalysisPage: React.FC = () => {
               >
                 <MenuItem value="analysis"><BarChart sx={{ fontSize: 'inherit', mr: 0.5 }} />분석 결과</MenuItem>
                 <MenuItem value="anomaly"><Warning sx={{ fontSize: 'inherit', mr: 0.5 }} />이상치 발견</MenuItem>
-                <MenuItem value="calculation">🧮 계산 검증</MenuItem>
+                <MenuItem value="calculation"><Calculate sx={{ fontSize: 'inherit', color: '#F59E0B', mr: 0.5 }} />계산 검증</MenuItem>
                 <MenuItem value="improvement"><Lightbulb sx={{ fontSize: 'inherit', mr: 0.5 }} />개선 제안</MenuItem>
               </Select>
             </FormControl>
@@ -837,7 +853,7 @@ const AnalysisPage: React.FC = () => {
         {calculationAnchor && (
           <Paper sx={{ maxWidth: 400, bgcolor: '#fff', borderRadius: '12px', border: `1px solid ${C.border}`, boxShadow: '0 8px 32px rgba(0,0,0,0.12)', overflow: 'hidden' }}>
             <Box sx={{ bgcolor: C.blue, color: '#fff', p: 2 }}>
-              <Typography sx={{ fontSize: 16, fontWeight: 700 }}>🧮 계산식 상세 정보</Typography>
+              <Typography sx={{ fontSize: 16, fontWeight: 700 }}><Calculate sx={{ fontSize: 'inherit', color: '#F59E0B' }} /> 계산식 상세 정보</Typography>
             </Box>
             <Box sx={{ p: 3 }}>
               <Box sx={{ mb: 3 }}>

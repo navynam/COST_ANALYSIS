@@ -135,6 +135,10 @@ const ParsedDataReviewPage: React.FC = () => {
 
   // 검증 완료 상태
   const [isVerified, setIsVerified] = useState(false);
+
+  // 시트 선택
+  const sheetList = ['Sheet1 - 원가계산서', 'Sheet2 - 재료비내역', 'Sheet3 - 가공비내역', 'Sheet4 - 제경비내역'];
+  const [selectedSheet, setSelectedSheet] = useState(sheetList[0]);
   const { showAlert, showConfirm } = useMessageDialog();
 
   // 📄 파일 정보 (URL 파라미터에서 가져옴)
@@ -1545,7 +1549,21 @@ const ParsedDataReviewPage: React.FC = () => {
       </Box>
 
       {/* Info Cards - Analysis 스타일 */}
-      <Box sx={{ display: 'flex', gap: 2, px: 3, py: 2, bgcolor: '#f5f5f7' }}>
+      <Box sx={{ display: 'flex', gap: 2, px: 3, py: 2, bgcolor: '#f5f5f7', alignItems: 'center' }}>
+        <Paper sx={{ minWidth: 200, px: 1.5, height: 62.5, borderRadius: '8px', border: '1px solid #e5e5e7', boxShadow: 'none', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <Typography sx={{ fontSize: 10, color: '#86868b', lineHeight: 1 }}>Sheet Name</Typography>
+          <Select
+            value={selectedSheet}
+            onChange={(e) => setSelectedSheet(e.target.value)}
+            size="small"
+            fullWidth
+            sx={{ fontSize: 13, fontWeight: 600, mt: 0.25, '& .MuiSelect-select': { py: 0, px: 0 }, '& .MuiOutlinedInput-notchedOutline': { border: 'none' }, '& .MuiInputBase-root': { minHeight: 0 } }}
+          >
+            {sheetList.map(s => (
+              <MenuItem key={s} value={s} sx={{ fontSize: 13 }}>{s}</MenuItem>
+            ))}
+          </Select>
+        </Paper>
         {[
           { label: 'E.O. NO.', value: fileMetadata.coNumber || 'EO-2024-1201' },
           { label: '품번 / 품명', value: `${fileMetadata.partNumber || 'HL-2024-001'} · ${fileMetadata.partName || 'HEAD LINING'}` },
