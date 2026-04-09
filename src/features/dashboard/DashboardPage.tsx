@@ -112,25 +112,28 @@ const DashboardPage: React.FC = () => {
       </Grid>
 
       {/* 차트 영역 */}
-      <Grid container spacing={2} sx={{ mb: 4 }}>
-        <Grid item xs={12} md={6}>
+      <Grid container spacing={2} sx={{ mb: 4 }} alignItems="stretch">
+        <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column' }}>
           <Typography variant="subtitle1" fontWeight={600} gutterBottom sx={{ mb: 2 }}>내가 해야할 작업</Typography>
-          <Paper sx={{ p: 2, borderRadius: 2 }}>
-            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 1.25 }}>
+          <Paper sx={{ p: 2.5, borderRadius: 2, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Box sx={{ display: 'flex', gap: 2, width: '100%', justifyContent: 'center' }}>
               {workItems.map((item) => (
                 <Card key={item.status}
                   sx={{
+                    flex: 1, maxWidth: 130,
                     cursor: 'pointer', transition: 'all 0.2s',
-                    '&:hover': { transform: 'translateY(-2px)', boxShadow: 4, bgcolor: `${item.color}10` },
-                    border: `2px solid ${item.color}30`,
+                    '&:hover': { transform: 'translateY(-3px)', boxShadow: `0 6px 16px ${item.color}30` },
+                    border: `1.5px solid ${item.color}30`,
+                    borderRadius: '12px',
+                    boxShadow: 'none',
                   }}
                   onClick={() => navigate(`/parsing_card?filter=${item.filter}`)}>
-                  <CardContent sx={{ textAlign: 'center', py: 1.25, px: 1, '&:last-child': { pb: 1.25 } }}>
-                    <Typography fontSize={18} sx={{ mb: 0.25 }}>{item.icon}</Typography>
-                    <Typography variant="h5" fontWeight={700} sx={{ color: item.color, mb: 0.25 }}>
+                  <CardContent sx={{ textAlign: 'center', py: 2, px: 1.5, '&:last-child': { pb: 2 } }}>
+                    <Typography fontSize={22} sx={{ mb: 0.5 }}>{item.icon}</Typography>
+                    <Typography variant="h4" fontWeight={800} sx={{ color: item.color, mb: 0.5, lineHeight: 1 }}>
                       {item.count}
                     </Typography>
-                    <Typography sx={{ fontSize: 11, color: 'text.secondary', fontWeight: 500 }}>
+                    <Typography sx={{ fontSize: 12, color: 'text.secondary', fontWeight: 600 }}>
                       {item.label}
                     </Typography>
                   </CardContent>
@@ -139,9 +142,9 @@ const DashboardPage: React.FC = () => {
             </Box>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column' }}>
           <Typography variant="subtitle1" fontWeight={600} gutterBottom sx={{ mb: 2 }}>최근 검증 현황</Typography>
-          <Paper sx={{ p: 2.5, borderRadius: 2, display: 'flex', alignItems: 'center' }}>
+          <Paper sx={{ p: 2.5, borderRadius: 2, flex: 1, display: 'flex', alignItems: 'center' }}>
             {/* 도넛 차트 */}
             <ResponsiveContainer width="55%" height={190}>
               <PieChart>
