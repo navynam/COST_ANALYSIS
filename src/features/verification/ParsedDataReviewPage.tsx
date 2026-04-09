@@ -131,7 +131,7 @@ const ParsedDataReviewPage: React.FC = () => {
   const [isVerified, setIsVerified] = useState(false);
 
   // 시트 선택
-  const sheetList = ['Sheet1 - 원가계산서', 'Sheet2 - 재료비내역', 'Sheet3 - 가공비내역', 'Sheet4 - 제경비내역'];
+  const sheetList = ['Sheet1', 'Sheet2', 'Sheet3', 'Sheet4'];
   const [selectedSheet, setSelectedSheet] = useState(sheetList[0]);
   const { showAlert, showConfirm } = useMessageDialog();
 

@@ -97,7 +97,7 @@ const AnalysisPage: React.FC = () => {
 
   const [selectedRelationNode, setSelectedRelationNode] = React.useState<any>(null);
   const [isAnalysisCompleted, setIsAnalysisCompleted] = React.useState(false);
-  const [analysisSheet, setAnalysisSheet] = React.useState('Sheet1 - 원가계산서');
+  const [analysisSheet, setAnalysisSheet] = React.useState('Sheet1');
 
   // 리스트뷰 인라인 편집 상태
   const [listEditCell, setListEditCell] = React.useState<{ itemId: string; field: string } | null>(null);
@@ -344,7 +344,7 @@ const AnalysisPage: React.FC = () => {
             fullWidth
             sx={{ fontSize: 13, fontWeight: 600, mt: 0.25, '& .MuiSelect-select': { py: 0, px: 0 }, '& .MuiOutlinedInput-notchedOutline': { border: 'none' }, '& .MuiInputBase-root': { minHeight: 0 } }}
           >
-            {['Sheet1 - 원가계산서', 'Sheet2 - 재료비내역', 'Sheet3 - 가공비내역', 'Sheet4 - 제경비내역'].map(s => (
+            {['Sheet1', 'Sheet2', 'Sheet3', 'Sheet4'].map(s => (
               <MenuItem key={s} value={s} sx={{ fontSize: 13 }}>{s}</MenuItem>
             ))}
           </Select>
