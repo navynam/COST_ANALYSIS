@@ -18,7 +18,7 @@ export const verificationStatus = [
 export const actionAlerts = [
   {
     id: 1,
-    icon: <FluentIcon name="notification" size={14} />,
+    icon: <FluentIcon name="notification" size={28} />,
     priority: '긴급',
     priorityColor: 'error' as const,
     title: '이상치 감지 — 즉시 검토 필요',
@@ -32,7 +32,7 @@ export const actionAlerts = [
   },
   {
     id: 2,
-    icon: <FluentIcon name="skipnext" size={14} />,
+    icon: <FluentIcon name="skipnext" size={28} />,
     priority: '주의',
     priorityColor: 'warning' as const,
     title: '분석 대기 — 검증 완료 파일',
@@ -46,7 +46,7 @@ export const actionAlerts = [
   },
   {
     id: 3,
-    icon: <FluentIcon name="upload" size={14} />,
+    icon: <FluentIcon name="upload" size={28} />,
     priority: '정보',
     priorityColor: 'info' as const,
     title: 'ERP 등록 대기 — 분석 완료',
@@ -60,7 +60,7 @@ export const actionAlerts = [
   },
   {
     id: 4,
-    icon: <FluentIcon name="alarm" size={14} />,
+    icon: <FluentIcon name="alarm" size={28} />,
     priority: '주의',
     priorityColor: 'warning' as const,
     title: '처리 지연 — 파싱 오류 발생',
@@ -74,7 +74,7 @@ export const actionAlerts = [
   },
   {
     id: 5,
-    icon: <FluentIcon name="search" size={14} />,
+    icon: <FluentIcon name="search" size={28} />,
     priority: '정보',
     priorityColor: 'info' as const,
     title: '자동 검증 진행 중',
@@ -88,7 +88,7 @@ export const actionAlerts = [
   },
   {
     id: 6,
-    icon: <FluentIcon name="lightbulb" size={14} />,
+    icon: <FluentIcon name="lightbulb" size={28} />,
     priority: '정보',
     priorityColor: 'info' as const,
     title: '인사이트 리포트 준비 완료',
@@ -119,17 +119,17 @@ const getCounts = () => {
 export const workItems = (() => {
   const c = getCounts();
   return [
-    { status: 'verifying',   label: '검증중',   count: c.verifying,   icon: <FluentIcon name="search" size={14} />, color: '#3B82F6', filter: 'verifying'   },
-    { status: 'verified',    label: '검증완료', count: c.verified,    icon: <FluentIcon name="check" size={14} />, color: '#0D9488', filter: 'verified'    },
-    { status: 'inAnalysis',  label: '분석중',   count: c.inAnalysis,  icon: <FluentIcon name="microscope" size={14} />, color: '#6366F1', filter: 'inAnalysis'  },
-    { status: 'analyzed',    label: '분석완료', count: c.analyzed,    icon: <FluentIcon name="barchart" size={14} />, color: '#10B981', filter: 'analyzed'    },
-    { status: 'failed',      label: '실패',     count: c.failed,      icon: <FluentIcon name="cross" size={14} />, color: '#EF4444', filter: 'failed'      },
+    { status: 'verifying',   label: '검증중',   count: c.verifying,   icon: <FluentIcon name="search" size={28} />, color: '#3B82F6', filter: 'verifying'   },
+    { status: 'verified',    label: '검증완료', count: c.verified,    icon: <FluentIcon name="check" size={28} />, color: '#0D9488', filter: 'verified'    },
+    { status: 'inAnalysis',  label: '분석중',   count: c.inAnalysis,  icon: <FluentIcon name="microscope" size={28} />, color: '#6366F1', filter: 'inAnalysis'  },
+    { status: 'analyzed',    label: '분석완료', count: c.analyzed,    icon: <FluentIcon name="barchart" size={28} />, color: '#10B981', filter: 'analyzed'    },
+    { status: 'failed',      label: '실패',     count: c.failed,      icon: <FluentIcon name="cross" size={28} />, color: '#EF4444', filter: 'failed'      },
   ];
 })();
 
 export const summaryCards = [
-  { label: '총 견적서', value: `${summaryData.totalEstimates}건`, icon: <FluentIcon name="document" size={14} />, color: '#e60012' },
-  { label: '검증 완료율', value: `${summaryData.verificationRate}%`, icon: <FluentIcon name="check" size={14} />, color: '#0056a6' },
-  { label: '이상치 발견', value: `${summaryData.anomalies}건`, icon: <FluentIcon name="warning" size={14} />, color: '#0070d4' },
-  { label: '평균 생산원가', value: `₩${summaryData.averageCost}천`, icon: <FluentIcon name="money" size={14} />, color: '#2196f3' },
+  { label: '총 견적서', value: `${summaryData.totalEstimates}건`, icon: <FluentIcon name="document" size={28} />, color: '#e60012' },
+  { label: '검증 완료율', value: `${summaryData.verificationRate}%`, icon: <FluentIcon name="check" size={28} />, color: '#0056a6' },
+  { label: '이상치 발견', value: `${summaryData.anomalies}건`, icon: <FluentIcon name="warning" size={28} />, color: '#0070d4' },
+  { label: '평균 생산원가', value: `₩${summaryData.averageCost}천`, icon: <FluentIcon name="money" size={28} />, color: '#2196f3' },
 ];
