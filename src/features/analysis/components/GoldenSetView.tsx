@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from 'react';
 import { Box, Typography, Button } from '@mui/material';
-import { FileDownload as ExcelIcon, Print as PrintIcon } from '@mui/icons-material';
+import { FileDownload as ExcelIcon, Print as PrintIcon, EmojiEvents } from '@mui/icons-material';
 
 // ── 공통 스타일
 const bd = '1px solid #b0b0b0';
@@ -264,7 +264,7 @@ const GoldenSetView: React.FC = () => {
         px: 3, py: 1.5, bgcolor: '#f8f9fa', borderBottom: '1px solid #e0e0e0', mb: 2,
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#1a1a2e' }}>🏆 골든셋</Typography>
+          <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#1a1a2e' }}><EmojiEvents sx={{ fontSize: 'inherit', mr: 0.5 }} />골든셋</Typography>
           <Typography sx={{ fontSize: 11, color: '#6b7280', ml: 1 }}>최종 Excel 출력 기준 데이터</Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>

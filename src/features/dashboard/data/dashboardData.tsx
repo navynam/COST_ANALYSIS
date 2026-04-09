@@ -1,3 +1,9 @@
+import React from 'react';
+import {
+  NotificationImportant, SkipNext, Upload, AccessAlarm, Search,
+  Lightbulb, Biotech, BarChart, Cancel, CheckCircle, Description,
+  Warning, AttachMoney,
+} from '@mui/icons-material';
 import { initialFiles } from '../../parsing/data/mockData';
 
 export const summaryData = {
@@ -16,7 +22,7 @@ export const verificationStatus = [
 export const actionAlerts = [
   {
     id: 1,
-    icon: '🚨',
+    icon: <NotificationImportant sx={{ fontSize: 'inherit' }} />,
     priority: '긴급',
     priorityColor: 'error' as const,
     title: '이상치 감지 — 즉시 검토 필요',
@@ -30,7 +36,7 @@ export const actionAlerts = [
   },
   {
     id: 2,
-    icon: '⏭️',
+    icon: <SkipNext sx={{ fontSize: 'inherit' }} />,
     priority: '주의',
     priorityColor: 'warning' as const,
     title: '분석 대기 — 검증 완료 파일',
@@ -44,7 +50,7 @@ export const actionAlerts = [
   },
   {
     id: 3,
-    icon: '📤',
+    icon: <Upload sx={{ fontSize: 'inherit' }} />,
     priority: '정보',
     priorityColor: 'info' as const,
     title: 'ERP 등록 대기 — 분석 완료',
@@ -58,7 +64,7 @@ export const actionAlerts = [
   },
   {
     id: 4,
-    icon: '⏰',
+    icon: <AccessAlarm sx={{ fontSize: 'inherit' }} />,
     priority: '주의',
     priorityColor: 'warning' as const,
     title: '처리 지연 — 파싱 오류 발생',
@@ -72,7 +78,7 @@ export const actionAlerts = [
   },
   {
     id: 5,
-    icon: '🔍',
+    icon: <Search sx={{ fontSize: 'inherit' }} />,
     priority: '정보',
     priorityColor: 'info' as const,
     title: '자동 검증 진행 중',
@@ -86,7 +92,7 @@ export const actionAlerts = [
   },
   {
     id: 6,
-    icon: '💡',
+    icon: <Lightbulb sx={{ fontSize: 'inherit' }} />,
     priority: '정보',
     priorityColor: 'info' as const,
     title: '인사이트 리포트 준비 완료',
@@ -117,17 +123,17 @@ const getCounts = () => {
 export const workItems = (() => {
   const c = getCounts();
   return [
-    { status: 'verifying',   label: '검증중',   count: c.verifying,   icon: '🔍', color: '#3B82F6', filter: 'verifying'   },
-    { status: 'verified',    label: '검증완료', count: c.verified,    icon: '✅', color: '#0D9488', filter: 'verified'    },
-    { status: 'inAnalysis',  label: '분석중',   count: c.inAnalysis,  icon: '🔬', color: '#6366F1', filter: 'inAnalysis'  },
-    { status: 'analyzed',    label: '분석완료', count: c.analyzed,    icon: '📊', color: '#10B981', filter: 'analyzed'    },
-    { status: 'failed',      label: '실패',     count: c.failed,      icon: '❌', color: '#EF4444', filter: 'failed'      },
+    { status: 'verifying',   label: '검증중',   count: c.verifying,   icon: <Search sx={{ fontSize: 'inherit' }} />, color: '#3B82F6', filter: 'verifying'   },
+    { status: 'verified',    label: '검증완료', count: c.verified,    icon: <CheckCircle sx={{ fontSize: 'inherit' }} />, color: '#0D9488', filter: 'verified'    },
+    { status: 'inAnalysis',  label: '분석중',   count: c.inAnalysis,  icon: <Biotech sx={{ fontSize: 'inherit' }} />, color: '#6366F1', filter: 'inAnalysis'  },
+    { status: 'analyzed',    label: '분석완료', count: c.analyzed,    icon: <BarChart sx={{ fontSize: 'inherit' }} />, color: '#10B981', filter: 'analyzed'    },
+    { status: 'failed',      label: '실패',     count: c.failed,      icon: <Cancel sx={{ fontSize: 'inherit' }} />, color: '#EF4444', filter: 'failed'      },
   ];
 })();
 
 export const summaryCards = [
-  { label: '총 견적서', value: `${summaryData.totalEstimates}건`, icon: '📄', color: '#e60012' },
-  { label: '검증 완료율', value: `${summaryData.verificationRate}%`, icon: '✅', color: '#0056a6' },
-  { label: '이상치 발견', value: `${summaryData.anomalies}건`, icon: '⚠️', color: '#0070d4' },
-  { label: '평균 생산원가', value: `₩${summaryData.averageCost}천`, icon: '💰', color: '#2196f3' },
+  { label: '총 견적서', value: `${summaryData.totalEstimates}건`, icon: <Description sx={{ fontSize: 'inherit' }} />, color: '#e60012' },
+  { label: '검증 완료율', value: `${summaryData.verificationRate}%`, icon: <CheckCircle sx={{ fontSize: 'inherit' }} />, color: '#0056a6' },
+  { label: '이상치 발견', value: `${summaryData.anomalies}건`, icon: <Warning sx={{ fontSize: 'inherit' }} />, color: '#0070d4' },
+  { label: '평균 생산원가', value: `₩${summaryData.averageCost}천`, icon: <AttachMoney sx={{ fontSize: 'inherit' }} />, color: '#2196f3' },
 ];

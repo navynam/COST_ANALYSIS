@@ -52,14 +52,20 @@ import {
   IconButton,
   Chip
 } from '@mui/material';
-import { 
+import {
   Search,
   Delete,
   Download,
   FilterList,
   Send as SendIcon,
   AutoAwesome as AIIcon,
-  Close as CloseIcon
+  Close as CloseIcon,
+  Folder,
+  Description,
+  EditNote,
+  Upload,
+  ListAlt,
+  Lightbulb,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -226,7 +232,7 @@ ${currentFile?.status === 'extracting' ? `
             id="parsing-file-input" type="file" hidden multiple accept=".xlsx,.xls,.jpg,.jpeg,.png"
             onChange={e => { if (e.target.files?.length) handleFiles(e.target.files); (e.target as HTMLInputElement).value = ''; }}
           />
-          <Box sx={{ fontSize: 40, mb: 1.5 }}>📁</Box>
+          <Box sx={{ fontSize: 40, mb: 1.5 }}><Folder sx={{ fontSize: 'inherit' }} /></Box>
           <Typography sx={{ fontSize: 14, color: C.gray, mb: 1 }}>
             파일을 드래그하거나 <strong style={{ color: C.blue }}>클릭하여 업로드</strong>
           </Typography>
@@ -240,7 +246,7 @@ ${currentFile?.status === 'extracting' ? `
           <Box sx={{ mt: 1 }}>
             {uploadQueue.map((q, i) => (
               <Box key={i} sx={{ bgcolor: '#fff', border: `1px solid ${C.border}`, borderRadius: '8px', p: '10px 16px', mb: 1, display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <span>📄</span>
+                <span><Description sx={{ fontSize: 'inherit' }} /></span>
                 <Typography sx={{ flex: 1, fontSize: 13, fontWeight: 500 }}>{q.file.name}</Typography>
                 <Box sx={{ width: 120, height: 4, bgcolor: '#e5e5e7', borderRadius: 2, overflow: 'hidden' }}>
                   <Box sx={{ width: `${q.progress}%`, height: '100%', bgcolor: C.blue, borderRadius: 2, transition: 'width 0.3s' }} />
@@ -336,7 +342,7 @@ ${currentFile?.status === 'extracting' ? `
           pb: 1
         }}>
           <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 18 }}>
-            📝 파싱 노트 작성
+            <EditNote sx={{ fontSize: 'inherit', mr: 0.5 }} />파싱 노트 작성
           </Typography>
           <IconButton onClick={() => setNoteDialogOpen(false)} size="small">
             <CloseIcon />
@@ -362,10 +368,10 @@ ${currentFile?.status === 'extracting' ? `
               onChange={(e) => setNoteType(e.target.value)}
               label="노트 유형"
             >
-              <MenuItem value="parsing">🔍 파싱 이슈</MenuItem>
-              <MenuItem value="upload">📤 업로드 문제</MenuItem>
-              <MenuItem value="format">📋 파일 형식</MenuItem>
-              <MenuItem value="improvement">💡 개선 제안</MenuItem>
+              <MenuItem value="parsing"><Search sx={{ fontSize: 'inherit', mr: 0.5 }} />파싱 이슈</MenuItem>
+              <MenuItem value="upload"><Upload sx={{ fontSize: 'inherit', mr: 0.5 }} />업로드 문제</MenuItem>
+              <MenuItem value="format"><ListAlt sx={{ fontSize: 'inherit', mr: 0.5 }} />파일 형식</MenuItem>
+              <MenuItem value="improvement"><Lightbulb sx={{ fontSize: 'inherit', mr: 0.5 }} />개선 제안</MenuItem>
             </Select>
           </FormControl>
 
@@ -421,7 +427,7 @@ ${currentFile?.status === 'extracting' ? `
                 mb: 2
               }}>
                 <Typography variant="subtitle2" color="text.secondary">
-                  📋 이 파일의 노트 히스토리 ({savedNotes.filter((n: any) => n.fileId === currentFileId && n.content && n.content.trim()).length}개)
+                  <ListAlt sx={{ fontSize: 'inherit', mr: 0.5 }} />이 파일의 노트 히스토리 ({savedNotes.filter((n: any) => n.fileId === currentFileId && n.content && n.content.trim()).length}개)
                 </Typography>
                 
                 <Button
@@ -473,10 +479,10 @@ ${currentFile?.status === 'extracting' ? `
                         <Chip 
                           size="small" 
                           label={
-                            note.type === 'parsing' ? '🔍 파싱' : 
-                            note.type === 'upload' ? '📤 업로드' : 
-                            note.type === 'format' ? '📋 형식' :
-                            '💡 개선'
+                            note.type === 'parsing' ? <><Search sx={{ fontSize: 'inherit', mr: 0.3 }} />파싱</> :
+                            note.type === 'upload' ? <><Upload sx={{ fontSize: 'inherit', mr: 0.3 }} />업로드</> :
+                            note.type === 'format' ? <><ListAlt sx={{ fontSize: 'inherit', mr: 0.3 }} />형식</> :
+                            <><Lightbulb sx={{ fontSize: 'inherit', mr: 0.3 }} />개선</>
                           } 
                           variant="outlined"
                           sx={{

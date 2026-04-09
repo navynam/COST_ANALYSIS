@@ -69,7 +69,11 @@ import {
   Visibility,
   Edit as EditIcon,
   Save,
-  FileDownload
+  FileDownload,
+  BarChart,
+  Work,
+  Factory,
+  CalendarToday,
 } from '@mui/icons-material';
 
 // 간단한 테이블 컴포넌트로 대체 (Handsontable 설치 문제 해결용)
@@ -759,7 +763,7 @@ const ExcelViewerDialog: React.FC<ExcelViewerDialogProps> = ({
               alignItems: 'center'
             }}>
               <Typography variant="body2" color="text.secondary">
-                📊 <strong>시트:</strong> {currentSheetName} | {currentSheetData.length}행 × {currentSheetData[0]?.length || 0}열
+                <BarChart sx={{ fontSize: 'inherit', mr: 0.5 }} /><strong>시트:</strong> {currentSheetName} | {currentSheetData.length}행 × {currentSheetData[0]?.length || 0}열
                 {highlightedPosition && ` • 매핑: R${highlightedPosition.row + 1}C${highlightedPosition.col + 1}`}
               </Typography>
               <Typography variant="caption" color="text.secondary">
@@ -941,7 +945,7 @@ const ExcelViewerDialog: React.FC<ExcelViewerDialogProps> = ({
         {/* 📋 파일 정보 */}
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
           <Typography variant="caption" color="text.secondary">
-            💼 원가계산서 | 🏭 대한(주) | 📅 2024-12-01
+            <Work sx={{ fontSize: 'inherit', mr: 0.3 }} />원가계산서 | <Factory sx={{ fontSize: 'inherit', mr: 0.3 }} />대한(주) | <CalendarToday sx={{ fontSize: 'inherit', mr: 0.3 }} />2024-12-01
           </Typography>
         </Box>
         

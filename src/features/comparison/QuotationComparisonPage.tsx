@@ -10,7 +10,7 @@ import {
   Dialog, DialogTitle, DialogContent, TextField, IconButton,
   Popover,
 } from '@mui/material';
-import { SwapHoriz, Search, Close } from '@mui/icons-material';
+import { SwapHoriz, Search, Close, Lightbulb, Warning, AttachMoney, ListAlt, BarChart } from '@mui/icons-material';
 import { mockProducts } from './data/mockData';
 import { useQuotationComparison } from './hooks/useQuotationComparison';
 import styles from './QuotationComparisonPage.module.css';
@@ -135,13 +135,13 @@ const QuotationComparisonPage: React.FC = () => {
             
             {selectedQuotations.length < 2 && (
               <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-                💡 비교하려면 최소 2개 이상 선택해주세요
+                <Lightbulb sx={{ fontSize: 'inherit', mr: 0.5 }} />비교하려면 최소 2개 이상 선택해주세요
               </Typography>
             )}
             
             {selectedQuotations.length >= 4 && (
               <Typography variant="caption" color="warning.main" sx={{ mt: 1, display: 'block' }}>
-                ⚠️ 최대 4개까지만 선택 가능합니다
+                <Warning sx={{ fontSize: 'inherit', mr: 0.5 }} />최대 4개까지만 선택 가능합니다
               </Typography>
             )}
             {selectedQuotations.length >= 2 && (
@@ -170,7 +170,7 @@ const QuotationComparisonPage: React.FC = () => {
 
           {/* 총원가 요약 */}
           <Paper sx={{ p: 2, mb: 3, borderRadius: 2, bgcolor: '#f0f4ff' }}>
-            <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 2 }}>💰 총 생산원가 비교</Typography>
+            <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 2 }}><AttachMoney sx={{ fontSize: 'inherit', mr: 0.5 }} />총 생산원가 비교</Typography>
             <Box sx={{ display: 'grid', gridTemplateColumns: `repeat(${selectedQuotations.length}, 1fr)`, gap: 2 }}>
               {selectedQuotations.map((qid, idx) => {
                 const q = quotations.find(qq => qq.id === qid)!;
@@ -344,13 +344,13 @@ const QuotationComparisonPage: React.FC = () => {
           {/* 차이 분석 및 제언 */}
           <Paper sx={{ p: 3, borderRadius: 2, bgcolor: '#fff8e1' }}>
             <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 2, color: '#ef6c00' }}>
-              🔍 견적서 차이 분석 및 제언
+              <Search sx={{ fontSize: 'inherit', mr: 0.5 }} />견적서 차이 분석 및 제언
             </Typography>
             
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
               <Box>
                 <Typography variant="body2" fontWeight={600} sx={{ mb: 1, color: '#d32f2f' }}>
-                  ⚠️ 주요 차이점
+                  <Warning sx={{ fontSize: 'inherit', mr: 0.5 }} />주요 차이점
                 </Typography>
                 <Box component="ul" sx={{ m: 0, pl: 2 }}>
                   <li>SKIN 표피재: 최대 26% 단가 차이 (₩18,917 ~ ₩22,500)</li>
@@ -361,7 +361,7 @@ const QuotationComparisonPage: React.FC = () => {
               
               <Box>
                 <Typography variant="body2" fontWeight={600} sx={{ mb: 1, color: '#1976d2' }}>
-                  💡 비용 최적화 제언
+                  <Lightbulb sx={{ fontSize: 'inherit', mr: 0.5 }} />비용 최적화 제언
                 </Typography>
                 <Box component="ul" sx={{ m: 0, pl: 2 }}>
                   <li>SKIN 표피재: 대한(주) 단가로 통일 시 ₩4,300 절약 가능</li>
@@ -373,7 +373,7 @@ const QuotationComparisonPage: React.FC = () => {
 
             <Box sx={{ mt: 3, p: 2, bgcolor: '#f5f5f5', borderRadius: 1 }}>
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
-                📋 누락 데이터 및 확인 필요 사항
+                <ListAlt sx={{ fontSize: 'inherit', mr: 0.5 }} />누락 데이터 및 확인 필요 사항
               </Typography>
               <Box component="ul" sx={{ m: 0, pl: 2, fontSize: 12 }}>
                 <li>현대시트: 제경비 세부 내역 미제출</li>
@@ -444,7 +444,7 @@ const QuotationComparisonPage: React.FC = () => {
 
               {/* 견적서별 계산식 */}
               <Typography sx={{ fontSize: 13, fontWeight: 600, color: '#0071e3', mb: 2 }}>
-                💰 견적서별 계산 과정
+                <AttachMoney sx={{ fontSize: 'inherit', mr: 0.5 }} />견적서별 계산 과정
               </Typography>
               
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -520,7 +520,7 @@ const QuotationComparisonPage: React.FC = () => {
                   alignItems: 'center',
                   gap: 0.5
                 }}>
-                  📊 차이 분석
+                  <BarChart sx={{ fontSize: 'inherit', mr: 0.5 }} />차이 분석
                 </Typography>
                 <Typography sx={{ fontSize: 12, color: '#f44336' }}>
                   최고가와 최저가 차이: {calculationPopover.itemData.diffPct}%

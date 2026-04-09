@@ -49,7 +49,8 @@ import {
   GridOn,
   TableChart,
   Visibility,
-  Edit as EditIcon
+  Edit as EditIcon,
+  BarChart,
 } from '@mui/icons-material';
 import { excelData } from '../data/excelData';
 
@@ -113,7 +114,7 @@ const SimpleExcelDialog: React.FC<SimpleExcelDialogProps> = ({
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <TableChart sx={{ color: '#4472C4' }} />
-            <Typography variant="h6">📊 Excel 원본 뷰어</Typography>
+            <Typography variant="h6"><BarChart sx={{ fontSize: 'inherit', mr: 0.5 }} />Excel 원본 뷰어</Typography>
             <Chip 
               label="HEAD_LINING_원가계산서.xlsx" 
               size="small" 

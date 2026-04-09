@@ -49,7 +49,10 @@ import {
   TextField, ClickAwayListener, Dialog, DialogTitle, DialogContent, 
   DialogActions, Select, MenuItem, FormControl, InputLabel, Alert, IconButton
 } from '@mui/material';
-import { NavigateNext, NavigateBefore, NoteAdd as NoteAddIcon, Close as CloseIcon, Save as SaveIcon } from '@mui/icons-material';
+import {
+  NavigateNext, NavigateBefore, NoteAdd as NoteAddIcon, Close as CloseIcon, Save as SaveIcon,
+  FileDownload, Description, Lightbulb, Warning, CheckCircle, SmartToy, AttachMoney, BarChart, EditNote,
+} from '@mui/icons-material';
 import { C } from '../../shared/constants/colors';
 import { costGroups, summaryRows } from './data/costGroups';
 import { listData } from './data/listData';
@@ -172,7 +175,7 @@ const AnalysisPage: React.FC = () => {
                 '&:hover': { borderColor: '#1a5c38', bgcolor: '#dcfce7', color: '#1a5c38' }
               }}
             >
-              📥 엑셀다운로드
+              <FileDownload sx={{ fontSize: 'inherit', mr: 0.5 }} />엑셀다운로드
             </Button>
             <Button
               variant="outlined"
@@ -190,7 +193,7 @@ const AnalysisPage: React.FC = () => {
                 '&:hover': { borderColor: '#d1d5db', bgcolor: '#f3f4f6', color: '#374151' }
               }}
             >
-              📄 원본보기
+              <Description sx={{ fontSize: 'inherit', mr: 0.5 }} />원본보기
             </Button>
             <Button
               variant="outlined"
@@ -464,7 +467,7 @@ const AnalysisPage: React.FC = () => {
                                   sx={{ fontSize: 10, color: C.gray, ml: 0.5, cursor: 'pointer', '&:hover': { color: C.blue } }}
                                   onClick={(e) => { e.stopPropagation(); handleAmountClick(e, row, group.title); }}
                                 >
-                                  💡
+                                  <Lightbulb sx={{ fontSize: 'inherit' }} />
                                 </Typography>
                               </Box>
                             )}
@@ -627,7 +630,7 @@ const AnalysisPage: React.FC = () => {
                         fontSize: 10, fontWeight: 700,
                         color: selectedRelationNode.status === 'anomaly' ? '#dc2626' : '#16a34a',
                       }}>
-                        {selectedRelationNode.status === 'anomaly' ? '⚠️ 이상치' : '✅ 정상'}
+                        {selectedRelationNode.status === 'anomaly' ? <><Warning sx={{ fontSize: 'inherit', mr: 0.3 }} />이상치</> : <><CheckCircle sx={{ fontSize: 'inherit', mr: 0.3 }} />정상</>}
                       </Typography>
                     </Box>
                     <Typography sx={{ fontSize: 15, fontWeight: 700, color: C.dark, lineHeight: 1.3 }}>
@@ -700,7 +703,7 @@ const AnalysisPage: React.FC = () => {
                   {selectedRelationNode.status === 'anomaly' && selectedRelationNode.anomalyReason && (
                     <Box sx={{ mb: 2, p: 1.5, bgcolor: '#fff5f5', borderRadius: '8px', border: '1px solid #fca5a520' }}>
                       <Typography sx={{ fontSize: 11, fontWeight: 700, color: C.orange, mb: 0.75 }}>
-                        🤖 AI 판단 근거
+                        <SmartToy sx={{ fontSize: 'inherit', mr: 0.5 }} />AI 판단 근거
                       </Typography>
                       <Typography sx={{ fontSize: 11, color: '#7f1d1d', lineHeight: 1.6 }}>
                         {selectedRelationNode.anomalyReason}
@@ -722,7 +725,7 @@ const AnalysisPage: React.FC = () => {
                       '&.Mui-disabled': { borderColor: '#d1d5db', color: '#9ca3af' },
                     }}
                   >
-                    📄 원본 데이터 보기
+                    <Description sx={{ fontSize: 'inherit', mr: 0.5 }} />원본 데이터 보기
                   </Button>
                 </Box>
               </Paper>
@@ -758,7 +761,7 @@ const AnalysisPage: React.FC = () => {
           }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <NoteAddIcon color="primary" />
-              <Typography variant="h6">📝 분석 노트 작성</Typography>
+              <Typography variant="h6"><EditNote sx={{ fontSize: 'inherit', mr: 0.5 }} />분석 노트 작성</Typography>
             </Box>
             <IconButton onClick={() => setNoteDialogOpen(false)} size="small">
               <CloseIcon />
@@ -782,10 +785,10 @@ const AnalysisPage: React.FC = () => {
                 label="노트 유형"
                 onChange={(e) => setNoteType(e.target.value)}
               >
-                <MenuItem value="analysis">📊 분석 결과</MenuItem>
-                <MenuItem value="anomaly">⚠️ 이상치 발견</MenuItem>
+                <MenuItem value="analysis"><BarChart sx={{ fontSize: 'inherit', mr: 0.5 }} />분석 결과</MenuItem>
+                <MenuItem value="anomaly"><Warning sx={{ fontSize: 'inherit', mr: 0.5 }} />이상치 발견</MenuItem>
                 <MenuItem value="calculation">🧮 계산 검증</MenuItem>
-                <MenuItem value="improvement">💡 개선 제안</MenuItem>
+                <MenuItem value="improvement"><Lightbulb sx={{ fontSize: 'inherit', mr: 0.5 }} />개선 제안</MenuItem>
               </Select>
             </FormControl>
 
@@ -823,7 +826,7 @@ const AnalysisPage: React.FC = () => {
       <Popover open={!!anomalyAnchor} anchorEl={anomalyAnchor?.el} onClose={() => setAnomalyAnchor(null)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} transformOrigin={{ vertical: 'top', horizontal: 'left' }}>
         <Box sx={{ bgcolor: C.dark, color: '#fff', borderRadius: '8px', p: 1.5, maxWidth: 260, fontSize: 12, lineHeight: 1.5 }}>
-          <Typography sx={{ fontWeight: 600, mb: 0.75, color: C.orange, fontSize: 12 }}>🤖 AI 판단 근거</Typography>
+          <Typography sx={{ fontWeight: 600, mb: 0.75, color: C.orange, fontSize: 12 }}><SmartToy sx={{ fontSize: 'inherit', mr: 0.5 }} />AI 판단 근거</Typography>
           <Typography sx={{ fontSize: 12, color: '#ddd' }}>{anomalyAnchor?.reason}</Typography>
         </Box>
       </Popover>
@@ -843,7 +846,7 @@ const AnalysisPage: React.FC = () => {
                 {calculationAnchor.row.spec && <Typography sx={{ fontSize: 12, color: C.gray }}>규격: {calculationAnchor.row.spec}</Typography>}
               </Box>
               <Box sx={{ mb: 3 }}>
-                <Typography sx={{ fontSize: 13, fontWeight: 600, color: C.blue, mb: 1.5 }}>💰 계산 과정</Typography>
+                <Typography sx={{ fontSize: 13, fontWeight: 600, color: C.blue, mb: 1.5 }}><AttachMoney sx={{ fontSize: 'inherit', mr: 0.5 }} />계산 과정</Typography>
                 {calculationAnchor.row.qty && calculationAnchor.row.unitPrice ? (
                   <Box sx={{ bgcolor: '#f8f9fa', p: 2, borderRadius: '8px', border: `1px solid ${C.border}`, mb: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
@@ -893,7 +896,7 @@ const AnalysisPage: React.FC = () => {
               </Box>
               {calculationAnchor.row.status === 'anomaly' && calculationAnchor.row.anomalyReason && (
                 <Box sx={{ mt: 2, p: 2, bgcolor: '#fff5f5', border: `1px solid ${C.red}20`, borderRadius: '8px' }}>
-                  <Typography sx={{ fontSize: 12, fontWeight: 600, color: C.red, mb: 0.5 }}>⚠️ 이상치 감지</Typography>
+                  <Typography sx={{ fontSize: 12, fontWeight: 600, color: C.red, mb: 0.5 }}><Warning sx={{ fontSize: 'inherit', mr: 0.5 }} />이상치 감지</Typography>
                   <Typography sx={{ fontSize: 12, color: C.red }}>{calculationAnchor.row.anomalyReason}</Typography>
                 </Box>
               )}

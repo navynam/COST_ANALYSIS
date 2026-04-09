@@ -8,12 +8,13 @@ import {
   Select, MenuItem, FormControl, InputLabel, Alert, Snackbar,
   Card, CardContent, Chip, ToggleButtonGroup, ToggleButton, Divider
 } from '@mui/material';
-import { 
-  Settings as SettingsIcon, 
+import {
+  Settings as SettingsIcon,
   Save,
   Palette as PaletteIcon,
   Business as BusinessIcon,
-  Favorite as FavoriteIcon
+  Favorite as FavoriteIcon,
+  Lightbulb,
 } from '@mui/icons-material';
 import { useSettingsPage } from './hooks/useSettingsPage';
 import { useTheme, ThemeType, getThemeInfo } from '../../shared/contexts/ThemeContext';
@@ -205,7 +206,7 @@ const SettingsPage: React.FC = () => {
         
         <Alert severity="info" sx={{ mt: 2 }}>
           <Typography variant="body2">
-            💡 <strong>팁:</strong> 테마는 실시간으로 적용되며, 모든 페이지에서 동일하게 표시됩니다. 
+            <Lightbulb sx={{ fontSize: 'inherit', mr: 0.5 }} /><strong>팁:</strong> 테마는 실시간으로 적용되며, 모든 페이지에서 동일하게 표시됩니다.
             검증 페이지에서 파싱 결과를 확인할 때도 선택한 테마가 적용됩니다.
           </Typography>
         </Alert>

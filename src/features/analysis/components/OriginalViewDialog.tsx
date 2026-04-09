@@ -27,7 +27,7 @@ import {
 } from '@mui/material';
 import { 
   Close, GridOn, ViewCompact, ZoomIn, ZoomOut, 
-  FindInPage, Download, Print 
+  FindInPage, Download, Print, Description, CheckCircle, Warning,
 } from '@mui/icons-material';
 import { C } from '../../../shared/constants/colors';
 import { excelData } from '../data/excelData';
@@ -88,7 +88,7 @@ const OriginalViewDialog: React.FC<OriginalViewDialogProps> = ({ open, onClose, 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <GridOn sx={{ color: C.green }} />
-            <Typography sx={{ fontSize: 18, fontWeight: 700 }}>📄 Excel 원본 뷰어</Typography>
+            <Typography sx={{ fontSize: 18, fontWeight: 700 }}><Description sx={{ fontSize: 'inherit', mr: 0.5 }} />Excel 원본 뷰어</Typography>
             <Chip 
               label="HEAD_LINING_원가계산서.xlsx" 
               size="small" 
@@ -369,7 +369,7 @@ const OriginalViewDialog: React.FC<OriginalViewDialogProps> = ({ open, onClose, 
                 border: '1px solid #c3e6cb' 
               }} />
               <Typography sx={{ fontSize: 11, color: C.gray }}>
-                ✅ 정상 파싱
+                <CheckCircle sx={{ fontSize: 'inherit', mr: 0.3 }} />정상 파싱
               </Typography>
             </Box>
             
@@ -382,7 +382,7 @@ const OriginalViewDialog: React.FC<OriginalViewDialogProps> = ({ open, onClose, 
                 border: '1px solid #f5c6cb' 
               }} />
               <Typography sx={{ fontSize: 11, color: C.gray }}>
-                ⚠️ 이상치 감지
+                <Warning sx={{ fontSize: 'inherit', mr: 0.3 }} />이상치 감지
               </Typography>
             </Box>
             

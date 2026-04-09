@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, IconButton } from '@mui/material';
-import { Close } from '@mui/icons-material';
+import { Close, Description } from '@mui/icons-material';
 import { C } from '../../../shared/constants/colors';
 import type { UploadQueueItem } from '../types';
 
@@ -19,7 +19,7 @@ const FileUploadArea: React.FC<FileUploadAreaProps> = ({ uploadQueue, onRemoveQu
           display: 'flex', alignItems: 'center', gap: 1.5,
           mb: i < uploadQueue.length - 1 ? 0.75 : 0,
         }}>
-          <Typography sx={{ fontSize: 13 }}>📄</Typography>
+          <Typography sx={{ fontSize: 13 }}><Description sx={{ fontSize: 'inherit' }} /></Typography>
           <Typography sx={{
             flex: 1, fontSize: 12, fontWeight: 500, color: '#191f28',
             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',

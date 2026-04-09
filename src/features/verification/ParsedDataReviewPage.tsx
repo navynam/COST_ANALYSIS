@@ -60,7 +60,13 @@ import {
   NoteAdd as NoteAddIcon,
   Send as SendIcon,
   AutoAwesome as AIIcon,
-  Close as CloseIcon
+  Close as CloseIcon,
+  BarChart,
+  ListAlt,
+  Lightbulb,
+  EditNote,
+  Search as SearchIcon,
+  CheckCircle,
 } from '@mui/icons-material';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMessageDialog } from '../../shared/components/MessageDialog';
@@ -971,7 +977,7 @@ const ParsedDataReviewPage: React.FC = () => {
     <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
         <Typography variant="h6" fontWeight={600} sx={{ color: 'text.primary' }}>
-          📊 카테고리별 원가 분석
+          <BarChart sx={{ fontSize: 'inherit', mr: 0.5 }} />카테고리별 원가 분석
         </Typography>
 
 
@@ -1204,7 +1210,7 @@ const ParsedDataReviewPage: React.FC = () => {
     <Box>
       <Box sx={{ mb: 3 }}>
         <Typography variant="h6" fontWeight={600}>
-          📋 전체 항목 리스트
+          <ListAlt sx={{ fontSize: 'inherit', mr: 0.5 }} />전체 항목 리스트
         </Typography>
       </Box>
 
@@ -1555,7 +1561,7 @@ const ParsedDataReviewPage: React.FC = () => {
       {/* 💡 안내 텍스트 (배경/라인 없음) */}
       <Box sx={{ px: 3, py: 0.75 }}>
         <Typography sx={{ fontSize: 12, color: '#0071e3', fontWeight: 600 }}>
-          💡 왼쪽 컬럼 클릭 → 오른쪽 Excel 하이라이트 · 더블클릭으로 셀 재매핑
+          <Lightbulb sx={{ fontSize: 'inherit', mr: 0.5 }} />왼쪽 컬럼 클릭 → 오른쪽 Excel 하이라이트 · 더블클릭으로 셀 재매핑
         </Typography>
       </Box>
 
@@ -1732,7 +1738,7 @@ const ParsedDataReviewPage: React.FC = () => {
         }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <NoteAddIcon color="primary" />
-            <Typography variant="h6">📝 분석 노트 작성</Typography>
+            <Typography variant="h6"><EditNote sx={{ fontSize: 'inherit', mr: 0.5 }} />분석 노트 작성</Typography>
           </Box>
           <IconButton onClick={() => setNoteDialogOpen(false)} size="small">
             <CloseIcon />
@@ -1758,9 +1764,9 @@ const ParsedDataReviewPage: React.FC = () => {
               label="노트 유형"
               onChange={(e) => setNoteType(e.target.value)}
             >
-              <MenuItem value="parsing">🔍 파싱 이슈</MenuItem>
-              <MenuItem value="validation">✅ 검증 결과</MenuItem>
-              <MenuItem value="improvement">💡 개선 제안</MenuItem>
+              <MenuItem value="parsing"><SearchIcon sx={{ fontSize: 'inherit', mr: 0.5 }} />파싱 이슈</MenuItem>
+              <MenuItem value="validation"><CheckCircle sx={{ fontSize: 'inherit', mr: 0.5 }} />검증 결과</MenuItem>
+              <MenuItem value="improvement"><Lightbulb sx={{ fontSize: 'inherit', mr: 0.5 }} />개선 제안</MenuItem>
             </Select>
           </FormControl>
 
@@ -1817,7 +1823,7 @@ const ParsedDataReviewPage: React.FC = () => {
                 mb: 2
               }}>
                 <Typography variant="subtitle2" color="text.secondary">
-                  📋 노트 히스토리 ({savedNotes.filter((n: any) => n && n.fileId === currentFileId && n.content && n.content.trim()).length}개)
+                  <ListAlt sx={{ fontSize: 'inherit', mr: 0.5 }} />노트 히스토리 ({savedNotes.filter((n: any) => n && n.fileId === currentFileId && n.content && n.content.trim()).length}개)
                 </Typography>
 
                 <Button
@@ -1870,9 +1876,9 @@ const ParsedDataReviewPage: React.FC = () => {
                         <Chip
                           size="small"
                           label={
-                            note.type === 'parsing' ? '🔍 파싱' :
-                            note.type === 'validation' ? '✅ 검증' :
-                            '💡 개선'
+                            note.type === 'parsing' ? <><SearchIcon sx={{ fontSize: 'inherit', mr: 0.3 }} />파싱</> :
+                            note.type === 'validation' ? <><CheckCircle sx={{ fontSize: 'inherit', mr: 0.3 }} />검증</> :
+                            <><Lightbulb sx={{ fontSize: 'inherit', mr: 0.3 }} />개선</>
                           }
                           variant="outlined"
                           sx={{

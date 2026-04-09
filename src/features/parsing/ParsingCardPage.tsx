@@ -65,6 +65,16 @@ import {
   TaskAlt,
   ViewModule,
   ViewList,
+  Folder,
+  CalendarToday,
+  Person,
+  Business,
+  BarChart,
+  EditNote,
+  Description,
+  Upload,
+  ListAlt,
+  Lightbulb,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -198,20 +208,20 @@ const FileCard: React.FC<{
           {/* 첫 번째 라인: 파일 크기, 업로드일 */}
           <Box className={cardStyles.cardInfoRow} sx={{ gap: 3, mb: 1 }}>
             <Typography sx={{ fontSize: 14, color: '#8b95a1', fontWeight: 500 }}>
-              📁 {formatFileSize(file.size || 0)}
+              <Folder sx={{ fontSize: 'inherit', mr: 0.5 }} />{formatFileSize(file.size || 0)}
             </Typography>
             <Typography sx={{ fontSize: 14, color: '#8b95a1', fontWeight: 500 }}>
-              📅 {file.uploadDate || file.uploadedAt}
+              <CalendarToday sx={{ fontSize: 'inherit', mr: 0.5 }} />{file.uploadDate || file.uploadedAt}
             </Typography>
           </Box>
 
           {/* 두 번째 라인: 업로더, 부서 */}
           <Box className={cardStyles.cardInfoRow} sx={{ gap: 3, mb: 1 }}>
             <Typography sx={{ fontSize: 14, color: '#8b95a1', fontWeight: 500 }}>
-              👤 {file.uploader}
+              <Person sx={{ fontSize: 'inherit', mr: 0.5 }} />{file.uploader}
             </Typography>
             <Typography sx={{ fontSize: 14, color: '#8b95a1', fontWeight: 500 }}>
-              🏢 {file.department}
+              <Business sx={{ fontSize: 'inherit', mr: 0.5 }} />{file.department}
             </Typography>
           </Box>
 
@@ -300,7 +310,7 @@ const FileCard: React.FC<{
                 mb: 1.5,
                 textAlign: 'center'
               }}>
-                {(file.status === 'inAnalysis' || file.status === 'analyzed') ? '📊 분석 완료' : '✨ 추출 완료'}
+                {(file.status === 'inAnalysis' || file.status === 'analyzed') ? <><BarChart sx={{ fontSize: 'inherit', mr: 0.5 }} />분석 완료</> : <><AIIcon sx={{ fontSize: 'inherit', mr: 0.5 }} />추출 완료</>}
               </Typography>
 
               {/* 📊 결과 요약 - 축소 */}
@@ -417,7 +427,7 @@ const FileCard: React.FC<{
                 mb: 1,
                 textAlign: 'center'
               }}>
-                ⏳ 대기 중
+                <HourglassEmpty sx={{ fontSize: 'inherit', mr: 0.5 }} />대기 중
               </Typography>
               
               <Typography sx={{ 
@@ -487,7 +497,7 @@ const FileCard: React.FC<{
                 }
               }}
             >
-              📝 노트({getNoteCount(file.id.toString())})
+              <EditNote sx={{ fontSize: 'inherit', mr: 0.5 }} />노트({getNoteCount(file.id.toString())})
             </Button>
             <Button 
               variant="contained" 
@@ -535,7 +545,7 @@ const FileCard: React.FC<{
                 }
               }}
             >
-              📝 노트({getNoteCount(file.id.toString())})
+              <EditNote sx={{ fontSize: 'inherit', mr: 0.5 }} />노트({getNoteCount(file.id.toString())})
             </Button>
             <Button 
               variant="contained" 
@@ -583,7 +593,7 @@ const FileCard: React.FC<{
                 }
               }}
             >
-              📝 노트({getNoteCount(file.id.toString())})
+              <EditNote sx={{ fontSize: 'inherit', mr: 0.5 }} />노트({getNoteCount(file.id.toString())})
             </Button>
             <Button 
               variant="outlined" 
@@ -627,7 +637,7 @@ const FileCard: React.FC<{
                 }
               }}
             >
-              📝 노트({getNoteCount(file.id.toString())})
+              <EditNote sx={{ fontSize: 'inherit', mr: 0.5 }} />노트({getNoteCount(file.id.toString())})
             </Button>
             <Button 
               variant="contained" 
@@ -675,7 +685,7 @@ const FileCard: React.FC<{
                 }
               }}
             >
-              📝 노트({getNoteCount(file.id.toString())})
+              <EditNote sx={{ fontSize: 'inherit', mr: 0.5 }} />노트({getNoteCount(file.id.toString())})
             </Button>
             <Button
               variant="outlined"
@@ -719,7 +729,7 @@ const FileCard: React.FC<{
                 }
               }}
             >
-              📝 노트({getNoteCount(file.id.toString())})
+              <EditNote sx={{ fontSize: 'inherit', mr: 0.5 }} />노트({getNoteCount(file.id.toString())})
             </Button>
             <Button
               variant="contained"
@@ -767,7 +777,7 @@ const FileCard: React.FC<{
                 }
               }}
             >
-              📝 노트({getNoteCount(file.id.toString())})
+              <EditNote sx={{ fontSize: 'inherit', mr: 0.5 }} />노트({getNoteCount(file.id.toString())})
             </Button>
             <Button 
               variant="contained" 
@@ -1057,7 +1067,7 @@ ${currentFile?.status === 'extracting' ? `
           <Box sx={{ px: 2, py: 1, borderBottom: '1px solid #f2f4f6' }}>
             {uploadQueue.map((q, i) => (
               <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: i < uploadQueue.length - 1 ? 0.75 : 0 }}>
-                <Typography sx={{ fontSize: 13 }}>📄</Typography>
+                <Typography sx={{ fontSize: 13 }}><Description sx={{ fontSize: 'inherit' }} /></Typography>
                 <Typography sx={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#191f28', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {q.file.name}
                 </Typography>
@@ -1108,7 +1118,7 @@ ${currentFile?.status === 'extracting' ? `
       <Box className={cardStyles.fileGrid} sx={{ px: viewMode === 'card' ? 3 : 0, pt: 1, pb: 3 }}>
         {filteredAndSorted.length === 0 ? (
           <Box className={cardStyles.emptyState} sx={{ py: 12 }}>
-            <Typography sx={{ fontSize: 64, mb: 3 }}>📄</Typography>
+            <Typography sx={{ fontSize: 64, mb: 3 }}><Description sx={{ fontSize: 'inherit' }} /></Typography>
             <Typography sx={{ 
               fontSize: 20, 
               color: '#191f28', 
@@ -1193,7 +1203,7 @@ ${currentFile?.status === 'extracting' ? `
           pb: 1
         }}>
           <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 18 }}>
-            📝 파싱 노트 작성
+            <EditNote sx={{ fontSize: 'inherit', mr: 0.5 }} />파싱 노트 작성
           </Typography>
           <IconButton onClick={() => setNoteDialogOpen(false)} size="small">
             <CloseIcon />
@@ -1219,10 +1229,10 @@ ${currentFile?.status === 'extracting' ? `
               onChange={(e) => setNoteType(e.target.value)}
               label="노트 유형"
             >
-              <MenuItem value="parsing">🔍 파싱 이슈</MenuItem>
-              <MenuItem value="upload">📤 업로드 문제</MenuItem>
-              <MenuItem value="format">📋 파일 형식</MenuItem>
-              <MenuItem value="improvement">💡 개선 제안</MenuItem>
+              <MenuItem value="parsing"><Search sx={{ fontSize: 'inherit', mr: 0.5 }} />파싱 이슈</MenuItem>
+              <MenuItem value="upload"><Upload sx={{ fontSize: 'inherit', mr: 0.5 }} />업로드 문제</MenuItem>
+              <MenuItem value="format"><ListAlt sx={{ fontSize: 'inherit', mr: 0.5 }} />파일 형식</MenuItem>
+              <MenuItem value="improvement"><Lightbulb sx={{ fontSize: 'inherit', mr: 0.5 }} />개선 제안</MenuItem>
             </Select>
           </FormControl>
 
@@ -1278,7 +1288,7 @@ ${currentFile?.status === 'extracting' ? `
                 mb: 2
               }}>
                 <Typography variant="subtitle2" color="text.secondary">
-                  📋 이 파일의 노트 히스토리 ({savedNotes.filter(n => n.fileId === currentFileId && n.content && n.content.trim()).length}개)
+                  <ListAlt sx={{ fontSize: 'inherit', mr: 0.5 }} />이 파일의 노트 히스토리 ({savedNotes.filter(n => n.fileId === currentFileId && n.content && n.content.trim()).length}개)
                 </Typography>
                 
                 <Button
@@ -1330,10 +1340,10 @@ ${currentFile?.status === 'extracting' ? `
                         <Chip 
                           size="small" 
                           label={
-                            note.type === 'parsing' ? '🔍 파싱' : 
-                            note.type === 'upload' ? '📤 업로드' : 
-                            note.type === 'format' ? '📋 형식' :
-                            '💡 개선'
+                            note.type === 'parsing' ? <><Search sx={{ fontSize: 'inherit', mr: 0.3 }} />파싱</> :
+                            note.type === 'upload' ? <><Upload sx={{ fontSize: 'inherit', mr: 0.3 }} />업로드</> :
+                            note.type === 'format' ? <><ListAlt sx={{ fontSize: 'inherit', mr: 0.3 }} />형식</> :
+                            <><Lightbulb sx={{ fontSize: 'inherit', mr: 0.3 }} />개선</>
                           } 
                           variant="outlined"
                           sx={{

@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import {
   Edit, Delete, Add, AccountTree, Settings, Send, CheckCircle, Cancel,
-  Person, AdminPanelSettings, SwapHoriz, Schedule, ExpandMore,
+  Person, AdminPanelSettings, SwapHoriz, Schedule, ExpandMore, Functions,
 } from '@mui/icons-material';
 import { useModelManagement, badgeConfig, Formula, ALL_DEPARTMENTS } from './hooks/useModelManagement';
 import { useModelWorkflow, userPresets, ChangeRequest } from './hooks/useModelWorkflow';
@@ -282,7 +282,7 @@ const ModelManagementPage: React.FC = () => {
                     )}
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5, bgcolor: '#f8f9fa', borderRadius: 1.5, px: 2, py: 1 }}>
-                    <Typography sx={{ fontSize: 16 }}>📐</Typography>
+                    <Typography sx={{ fontSize: 16 }}><Functions sx={{ fontSize: 'inherit' }} /></Typography>
                     <Typography component="code" sx={{ fontFamily: 'monospace', fontSize: 13, color: '#333', fontWeight: 500 }}>{f.expression}</Typography>
                   </Box>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>{f.description}</Typography>

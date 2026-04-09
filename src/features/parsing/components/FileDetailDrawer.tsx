@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Box, Typography, IconButton, Button, LinearProgress, Drawer, Chip,
 } from '@mui/material';
-import { Close, CheckCircle, Schedule, Error } from '@mui/icons-material';
+import { Close, CheckCircle, Schedule, Error, Folder, CalendarToday, Person, Business, BarChart, AutoAwesome, Description, Label, Inventory } from '@mui/icons-material';
 import type { FileItem } from '../types';
 
 interface FileDetailDrawerProps {
@@ -86,19 +86,19 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
               {/* 기본 파일 정보 (파싱 카드와 동일한 스타일) */}
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
                 <Typography sx={{ fontSize: 14, color: '#8b95a1', fontWeight: 500 }}>
-                  📁 {file.fileSize || '0 Bytes'}
+                  <Folder sx={{ fontSize: 'inherit', mr: 0.5 }} />{file.fileSize || '0 Bytes'}
                 </Typography>
                 <Typography sx={{ fontSize: 14, color: '#8b95a1', fontWeight: 500 }}>
-                  📅 {file.uploadDate}
+                  <CalendarToday sx={{ fontSize: 'inherit', mr: 0.5 }} />{file.uploadDate}
                 </Typography>
               </Box>
               
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mt: 0.5 }}>
                 <Typography sx={{ fontSize: 14, color: '#8b95a1', fontWeight: 500 }}>
-                  👤 {file.uploader || '김남중'}
+                  <Person sx={{ fontSize: 'inherit', mr: 0.5 }} />{file.uploader || '김남중'}
                 </Typography>
                 <Typography sx={{ fontSize: 14, color: '#8b95a1', fontWeight: 500 }}>
-                  🏢 {file.department || '개발팀'}
+                  <Business sx={{ fontSize: 'inherit', mr: 0.5 }} />{file.department || '개발팀'}
                 </Typography>
               </Box>
             </Box>
@@ -128,7 +128,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                   mb: 2,
                   textAlign: 'center'
                 }}>
-                  📊 데이터 추출 중
+                  <BarChart sx={{ fontSize: 'inherit', mr: 0.5 }} />데이터 추출 중
                 </Typography>
                 
                 {/* 전체 진행률 */}
@@ -255,7 +255,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                     textAlign: 'center',
                     letterSpacing: '-0.2px'
                   }}>
-                    {(file.status === 'inAnalysis' || file.status === 'analyzed') ? '📊 분석 완료' : '✨ 추출 완료'}
+                    {(file.status === 'inAnalysis' || file.status === 'analyzed') ? <><BarChart sx={{ fontSize: 'inherit', mr: 0.5 }} />분석 완료</> : <><AutoAwesome sx={{ fontSize: 'inherit', mr: 0.5 }} />추출 완료</>}
                   </Typography>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
                     <Box sx={{ textAlign: 'center', flex: 1 }}>
@@ -305,7 +305,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                     alignItems: 'center',
                     gap: 0.5
                   }}>
-                    🏷️ 추출된 카테고리
+                    <Label sx={{ fontSize: 'inherit', mr: 0.5 }} />추출된 카테고리
                   </Typography>
                   <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                     <Chip
@@ -358,7 +358,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                     alignItems: 'center',
                     gap: 0.5
                   }}>
-                    📄 파일 정보
+                    <Description sx={{ fontSize: 'inherit', mr: 0.5 }} />파일 정보
                   </Typography>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                     {/* 파일명 */}
@@ -370,7 +370,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                       borderLeft: '4px solid #f59e0b'
                     }}>
                       <Typography sx={{ fontSize: 10, color: '#92400e', fontWeight: 600, mb: 0.5 }}>
-                        📁 파일명
+                        <Folder sx={{ fontSize: 'inherit', mr: 0.5 }} />파일명
                       </Typography>
                       <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#1a1a1a', wordBreak: 'break-all' }}>
                         {file?.name || 'DOOR_TRIM.xlsx'}
@@ -386,7 +386,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                         border: '1px solid #bfdbfe'
                       }}>
                         <Typography sx={{ fontSize: 10, color: '#1e40af', fontWeight: 600, mb: 0.5 }}>
-                          🏷️ C.O. NO.
+                          <Label sx={{ fontSize: 'inherit', mr: 0.5 }} />C.O. NO.
                         </Typography>
                         <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#1e3a8a' }}>
                           CO-2024-001
@@ -399,7 +399,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                         border: '1px solid #e9d5ff'
                       }}>
                         <Typography sx={{ fontSize: 10, color: '#6b21a8', fontWeight: 600, mb: 0.5 }}>
-                          🔢 품번
+                          # 품번
                         </Typography>
                         <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#4c1d95' }}>
                           HL-2024-001
@@ -415,7 +415,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                       border: '1px solid #bbf7d0'
                     }}>
                       <Typography sx={{ fontSize: 10, color: '#166534', fontWeight: 600, mb: 0.5 }}>
-                        📦 품명
+                        <Inventory sx={{ fontSize: 'inherit', mr: 0.5 }} />품명
                       </Typography>
                       <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#14532d' }}>
                         HEAD LINING ASSY
@@ -431,7 +431,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                         border: '1px solid #fed7aa'
                       }}>
                         <Typography sx={{ fontSize: 10, color: '#9a3412', fontWeight: 600, mb: 0.5 }}>
-                          🏢 협력사
+                          <Business sx={{ fontSize: 'inherit', mr: 0.5 }} />협력사
                         </Typography>
                         <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#7c2d12' }}>
                           대리(주)
@@ -444,7 +444,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                         border: '1px solid #f9a8d4'
                       }}>
                         <Typography sx={{ fontSize: 10, color: '#9d174d', fontWeight: 600, mb: 0.5 }}>
-                          👤 담당자
+                          <Person sx={{ fontSize: 'inherit', mr: 0.5 }} />담당자
                         </Typography>
                         <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#831843' }}>
                           원장수
