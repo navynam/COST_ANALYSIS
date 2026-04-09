@@ -3,7 +3,8 @@ import {
   Box, Typography, Table, TableBody, TableCell, TableRow, Collapse,
   TextField, ClickAwayListener,
 } from '@mui/material';
-import { ExpandMore, ChevronRight, Warning, Lightbulb } from '@mui/icons-material';
+import { ExpandMore, ChevronRight } from '@mui/icons-material';
+import FluentIcon from '../../../shared/components/FluentIcon';
 import { C } from '../../../shared/constants/colors';
 import type { ListItem, CostRow } from '../types';
 import MiniConfidence from './MiniConfidence';
@@ -55,7 +56,7 @@ const ListViewRow: React.FC<ListViewRowProps> = ({
           onClick={() => onCellClick?.(item.name)}
         >
           {item.name}
-          {isAnomaly && <Typography component="span" sx={{ ml: 0.5, color: C.red, fontSize: 11 }}><Warning sx={{ fontSize: 'inherit' }} /></Typography>}
+          {isAnomaly && <Typography component="span" sx={{ ml: 0.5, color: C.red, fontSize: 11 }}><FluentIcon name="warning" size={11} /></Typography>}
         </TableCell>
         <TableCell sx={tdSx}>{item.spec}</TableCell>
         <TableCell sx={tdSx}>{item.unit}</TableCell>
@@ -109,7 +110,7 @@ const ListViewRow: React.FC<ListViewRowProps> = ({
                   };
                   onAmountClick?.(e, costRow, groupTitle);
                 }}
-              ><Lightbulb sx={{ fontSize: 'inherit' }} /></Typography>
+              ><FluentIcon name="lightbulb" size={10} /></Typography>
             </Box>
           )}
         </TableCell>

@@ -2,7 +2,8 @@ import React from 'react';
 import {
   Box, Typography, IconButton, Button, LinearProgress, Drawer, Chip,
 } from '@mui/material';
-import { Close, CheckCircle, Schedule, Error, Folder, CalendarToday, Person, Business, BarChart, AutoAwesome, Description, Label, Inventory } from '@mui/icons-material';
+import { Close } from '@mui/icons-material';
+import FluentIcon from '../../../shared/components/FluentIcon';
 import type { FileItem } from '../types';
 
 interface FileDetailDrawerProps {
@@ -17,21 +18,21 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
   const getStatusConfig = (status: string) => {
     switch (status) {
       case 'extracting':
-        return { color: '#F59E0B', icon: <Schedule sx={{ fontSize: 16 }} />, label: '추출중(자동)', bgColor: '#FEF3C7' };
+        return { color: '#F59E0B', icon: <FluentIcon name="schedule" size={16} />, label: '추출중(자동)', bgColor: '#FEF3C7' };
       case 'verifying':
-        return { color: '#3B82F6', icon: <Schedule sx={{ fontSize: 16 }} />, label: '검증중', bgColor: '#DBEAFE' };
+        return { color: '#3B82F6', icon: <FluentIcon name="schedule" size={16} />, label: '검증중', bgColor: '#DBEAFE' };
       case 'verified':
-        return { color: '#0D9488', icon: <CheckCircle sx={{ fontSize: 16 }} />, label: '검증완료', bgColor: '#CCFBF1' };
+        return { color: '#0D9488', icon: <FluentIcon name="check" size={16} />, label: '검증완료', bgColor: '#CCFBF1' };
       case 'analyzing':
-        return { color: '#8B5CF6', icon: <Schedule sx={{ fontSize: 16 }} />, label: '분석중(자동)', bgColor: '#EDE9FE' };
+        return { color: '#8B5CF6', icon: <FluentIcon name="schedule" size={16} />, label: '분석중(자동)', bgColor: '#EDE9FE' };
       case 'inAnalysis':
-        return { color: '#6366F1', icon: <CheckCircle sx={{ fontSize: 16 }} />, label: '분석중', bgColor: '#E0E7FF' };
+        return { color: '#6366F1', icon: <FluentIcon name="check" size={16} />, label: '분석중', bgColor: '#E0E7FF' };
       case 'analyzed':
-        return { color: '#10B981', icon: <CheckCircle sx={{ fontSize: 16 }} />, label: '분석완료', bgColor: '#D1FAE5' };
+        return { color: '#10B981', icon: <FluentIcon name="check" size={16} />, label: '분석완료', bgColor: '#D1FAE5' };
       case 'failed':
-        return { color: '#EF4444', icon: <Error sx={{ fontSize: 16 }} />, label: '실패', bgColor: '#FEE2E2' };
+        return { color: '#EF4444', icon: <FluentIcon name="error" size={16} />, label: '실패', bgColor: '#FEE2E2' };
       default:
-        return { color: '#9e9e9e', icon: <Schedule sx={{ fontSize: 16 }} />, label: '알 수 없음', bgColor: '#f5f5f5' };
+        return { color: '#9e9e9e', icon: <FluentIcon name="schedule" size={16} />, label: '알 수 없음', bgColor: '#f5f5f5' };
     }
   };
 
@@ -86,19 +87,19 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
               {/* 기본 파일 정보 (파싱 카드와 동일한 스타일) */}
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
                 <Typography sx={{ fontSize: 14, color: '#8b95a1', fontWeight: 500 }}>
-                  <Folder sx={{ fontSize: 'inherit', mr: 0.5 }} />{file.fileSize || '0 Bytes'}
+                  <FluentIcon name="folder" size={14} style={{ marginRight: 4 }} />{file.fileSize || '0 Bytes'}
                 </Typography>
                 <Typography sx={{ fontSize: 14, color: '#8b95a1', fontWeight: 500 }}>
-                  <CalendarToday sx={{ fontSize: 'inherit', mr: 0.5 }} />{file.uploadDate}
+                  <FluentIcon name="calendar" size={14} style={{ marginRight: 4 }} />{file.uploadDate}
                 </Typography>
               </Box>
               
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mt: 0.5 }}>
                 <Typography sx={{ fontSize: 14, color: '#8b95a1', fontWeight: 500 }}>
-                  <Person sx={{ fontSize: 'inherit', mr: 0.5 }} />{file.uploader || '김남중'}
+                  <FluentIcon name="person" size={14} style={{ marginRight: 4 }} />{file.uploader || '김남중'}
                 </Typography>
                 <Typography sx={{ fontSize: 14, color: '#8b95a1', fontWeight: 500 }}>
-                  <Business sx={{ fontSize: 'inherit', mr: 0.5 }} />{file.department || '개발팀'}
+                  <FluentIcon name="building" size={14} style={{ marginRight: 4 }} />{file.department || '개발팀'}
                 </Typography>
               </Box>
             </Box>
@@ -128,7 +129,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                   mb: 2,
                   textAlign: 'center'
                 }}>
-                  <BarChart sx={{ fontSize: 'inherit', mr: 0.5 }} />데이터 추출 중
+                  <FluentIcon name="barchart" size={14} style={{ marginRight: 4 }} />데이터 추출 중
                 </Typography>
                 
                 {/* 전체 진행률 */}
@@ -255,7 +256,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                     textAlign: 'center',
                     letterSpacing: '-0.2px'
                   }}>
-                    {(file.status === 'inAnalysis' || file.status === 'analyzed') ? <><BarChart sx={{ fontSize: 'inherit', mr: 0.5 }} />분석 완료</> : <><AutoAwesome sx={{ fontSize: 'inherit', mr: 0.5 }} />추출 완료</>}
+                    {(file.status === 'inAnalysis' || file.status === 'analyzed') ? <><FluentIcon name="barchart" size={14} style={{ marginRight: 4 }} />분석 완료</> : <><FluentIcon name="star" size={14} style={{ marginRight: 4 }} />추출 완료</>}
                   </Typography>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
                     <Box sx={{ textAlign: 'center', flex: 1 }}>
@@ -305,7 +306,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                     alignItems: 'center',
                     gap: 0.5
                   }}>
-                    <Label sx={{ fontSize: 'inherit', mr: 0.5 }} />추출된 카테고리
+                    <FluentIcon name="clipboard" size={14} style={{ marginRight: 4 }} />추출된 카테고리
                   </Typography>
                   <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                     <Chip
@@ -358,7 +359,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                     alignItems: 'center',
                     gap: 0.5
                   }}>
-                    <Description sx={{ fontSize: 'inherit', mr: 0.5 }} />파일 정보
+                    <FluentIcon name="document" size={14} style={{ marginRight: 4 }} />파일 정보
                   </Typography>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                     {/* 파일명 */}
@@ -370,7 +371,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                       borderLeft: '4px solid #f59e0b'
                     }}>
                       <Typography sx={{ fontSize: 10, color: '#92400e', fontWeight: 600, mb: 0.5 }}>
-                        <Folder sx={{ fontSize: 'inherit', mr: 0.5 }} />파일명
+                        <FluentIcon name="folder" size={14} style={{ marginRight: 4 }} />파일명
                       </Typography>
                       <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#1a1a1a', wordBreak: 'break-all' }}>
                         {file?.name || 'DOOR_TRIM.xlsx'}
@@ -386,7 +387,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                         border: '1px solid #bfdbfe'
                       }}>
                         <Typography sx={{ fontSize: 10, color: '#1e40af', fontWeight: 600, mb: 0.5 }}>
-                          <Label sx={{ fontSize: 'inherit', mr: 0.5 }} />C.O. NO.
+                          <FluentIcon name="clipboard" size={14} style={{ marginRight: 4 }} />C.O. NO.
                         </Typography>
                         <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#1e3a8a' }}>
                           CO-2024-001
@@ -415,7 +416,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                       border: '1px solid #bbf7d0'
                     }}>
                       <Typography sx={{ fontSize: 10, color: '#166534', fontWeight: 600, mb: 0.5 }}>
-                        <Inventory sx={{ fontSize: 'inherit', mr: 0.5 }} />품명
+                        <FluentIcon name="clipboard" size={14} style={{ marginRight: 4 }} />품명
                       </Typography>
                       <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#14532d' }}>
                         HEAD LINING ASSY
@@ -431,7 +432,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                         border: '1px solid #fed7aa'
                       }}>
                         <Typography sx={{ fontSize: 10, color: '#9a3412', fontWeight: 600, mb: 0.5 }}>
-                          <Business sx={{ fontSize: 'inherit', mr: 0.5 }} />협력사
+                          <FluentIcon name="building" size={14} style={{ marginRight: 4 }} />협력사
                         </Typography>
                         <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#7c2d12' }}>
                           대리(주)
@@ -444,7 +445,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                         border: '1px solid #f9a8d4'
                       }}>
                         <Typography sx={{ fontSize: 10, color: '#9d174d', fontWeight: 600, mb: 0.5 }}>
-                          <Person sx={{ fontSize: 'inherit', mr: 0.5 }} />담당자
+                          <FluentIcon name="person" size={14} style={{ marginRight: 4 }} />담당자
                         </Typography>
                         <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#831843' }}>
                           원장수

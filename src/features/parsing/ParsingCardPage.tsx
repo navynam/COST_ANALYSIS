@@ -49,33 +49,13 @@ import {
   IconButton
 } from '@mui/material';
 import {
-  Search,
   FilterList,
-  CheckCircle,
-  Schedule,
-  Error,
-  Analytics,
   Send as SendIcon,
-  AutoAwesome as AIIcon,
   Close as CloseIcon,
-  UploadFile,
-  GridView,
-  HourglassEmpty,
-  PendingActions,
-  TaskAlt,
   ViewModule,
   ViewList,
-  Folder,
-  CalendarToday,
-  Person,
-  Business,
-  BarChart,
-  EditNote,
-  Description,
-  Upload,
-  ListAlt,
-  Lightbulb,
 } from '@mui/icons-material';
+import FluentIcon from '../../shared/components/FluentIcon';
 import { useNavigate } from 'react-router-dom';
 
 import { C } from '../../shared/constants/colors';
@@ -104,56 +84,56 @@ const FileCard: React.FC<{
       case 'extracting':
         return {
           color: '#F59E0B',
-          icon: <Schedule sx={{ fontSize: 16 }} />,
+          icon: <FluentIcon name="schedule" size={16} />,
           label: '추출중(자동)', 
           bgColor: '#FEF3C7'
         };
       case 'verifying':
         return {
           color: '#3B82F6',
-          icon: <Schedule sx={{ fontSize: 16 }} />,
+          icon: <FluentIcon name="schedule" size={16} />,
           label: '검증중',
           bgColor: '#DBEAFE'
         };
       case 'verified':
         return {
           color: '#0D9488',
-          icon: <CheckCircle sx={{ fontSize: 16 }} />,
+          icon: <FluentIcon name="check" size={16} />,
           label: '검증완료',
           bgColor: '#CCFBF1'
         };
       case 'analyzing':
         return {
           color: '#8B5CF6',
-          icon: <Analytics sx={{ fontSize: 16 }} />,
+          icon: <FluentIcon name="microscope" size={16} />,
           label: '분석중(자동)',
           bgColor: '#EDE9FE'
         };
       case 'inAnalysis':
         return {
           color: '#6366F1',
-          icon: <Analytics sx={{ fontSize: 16 }} />,
+          icon: <FluentIcon name="microscope" size={16} />,
           label: '분석중',
           bgColor: '#E0E7FF'
         };
       case 'analyzed':
         return {
           color: '#10B981',
-          icon: <CheckCircle sx={{ fontSize: 16 }} />,
+          icon: <FluentIcon name="check" size={16} />,
           label: '분석완료',
           bgColor: '#D1FAE5'
         };
       case 'failed':
         return {
           color: '#EF4444',
-          icon: <Error sx={{ fontSize: 16 }} />,
+          icon: <FluentIcon name="error" size={16} />,
           label: '실패',
           bgColor: '#FEE2E2' 
         };
       default:
         return { 
           color: '#9e9e9e', 
-          icon: <Schedule sx={{ fontSize: 16 }} />, 
+          icon: <FluentIcon name="schedule" size={16} />, 
           label: '대기', 
           bgColor: '#f5f5f5' 
         };
@@ -208,20 +188,20 @@ const FileCard: React.FC<{
           {/* 첫 번째 라인: 파일 크기, 업로드일 */}
           <Box className={cardStyles.cardInfoRow} sx={{ gap: 3, mb: 1 }}>
             <Typography sx={{ fontSize: 14, color: '#8b95a1', fontWeight: 500 }}>
-              <Folder sx={{ fontSize: 'inherit', mr: 0.5 }} />{formatFileSize(file.size || 0)}
+              <FluentIcon name="folder" size={14} style={{ marginRight: 4 }} />{formatFileSize(file.size || 0)}
             </Typography>
             <Typography sx={{ fontSize: 14, color: '#8b95a1', fontWeight: 500 }}>
-              <CalendarToday sx={{ fontSize: 'inherit', mr: 0.5 }} />{file.uploadDate || file.uploadedAt}
+              <FluentIcon name="calendar" size={14} style={{ marginRight: 4 }} />{file.uploadDate || file.uploadedAt}
             </Typography>
           </Box>
 
           {/* 두 번째 라인: 업로더, 부서 */}
           <Box className={cardStyles.cardInfoRow} sx={{ gap: 3, mb: 1 }}>
             <Typography sx={{ fontSize: 14, color: '#8b95a1', fontWeight: 500 }}>
-              <Person sx={{ fontSize: 'inherit', mr: 0.5 }} />{file.uploader}
+              <FluentIcon name="person" size={14} style={{ marginRight: 4 }} />{file.uploader}
             </Typography>
             <Typography sx={{ fontSize: 14, color: '#8b95a1', fontWeight: 500 }}>
-              <Business sx={{ fontSize: 'inherit', mr: 0.5 }} />{file.department}
+              <FluentIcon name="building" size={14} style={{ marginRight: 4 }} />{file.department}
             </Typography>
           </Box>
 
@@ -310,7 +290,7 @@ const FileCard: React.FC<{
                 mb: 1.5,
                 textAlign: 'center'
               }}>
-                {(file.status === 'inAnalysis' || file.status === 'analyzed') ? <><BarChart sx={{ fontSize: 'inherit', mr: 0.5 }} />분석 완료</> : <><AIIcon sx={{ fontSize: 'inherit', mr: 0.5 }} />추출 완료</>}
+                {(file.status === 'inAnalysis' || file.status === 'analyzed') ? <><FluentIcon name="barchart" size={14} style={{ marginRight: 4 }} />분석 완료</> : <><FluentIcon name="star" size={14} style={{ marginRight: 4 }} />추출 완료</>}
               </Typography>
 
               {/* 📊 결과 요약 - 축소 */}
@@ -427,7 +407,7 @@ const FileCard: React.FC<{
                 mb: 1,
                 textAlign: 'center'
               }}>
-                <HourglassEmpty sx={{ fontSize: 'inherit', mr: 0.5 }} />대기 중
+                <FluentIcon name="hourglass" size={14} style={{ marginRight: 4 }} />대기 중
               </Typography>
               
               <Typography sx={{ 
@@ -497,7 +477,7 @@ const FileCard: React.FC<{
                 }
               }}
             >
-              <EditNote sx={{ fontSize: 'inherit', mr: 0.5 }} />노트({getNoteCount(file.id.toString())})
+              <FluentIcon name="editnote" size={14} style={{ marginRight: 4 }} />노트({getNoteCount(file.id.toString())})
             </Button>
             <Button 
               variant="contained" 
@@ -545,7 +525,7 @@ const FileCard: React.FC<{
                 }
               }}
             >
-              <EditNote sx={{ fontSize: 'inherit', mr: 0.5 }} />노트({getNoteCount(file.id.toString())})
+              <FluentIcon name="editnote" size={14} style={{ marginRight: 4 }} />노트({getNoteCount(file.id.toString())})
             </Button>
             <Button 
               variant="contained" 
@@ -593,7 +573,7 @@ const FileCard: React.FC<{
                 }
               }}
             >
-              <EditNote sx={{ fontSize: 'inherit', mr: 0.5 }} />노트({getNoteCount(file.id.toString())})
+              <FluentIcon name="editnote" size={14} style={{ marginRight: 4 }} />노트({getNoteCount(file.id.toString())})
             </Button>
             <Button 
               variant="outlined" 
@@ -637,7 +617,7 @@ const FileCard: React.FC<{
                 }
               }}
             >
-              <EditNote sx={{ fontSize: 'inherit', mr: 0.5 }} />노트({getNoteCount(file.id.toString())})
+              <FluentIcon name="editnote" size={14} style={{ marginRight: 4 }} />노트({getNoteCount(file.id.toString())})
             </Button>
             <Button 
               variant="contained" 
@@ -685,7 +665,7 @@ const FileCard: React.FC<{
                 }
               }}
             >
-              <EditNote sx={{ fontSize: 'inherit', mr: 0.5 }} />노트({getNoteCount(file.id.toString())})
+              <FluentIcon name="editnote" size={14} style={{ marginRight: 4 }} />노트({getNoteCount(file.id.toString())})
             </Button>
             <Button
               variant="outlined"
@@ -729,7 +709,7 @@ const FileCard: React.FC<{
                 }
               }}
             >
-              <EditNote sx={{ fontSize: 'inherit', mr: 0.5 }} />노트({getNoteCount(file.id.toString())})
+              <FluentIcon name="editnote" size={14} style={{ marginRight: 4 }} />노트({getNoteCount(file.id.toString())})
             </Button>
             <Button
               variant="contained"
@@ -777,7 +757,7 @@ const FileCard: React.FC<{
                 }
               }}
             >
-              <EditNote sx={{ fontSize: 'inherit', mr: 0.5 }} />노트({getNoteCount(file.id.toString())})
+              <FluentIcon name="editnote" size={14} style={{ marginRight: 4 }} />노트({getNoteCount(file.id.toString())})
             </Button>
             <Button 
               variant="contained" 
@@ -808,13 +788,13 @@ const FileCard: React.FC<{
 };
 
 const statusIconMap: Record<string, React.ReactNode> = {
-  all:       <GridView sx={{ fontSize: 14 }} />,
-  extracting: <HourglassEmpty sx={{ fontSize: 14 }} />,
-  verifying: <PendingActions sx={{ fontSize: 14 }} />,
-  verified:  <CheckCircle sx={{ fontSize: 14 }} />,
-  analyzing: <Analytics sx={{ fontSize: 14 }} />,
-  analyzed:  <TaskAlt sx={{ fontSize: 14 }} />,
-  failed:    <Error sx={{ fontSize: 14 }} />,
+  all:       <FluentIcon name="clipboard" size={14} />,
+  extracting: <FluentIcon name="hourglass" size={14} />,
+  verifying: <FluentIcon name="schedule" size={14} />,
+  verified:  <FluentIcon name="check" size={14} />,
+  analyzing: <FluentIcon name="microscope" size={14} />,
+  analyzed:  <FluentIcon name="barchart" size={14} />,
+  failed:    <FluentIcon name="error" size={14} />,
 };
 
 const ParsingCardPage: React.FC = () => {
@@ -989,7 +969,7 @@ ${currentFile?.status === 'extracting' ? `
           />
           <Button
             variant="contained"
-            startIcon={<UploadFile sx={{ fontSize: 17 }} />}
+            startIcon={<FluentIcon name="uploadfile" size={17} />}
             onClick={() => fileInputRef.current?.click()}
             sx={{
               whiteSpace: 'nowrap', fontSize: 13, fontWeight: 600,
@@ -1011,7 +991,7 @@ ${currentFile?.status === 'extracting' ? `
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <Search sx={{ fontSize: 18, color: '#8b95a1' }} />
+                  <FluentIcon name="search" size={18} />
                 </InputAdornment>
               ),
               sx: { borderRadius: '10px', bgcolor: '#f9fafb', fontSize: 14 },
@@ -1067,7 +1047,7 @@ ${currentFile?.status === 'extracting' ? `
           <Box sx={{ px: 2, py: 1, borderBottom: '1px solid #f2f4f6' }}>
             {uploadQueue.map((q, i) => (
               <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: i < uploadQueue.length - 1 ? 0.75 : 0 }}>
-                <Typography sx={{ fontSize: 13 }}><Description sx={{ fontSize: 'inherit' }} /></Typography>
+                <Typography sx={{ fontSize: 13 }}><FluentIcon name="document" size={14} /></Typography>
                 <Typography sx={{ flex: 1, fontSize: 12, fontWeight: 500, color: '#191f28', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {q.file.name}
                 </Typography>
@@ -1118,7 +1098,7 @@ ${currentFile?.status === 'extracting' ? `
       <Box className={cardStyles.fileGrid} sx={{ px: viewMode === 'card' ? 3 : 0, pt: 1, pb: 3 }}>
         {filteredAndSorted.length === 0 ? (
           <Box className={cardStyles.emptyState} sx={{ py: 12 }}>
-            <Typography sx={{ fontSize: 64, mb: 3 }}><Description sx={{ fontSize: 'inherit' }} /></Typography>
+            <Typography sx={{ fontSize: 64, mb: 3 }}><FluentIcon name="document" size={14} /></Typography>
             <Typography sx={{ 
               fontSize: 20, 
               color: '#191f28', 
@@ -1203,7 +1183,7 @@ ${currentFile?.status === 'extracting' ? `
           pb: 1
         }}>
           <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 18 }}>
-            <EditNote sx={{ fontSize: 'inherit', mr: 0.5 }} />파싱 노트 작성
+            <FluentIcon name="editnote" size={14} style={{ marginRight: 4 }} />파싱 노트 작성
           </Typography>
           <IconButton onClick={() => setNoteDialogOpen(false)} size="small">
             <CloseIcon />
@@ -1229,10 +1209,10 @@ ${currentFile?.status === 'extracting' ? `
               onChange={(e) => setNoteType(e.target.value)}
               label="노트 유형"
             >
-              <MenuItem value="parsing"><Search sx={{ fontSize: 'inherit', mr: 0.5 }} />파싱 이슈</MenuItem>
-              <MenuItem value="upload"><Upload sx={{ fontSize: 'inherit', mr: 0.5 }} />업로드 문제</MenuItem>
-              <MenuItem value="format"><ListAlt sx={{ fontSize: 'inherit', mr: 0.5 }} />파일 형식</MenuItem>
-              <MenuItem value="improvement"><Lightbulb sx={{ fontSize: 'inherit', mr: 0.5 }} />개선 제안</MenuItem>
+              <MenuItem value="parsing"><FluentIcon name="search" size={14} style={{ marginRight: 4 }} />파싱 이슈</MenuItem>
+              <MenuItem value="upload"><FluentIcon name="upload" size={14} style={{ marginRight: 4 }} />업로드 문제</MenuItem>
+              <MenuItem value="format"><FluentIcon name="listalt" size={14} style={{ marginRight: 4 }} />파일 형식</MenuItem>
+              <MenuItem value="improvement"><FluentIcon name="lightbulb" size={14} style={{ marginRight: 4 }} />개선 제안</MenuItem>
             </Select>
           </FormControl>
 
@@ -1240,7 +1220,7 @@ ${currentFile?.status === 'extracting' ? `
           <Button
             fullWidth
             variant="outlined"
-            startIcon={isAnalyzing ? <AIIcon className="animate-spin" /> : <AIIcon />}
+            startIcon={<FluentIcon name="robot" size={16} />}
             onClick={handleAIAnalysis}
             disabled={isAnalyzing || !currentFileId}
             sx={{ 
@@ -1288,7 +1268,7 @@ ${currentFile?.status === 'extracting' ? `
                 mb: 2
               }}>
                 <Typography variant="subtitle2" color="text.secondary">
-                  <ListAlt sx={{ fontSize: 'inherit', mr: 0.5 }} />이 파일의 노트 히스토리 ({savedNotes.filter(n => n.fileId === currentFileId && n.content && n.content.trim()).length}개)
+                  <FluentIcon name="listalt" size={14} style={{ marginRight: 4 }} />이 파일의 노트 히스토리 ({savedNotes.filter(n => n.fileId === currentFileId && n.content && n.content.trim()).length}개)
                 </Typography>
                 
                 <Button
@@ -1340,10 +1320,10 @@ ${currentFile?.status === 'extracting' ? `
                         <Chip 
                           size="small" 
                           label={
-                            note.type === 'parsing' ? <><Search sx={{ fontSize: 'inherit', mr: 0.3 }} />파싱</> :
-                            note.type === 'upload' ? <><Upload sx={{ fontSize: 'inherit', mr: 0.3 }} />업로드</> :
-                            note.type === 'format' ? <><ListAlt sx={{ fontSize: 'inherit', mr: 0.3 }} />형식</> :
-                            <><Lightbulb sx={{ fontSize: 'inherit', mr: 0.3 }} />개선</>
+                            note.type === 'parsing' ? <><FluentIcon name="search" size={12} style={{ marginRight: 2 }} />파싱</> :
+                            note.type === 'upload' ? <><FluentIcon name="upload" size={12} style={{ marginRight: 2 }} />업로드</> :
+                            note.type === 'format' ? <><FluentIcon name="listalt" size={12} style={{ marginRight: 2 }} />형식</> :
+                            <><FluentIcon name="lightbulb" size={12} style={{ marginRight: 2 }} />개선</>
                           } 
                           variant="outlined"
                           sx={{

@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from 'react';
 import { Box, Typography, Button } from '@mui/material';
-import { FileDownload as ExcelIcon, Print as PrintIcon, EmojiEvents } from '@mui/icons-material';
+import FluentIcon from '../../../shared/components/FluentIcon';
 
 // ── 공통 스타일
 const bd = '1px solid #b0b0b0';
@@ -264,16 +264,16 @@ const GoldenSetView: React.FC = () => {
         px: 3, py: 1.5, bgcolor: '#f8f9fa', borderBottom: '1px solid #e0e0e0', mb: 2,
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#1a1a2e' }}><EmojiEvents sx={{ fontSize: 'inherit', mr: 0.5 }} />골든셋</Typography>
+          <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#1a1a2e' }}><FluentIcon name="trophy" size={13} style={{ marginRight: 4 }} />골든셋</Typography>
           <Typography sx={{ fontSize: 11, color: '#6b7280', ml: 1 }}>최종 Excel 출력 기준 데이터</Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button size="small" variant="outlined" startIcon={<PrintIcon sx={{ fontSize: 14 }} />}
+          <Button size="small" variant="outlined" startIcon={<FluentIcon name="print" size={14} />}
             onClick={() => window.print()}
             sx={{ textTransform: 'none', fontSize: 12, fontWeight: 600, borderRadius: '8px', borderColor: '#e5e5e7', color: '#6b7280', bgcolor: '#fff', px: 1.5, '&:hover': { borderColor: '#d1d5db', bgcolor: '#f3f4f6' } }}>
             인쇄
           </Button>
-          <Button size="small" variant="contained" startIcon={<ExcelIcon sx={{ fontSize: 14 }} />}
+          <Button size="small" variant="contained" startIcon={<FluentIcon name="exceldownload" size={14} />}
             data-excel-download
             onClick={handleExcelDownload}
             sx={{ textTransform: 'none', fontSize: 12, fontWeight: 700, borderRadius: '8px', bgcolor: '#217346', boxShadow: 'none', px: 1.5, '&:hover': { bgcolor: '#1a5c38', boxShadow: 'none' } }}>

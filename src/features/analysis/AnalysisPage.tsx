@@ -51,9 +51,8 @@ import {
 } from '@mui/material';
 import {
   NavigateNext, NavigateBefore, NoteAdd as NoteAddIcon, Close as CloseIcon, Save as SaveIcon,
-  FileDownload, Description, Lightbulb, Warning, CheckCircle, SmartToy, AttachMoney, BarChart, EditNote,
-  AttachFile, AccountTree, Calculate,
 } from '@mui/icons-material';
+import FluentIcon from '../../shared/components/FluentIcon';
 import { C } from '../../shared/constants/colors';
 import { costGroups, summaryRows } from './data/costGroups';
 import { listData } from './data/listData';
@@ -177,7 +176,7 @@ const AnalysisPage: React.FC = () => {
                 '&:hover': { borderColor: '#1a5c38', bgcolor: '#dcfce7', color: '#1a5c38' }
               }}
             >
-              <FileDownload sx={{ fontSize: 'inherit', mr: 0.5 }} />엑셀다운로드
+              <FluentIcon name="download" size={14} style={{ marginRight: 4 }} />엑셀다운로드
             </Button>
             <Button
               variant="outlined"
@@ -195,7 +194,7 @@ const AnalysisPage: React.FC = () => {
                 '&:hover': { borderColor: '#d1d5db', bgcolor: '#f3f4f6', color: '#374151' }
               }}
             >
-              <Description sx={{ fontSize: 'inherit', mr: 0.5 }} />원본보기
+              <FluentIcon name="document" size={14} style={{ marginRight: 4 }} />원본보기
             </Button>
             <Button
               variant="outlined"
@@ -447,7 +446,7 @@ const AnalysisPage: React.FC = () => {
                             onClick={() => handleCellClick(row.name)}
                           >
                             {row.name}
-                            {row.hasSub && <Typography component="span" sx={{ fontSize: 11, ml: 1, color: C.blue }}><AttachFile sx={{ fontSize: 'inherit', color: '#3B82F6' }} /> 하위 견적서</Typography>}
+                            {row.hasSub && <Typography component="span" sx={{ fontSize: 11, ml: 1, color: C.blue }}><FluentIcon name="attachfile" size={11} /> 하위 견적서</Typography>}
                           </TableCell>
                           {!isOverhead(group.id) && <TableCell sx={tdSx}>{row.spec}</TableCell>}
                           {!isOverhead(group.id) && <TableCell sx={tdSx}>{row.unit}</TableCell>}
@@ -483,7 +482,7 @@ const AnalysisPage: React.FC = () => {
                                   sx={{ fontSize: 10, color: C.gray, ml: 0.5, cursor: 'pointer', '&:hover': { color: C.blue } }}
                                   onClick={(e) => { e.stopPropagation(); handleAmountClick(e, row, group.title); }}
                                 >
-                                  <Lightbulb sx={{ fontSize: 'inherit' }} />
+                                  <FluentIcon name="lightbulb" size={12} />
                                 </Typography>
                               </Box>
                             )}
@@ -603,7 +602,7 @@ const AnalysisPage: React.FC = () => {
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
             <Paper sx={{ flex: 1, borderRadius: '10px', border: `1px solid ${C.border}`, boxShadow: 'none', overflow: 'hidden', minWidth: 0 }}>
               <Box sx={{ px: 2.5, py: 1.75, bgcolor: '#f9f9fb', borderBottom: `1px solid ${C.border}` }}>
-                <Typography sx={{ fontSize: 14, fontWeight: 600 }}><AccountTree sx={{ fontSize: 'inherit', color: '#6366F1' }} /> 원가 구조 관계도</Typography>
+                <Typography sx={{ fontSize: 14, fontWeight: 600 }}><FluentIcon name="accounttree" size={14} /> 원가 구조 관계도</Typography>
                 <Typography sx={{ fontSize: 11, color: C.gray }}>노드 간 관계와 이상치를 시각적으로 확인합니다</Typography>
               </Box>
               <Box sx={{ p: 3 }}>
@@ -646,7 +645,7 @@ const AnalysisPage: React.FC = () => {
                         fontSize: 10, fontWeight: 700,
                         color: selectedRelationNode.status === 'anomaly' ? '#dc2626' : '#16a34a',
                       }}>
-                        {selectedRelationNode.status === 'anomaly' ? <><Warning sx={{ fontSize: 'inherit', mr: 0.3 }} />이상치</> : <><CheckCircle sx={{ fontSize: 'inherit', mr: 0.3 }} />정상</>}
+                        {selectedRelationNode.status === 'anomaly' ? <><FluentIcon name="warning" size={12} style={{ marginRight: 2 }} />이상치</> : <><FluentIcon name="check" size={12} style={{ marginRight: 2 }} />정상</>}
                       </Typography>
                     </Box>
                     <Typography sx={{ fontSize: 15, fontWeight: 700, color: C.dark, lineHeight: 1.3 }}>
@@ -719,7 +718,7 @@ const AnalysisPage: React.FC = () => {
                   {selectedRelationNode.status === 'anomaly' && selectedRelationNode.anomalyReason && (
                     <Box sx={{ mb: 2, p: 1.5, bgcolor: '#fff5f5', borderRadius: '8px', border: '1px solid #fca5a520' }}>
                       <Typography sx={{ fontSize: 11, fontWeight: 700, color: C.orange, mb: 0.75 }}>
-                        <SmartToy sx={{ fontSize: 'inherit', mr: 0.5 }} />AI 판단 근거
+                        <FluentIcon name="smarttoy" size={14} style={{ marginRight: 4 }} />AI 판단 근거
                       </Typography>
                       <Typography sx={{ fontSize: 11, color: '#7f1d1d', lineHeight: 1.6 }}>
                         {selectedRelationNode.anomalyReason}
@@ -741,7 +740,7 @@ const AnalysisPage: React.FC = () => {
                       '&.Mui-disabled': { borderColor: '#d1d5db', color: '#9ca3af' },
                     }}
                   >
-                    <Description sx={{ fontSize: 'inherit', mr: 0.5 }} />원본 데이터 보기
+                    <FluentIcon name="document" size={14} style={{ marginRight: 4 }} />원본 데이터 보기
                   </Button>
                 </Box>
               </Paper>
@@ -777,7 +776,7 @@ const AnalysisPage: React.FC = () => {
           }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <NoteAddIcon color="primary" />
-              <Typography variant="h6"><EditNote sx={{ fontSize: 'inherit', mr: 0.5 }} />분석 노트 작성</Typography>
+              <Typography variant="h6"><FluentIcon name="editnote" size={14} style={{ marginRight: 4 }} />분석 노트 작성</Typography>
             </Box>
             <IconButton onClick={() => setNoteDialogOpen(false)} size="small">
               <CloseIcon />
@@ -801,10 +800,10 @@ const AnalysisPage: React.FC = () => {
                 label="노트 유형"
                 onChange={(e) => setNoteType(e.target.value)}
               >
-                <MenuItem value="analysis"><BarChart sx={{ fontSize: 'inherit', mr: 0.5 }} />분석 결과</MenuItem>
-                <MenuItem value="anomaly"><Warning sx={{ fontSize: 'inherit', mr: 0.5 }} />이상치 발견</MenuItem>
-                <MenuItem value="calculation"><Calculate sx={{ fontSize: 'inherit', color: '#F59E0B', mr: 0.5 }} />계산 검증</MenuItem>
-                <MenuItem value="improvement"><Lightbulb sx={{ fontSize: 'inherit', mr: 0.5 }} />개선 제안</MenuItem>
+                <MenuItem value="analysis"><FluentIcon name="barchart" size={14} style={{ marginRight: 4 }} />분석 결과</MenuItem>
+                <MenuItem value="anomaly"><FluentIcon name="warning" size={14} style={{ marginRight: 4 }} />이상치 발견</MenuItem>
+                <MenuItem value="calculation"><FluentIcon name="calculate" size={14} style={{ marginRight: 4 }} />계산 검증</MenuItem>
+                <MenuItem value="improvement"><FluentIcon name="lightbulb" size={14} style={{ marginRight: 4 }} />개선 제안</MenuItem>
               </Select>
             </FormControl>
 
@@ -842,7 +841,7 @@ const AnalysisPage: React.FC = () => {
       <Popover open={!!anomalyAnchor} anchorEl={anomalyAnchor?.el} onClose={() => setAnomalyAnchor(null)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} transformOrigin={{ vertical: 'top', horizontal: 'left' }}>
         <Box sx={{ bgcolor: C.dark, color: '#fff', borderRadius: '8px', p: 1.5, maxWidth: 260, fontSize: 12, lineHeight: 1.5 }}>
-          <Typography sx={{ fontWeight: 600, mb: 0.75, color: C.orange, fontSize: 12 }}><SmartToy sx={{ fontSize: 'inherit', mr: 0.5 }} />AI 판단 근거</Typography>
+          <Typography sx={{ fontWeight: 600, mb: 0.75, color: C.orange, fontSize: 12 }}><FluentIcon name="smarttoy" size={14} style={{ marginRight: 4 }} />AI 판단 근거</Typography>
           <Typography sx={{ fontSize: 12, color: '#ddd' }}>{anomalyAnchor?.reason}</Typography>
         </Box>
       </Popover>
@@ -853,7 +852,7 @@ const AnalysisPage: React.FC = () => {
         {calculationAnchor && (
           <Paper sx={{ maxWidth: 400, bgcolor: '#fff', borderRadius: '12px', border: `1px solid ${C.border}`, boxShadow: '0 8px 32px rgba(0,0,0,0.12)', overflow: 'hidden' }}>
             <Box sx={{ bgcolor: C.blue, color: '#fff', p: 2 }}>
-              <Typography sx={{ fontSize: 16, fontWeight: 700 }}><Calculate sx={{ fontSize: 'inherit', color: '#F59E0B' }} /> 계산식 상세 정보</Typography>
+              <Typography sx={{ fontSize: 16, fontWeight: 700 }}><FluentIcon name="calculate" size={14} /> 계산식 상세 정보</Typography>
             </Box>
             <Box sx={{ p: 3 }}>
               <Box sx={{ mb: 3 }}>
@@ -862,7 +861,7 @@ const AnalysisPage: React.FC = () => {
                 {calculationAnchor.row.spec && <Typography sx={{ fontSize: 12, color: C.gray }}>규격: {calculationAnchor.row.spec}</Typography>}
               </Box>
               <Box sx={{ mb: 3 }}>
-                <Typography sx={{ fontSize: 13, fontWeight: 600, color: C.blue, mb: 1.5 }}><AttachMoney sx={{ fontSize: 'inherit', mr: 0.5 }} />계산 과정</Typography>
+                <Typography sx={{ fontSize: 13, fontWeight: 600, color: C.blue, mb: 1.5 }}><FluentIcon name="money" size={14} style={{ marginRight: 4 }} />계산 과정</Typography>
                 {calculationAnchor.row.qty && calculationAnchor.row.unitPrice ? (
                   <Box sx={{ bgcolor: '#f8f9fa', p: 2, borderRadius: '8px', border: `1px solid ${C.border}`, mb: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
@@ -912,7 +911,7 @@ const AnalysisPage: React.FC = () => {
               </Box>
               {calculationAnchor.row.status === 'anomaly' && calculationAnchor.row.anomalyReason && (
                 <Box sx={{ mt: 2, p: 2, bgcolor: '#fff5f5', border: `1px solid ${C.red}20`, borderRadius: '8px' }}>
-                  <Typography sx={{ fontSize: 12, fontWeight: 600, color: C.red, mb: 0.5 }}><Warning sx={{ fontSize: 'inherit', mr: 0.5 }} />이상치 감지</Typography>
+                  <Typography sx={{ fontSize: 12, fontWeight: 600, color: C.red, mb: 0.5 }}><FluentIcon name="warning" size={14} style={{ marginRight: 4 }} />이상치 감지</Typography>
                   <Typography sx={{ fontSize: 12, color: C.red }}>{calculationAnchor.row.anomalyReason}</Typography>
                 </Box>
               )}

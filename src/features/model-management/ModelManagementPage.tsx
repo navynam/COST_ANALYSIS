@@ -9,9 +9,9 @@ import {
   FormControlLabel, Checkbox, Divider,
 } from '@mui/material';
 import {
-  Edit, Delete, Add, AccountTree, Settings, Send, CheckCircle, Cancel,
-  Person, AdminPanelSettings, SwapHoriz, Schedule, ExpandMore, Functions,
+  Edit, Delete, Add, Send, ExpandMore,
 } from '@mui/icons-material';
+import FluentIcon from '../../shared/components/FluentIcon';
 import { useModelManagement, badgeConfig, Formula, ALL_DEPARTMENTS } from './hooks/useModelManagement';
 import { useModelWorkflow, userPresets, ChangeRequest } from './hooks/useModelWorkflow';
 import SimpleKnowledgeGraphTab from './components/SimpleKnowledgeGraphTab';
@@ -179,7 +179,7 @@ const ModelManagementPage: React.FC = () => {
           <Chip
             avatar={
               <Avatar sx={{ bgcolor: isAdmin ? '#003875' : '#7b1fa2', width: 24, height: 24 }}>
-                {isAdmin ? <AdminPanelSettings sx={{ fontSize: 14 }} /> : <Person sx={{ fontSize: 14 }} />}
+                {isAdmin ? <FluentIcon name="admin" size={14} /> : <FluentIcon name="person" size={14} />}
               </Avatar>
             }
             label={
@@ -208,7 +208,7 @@ const ModelManagementPage: React.FC = () => {
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                   <Avatar sx={{ width: 28, height: 28, bgcolor: u.role === 'admin' ? '#003875' : '#7b1fa2', fontSize: 12 }}>
-                    {u.role === 'admin' ? <AdminPanelSettings sx={{ fontSize: 16 }} /> : <Person sx={{ fontSize: 16 }} />}
+                    {u.role === 'admin' ? <FluentIcon name="admin" size={16} /> : <FluentIcon name="person" size={16} />}
                   </Avatar>
                   <Box>
                     <Typography sx={{ fontSize: 13, fontWeight: 600 }}>{u.name}</Typography>
@@ -243,12 +243,12 @@ const ModelManagementPage: React.FC = () => {
       <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
         <Tabs value={currentTab} onChange={handleTabChange}
           sx={{ '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontSize: 14 } }}>
-          <Tab icon={<Settings />} iconPosition="start" label="모델 관리" sx={{ minHeight: 48 }} />
-          <Tab icon={<AccountTree />} iconPosition="start" label="지식그래프" sx={{ minHeight: 48 }} />
+          <Tab icon={<FluentIcon name="settings" size={18} />} iconPosition="start" label="모델 관리" sx={{ minHeight: 48 }} />
+          <Tab icon={<FluentIcon name="accounttree" size={18} />} iconPosition="start" label="지식그래프" sx={{ minHeight: 48 }} />
           <Tab
             icon={
               <Badge badgeContent={stats.pending} color="warning" sx={{ '& .MuiBadge-badge': { fontSize: 10, minWidth: 16, height: 16 } }}>
-                <SwapHoriz />
+                <FluentIcon name="swap" size={18} />
               </Badge>
             }
             iconPosition="start"
@@ -273,7 +273,7 @@ const ModelManagementPage: React.FC = () => {
                     <Chip label={badge.label} size="small" sx={{ bgcolor: badge.bg, color: badge.color, fontWeight: 600, fontSize: 11, height: 22 }} />
                     {pendingCnt > 0 && (
                       <Chip
-                        icon={<Schedule sx={{ fontSize: 12 }} />}
+                        icon={<FluentIcon name="schedule" size={12} />}
                         label={`변경요청 ${pendingCnt}건`}
                         size="small"
                         onClick={() => { setDetailFormulaId(f.id); setDetailDialogOpen(true); }}
@@ -282,7 +282,7 @@ const ModelManagementPage: React.FC = () => {
                     )}
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5, bgcolor: '#f8f9fa', borderRadius: 1.5, px: 2, py: 1 }}>
-                    <Typography sx={{ fontSize: 16 }}><Functions sx={{ fontSize: 'inherit' }} /></Typography>
+                    <Typography sx={{ fontSize: 16 }}><FluentIcon name="functions" size={16} /></Typography>
                     <Typography component="code" sx={{ fontFamily: 'monospace', fontSize: 13, color: '#333', fontWeight: 500 }}>{f.expression}</Typography>
                   </Box>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>{f.description}</Typography>
@@ -309,7 +309,7 @@ const ModelManagementPage: React.FC = () => {
                     ) : (
                       hasPendingByUser(f.id) ? (
                         <Chip
-                          icon={<Schedule sx={{ fontSize: 12 }} />}
+                          icon={<FluentIcon name="schedule" size={12} />}
                           label="수정 요청 접수됨"
                           size="small"
                           onClick={() => { setDetailFormulaId(f.id); setDetailDialogOpen(true); }}
@@ -442,12 +442,12 @@ const ModelManagementPage: React.FC = () => {
                       {/* 관리자 승인/반려 버튼 */}
                       {isAdmin && cr.status === 'pending' && (
                         <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
-                          <Button size="small" variant="contained" startIcon={<CheckCircle sx={{ fontSize: 14 }} />}
+                          <Button size="small" variant="contained" startIcon={<FluentIcon name="check" size={14} />}
                             onClick={() => openReviewDialog(cr)}
                             sx={{ bgcolor: '#2e7d32', fontSize: 12, textTransform: 'none', '&:hover': { bgcolor: '#1b5e20' } }}>
                             검토 및 승인
                           </Button>
-                          <Button size="small" variant="outlined" startIcon={<Cancel sx={{ fontSize: 14 }} />}
+                          <Button size="small" variant="outlined" startIcon={<FluentIcon name="cross" size={14} />}
                             onClick={() => { setReviewTarget(cr); setReviewComment(''); setReviewDialogOpen(true); }}
                             sx={{ color: '#c62828', borderColor: '#c62828', fontSize: 12, textTransform: 'none' }}>
                             반려
@@ -458,7 +458,7 @@ const ModelManagementPage: React.FC = () => {
                       {/* 본인 요청 취소 버튼 */}
                       {!isAdmin && cr.requesterId === currentUser.id && cr.status === 'pending' && (
                         <Box sx={{ mt: 1 }}>
-                          <Button size="small" variant="outlined" startIcon={<Cancel sx={{ fontSize: 14 }} />}
+                          <Button size="small" variant="outlined" startIcon={<FluentIcon name="cross" size={14} />}
                             onClick={() => {
                               showConfirm('이 수정 요청을 취소하시겠습니까?', '대기 중인 요청이 삭제됩니다.').then(ok => { if (ok) {
                                 cancelRequest(cr.id);
@@ -577,7 +577,7 @@ const ModelManagementPage: React.FC = () => {
       {/* ── 승인/반려 검토 다이얼로그 (관리자) ── */}
       <Dialog open={reviewDialogOpen} onClose={() => setReviewDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
-          <AdminPanelSettings sx={{ fontSize: 20, color: '#003875' }} />
+          <FluentIcon name="admin" size={20} />
           변경 요청 검토
         </DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '16px !important' }}>
@@ -652,11 +652,11 @@ const ModelManagementPage: React.FC = () => {
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
           <Button onClick={() => setReviewDialogOpen(false)}>취소</Button>
-          <Button variant="outlined" onClick={handleReject} startIcon={<Cancel sx={{ fontSize: 16 }} />}
+          <Button variant="outlined" onClick={handleReject} startIcon={<FluentIcon name="cross" size={16} />}
             sx={{ color: '#c62828', borderColor: '#c62828' }}>
             반려
           </Button>
-          <Button variant="contained" onClick={handleApprove} startIcon={<CheckCircle sx={{ fontSize: 16 }} />}
+          <Button variant="contained" onClick={handleApprove} startIcon={<FluentIcon name="check" size={16} />}
             sx={{ bgcolor: '#2e7d32', '&:hover': { bgcolor: '#1b5e20' } }}>
             승인
           </Button>
@@ -666,7 +666,7 @@ const ModelManagementPage: React.FC = () => {
       {/* ── 수식별 변경요청 상세 팝업 ── */}
       <Dialog open={detailDialogOpen} onClose={() => setDetailDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Schedule sx={{ fontSize: 20, color: '#e65100' }} />
+          <FluentIcon name="schedule" size={20} />
           변경 요청 내역
           {detailRequests.length > 0 && (
             <Typography sx={{ fontSize: 13, color: 'text.secondary', ml: 1 }}>
@@ -732,7 +732,7 @@ const ModelManagementPage: React.FC = () => {
                     {/* 본인 대기 중 요청 취소 */}
                     {cr.requesterId === currentUser.id && cr.status === 'pending' && (
                       <Box sx={{ mt: 1 }}>
-                        <Button size="small" startIcon={<Cancel sx={{ fontSize: 12 }} />}
+                        <Button size="small" startIcon={<FluentIcon name="cross" size={12} />}
                           onClick={() => {
                             if (window.confirm('이 수정 요청을 취소하시겠습니까?')) {
                               cancelRequest(cr.id);

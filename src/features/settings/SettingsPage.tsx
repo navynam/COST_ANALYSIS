@@ -9,14 +9,9 @@ import {
   Card, CardContent, Chip, ToggleButtonGroup, ToggleButton, Divider
 } from '@mui/material';
 import {
-  Settings as SettingsIcon,
   Save,
-  Palette as PaletteIcon,
-  Business as BusinessIcon,
-  Favorite as FavoriteIcon,
-  Lightbulb,
-  Palette,
 } from '@mui/icons-material';
+import FluentIcon from '../../shared/components/FluentIcon';
 import { useSettingsPage } from './hooks/useSettingsPage';
 import { useTheme, ThemeType, getThemeInfo } from '../../shared/contexts/ThemeContext';
 import styles from './SettingsPage.module.css';
@@ -58,7 +53,7 @@ const SettingsPage: React.FC = () => {
   return (
     <Box className={styles.container}>
       <Box className={styles.pageHeader} sx={{ mb: 3 }}>
-        <SettingsIcon sx={{ color: '#e60012' }} />
+        <FluentIcon name="settings" size={24} />
         <Typography variant="h5" fontWeight={700}>설정</Typography>
       </Box>
 
@@ -94,7 +89,7 @@ const SettingsPage: React.FC = () => {
         </FormControl>
       </Section>
 
-      <Section title={<><Palette sx={{ fontSize: 'inherit', color: '#8B5CF6' }} /> 테마 설정</>}>
+      <Section title={<><FluentIcon name="palette" size={16} /> 테마 설정</>}>
         <Box sx={{ mb: 3 }}>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
             견적서 분석 시스템의 테마를 선택하세요. 언제든지 변경할 수 있습니다.
@@ -109,11 +104,11 @@ const SettingsPage: React.FC = () => {
             sx={{ mb: 3 }}
           >
             <ToggleButton value="hyundai" sx={{ px: 3, py: 2 }}>
-              <BusinessIcon sx={{ mr: 1 }} />
+              <FluentIcon name="building" size={16} style={{ marginRight: 8 }} />
               현대모비스 테마
             </ToggleButton>
             <ToggleButton value="toss" sx={{ px: 3, py: 2 }}>
-              <FavoriteIcon sx={{ mr: 1 }} />
+              <FluentIcon name="star" size={16} style={{ marginRight: 8 }} />
               Toss 스타일 테마
             </ToggleButton>
           </ToggleButtonGroup>
@@ -130,7 +125,7 @@ const SettingsPage: React.FC = () => {
             }}>
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                  <PaletteIcon />
+                  <FluentIcon name="palette" size={20} />
                   <Typography variant="h6" fontWeight={600}>
                     현재 테마
                   </Typography>
@@ -172,7 +167,7 @@ const SettingsPage: React.FC = () => {
             }}>
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                  <PaletteIcon color="action" />
+                  <FluentIcon name="palette" size={20} />
                   <Typography variant="h6" fontWeight={600} color="text.secondary">
                     다른 테마
                   </Typography>
@@ -207,7 +202,7 @@ const SettingsPage: React.FC = () => {
         
         <Alert severity="info" sx={{ mt: 2 }}>
           <Typography variant="body2">
-            <Lightbulb sx={{ fontSize: 'inherit', mr: 0.5 }} /><strong>팁:</strong> 테마는 실시간으로 적용되며, 모든 페이지에서 동일하게 표시됩니다.
+            <FluentIcon name="lightbulb" size={14} style={{ marginRight: 4 }} /><strong>팁:</strong> 테마는 실시간으로 적용되며, 모든 페이지에서 동일하게 표시됩니다.
             검증 페이지에서 파싱 결과를 확인할 때도 선택한 테마가 적용됩니다.
           </Typography>
         </Alert>
