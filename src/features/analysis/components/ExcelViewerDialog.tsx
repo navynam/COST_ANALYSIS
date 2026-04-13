@@ -641,9 +641,8 @@ const ExcelViewerDialog: React.FC<ExcelViewerDialogProps> = ({
                 highlightedCell={typeof highlightedCell === 'string' ? highlightedCell : null}
                 zoom={zoom}
                 onCellClick={(cellRef, value) => {
-                  if (isRemappingMode) {
-                    setSelectedCell({ row: 0, col: 0, cell: cellRef, value });
-                  }
+                  // 항상 셀 선택 상태 업데이트
+                  setSelectedCell({ row: 0, col: 0, cell: cellRef, value });
                 }}
               />
             </Box>

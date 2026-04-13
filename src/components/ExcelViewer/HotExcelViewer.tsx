@@ -401,21 +401,22 @@ const HotExcelViewer: React.FC<HotExcelViewerProps> = ({
     }
   }, [externalStyles]);
 
-  // ── 셀 클릭 핸들러 ──
+  // ── 셀 클릭 핸들러 (비동기로 setState 호출하여 무한 루프 방지) ──
   const handleAfterSelection = useCallback((row: number, col: number) => {
-    const ref = `${colLetter(col)}${row + 1}`;
-    setSelectedCell(ref);
+    setTimeout(() => {
+      const ref = `${colLetter(col)}${row + 1}`;
+      setSelectedCell(ref);
 
-    const sheet = sheets[activeSheet];
-    if (!sheet) return;
+      const sheet = sheets[activeSheet];
+      if (!sheet) return;
 
-    // 수식 바 텍스트
-    const sheetFormulas = formulas[sheet.name] || {};
-    const formula = sheetFormulas[ref];
-    const value = sheet.data[row]?.[col];
-    setFormulaBarText(formula || (value !== null && value !== undefined ? String(value) : ''));
+      const sheetFormulas = formulas[sheet.name] || {};
+      const formula = sheetFormulas[ref];
+      const value = sheet.data[row]?.[col];
+      setFormulaBarText(formula || (value !== null && value !== undefined ? String(value) : ''));
 
-    onCellClick?.(ref, value !== null && value !== undefined ? String(value) : '', formula);
+      onCellClick?.(ref, value !== null && value !== undefined ? String(value) : '', formula);
+    }, 0);
   }, [sheets, activeSheet, formulas, onCellClick]);
 
   // ── 현재 시트 ──
@@ -486,7 +487,7 @@ const HotExcelViewer: React.FC<HotExcelViewerProps> = ({
             data={currentSheet.data}
             colHeaders={true}
             rowHeaders={true}
-            readOnly={readOnly}
+            readOnly={true}
             mergeCells={externalMerges.length > 0 ? externalMerges : (currentSheet.merges.length > 0 ? currentSheet.merges : false)}
             colWidths={currentSheet.colWidths}
             rowHeights={currentSheet.rowHeights}
@@ -502,8 +503,22 @@ const HotExcelViewer: React.FC<HotExcelViewerProps> = ({
             contextMenu={false}
             disableVisualSelection={false}
             selectionMode="single"
-            afterSelection={handleAfterSelection}
-            cells={() => ({ renderer: cellRenderer })}
+            enterBeginsEditing={false}
+            afterSelectionEnd={(row: number, col: number) => {
+              if (row >= 0 && col >= 0) {
+                handleAfterSelection(row, col);
+              }
+            }}
+            afterBeginEditing={() => {
+              try {
+                const hot = hotRef.current?.hotInstance;
+                if (hot) {
+                  const editor = hot.getActiveEditor();
+                  if (editor) editor.close();
+                }
+              } catch { /* ignore */ }
+            }}
+            cells={() => ({ renderer: cellRenderer, readOnly: true })}
             licenseKey="non-commercial-and-evaluation"
           />
         )}
