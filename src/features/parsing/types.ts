@@ -12,6 +12,7 @@ export interface FileItem {
   sheets?: number;
   uploader?: string;
   department?: string;
+  attachments?: string[];  // 참조 파일명 목록
 }
 
 export interface UploadQueueItem {

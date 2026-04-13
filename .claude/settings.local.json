@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c ':*)",
+      "Bash(python generate_process_customer_pptx.py)",
+      "Bash(ls -la \"c:/WORK/cost-analysis-src/docs/업무프로세스_고객설명자료\"*)"
+    ]
+  }
+}

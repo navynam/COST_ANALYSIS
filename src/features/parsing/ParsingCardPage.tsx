@@ -46,7 +46,8 @@ import {
   Alert,
   Divider,
   Paper,
-  IconButton
+  IconButton,
+  Tooltip
 } from '@mui/material';
 import {
   FilterList,
@@ -180,6 +181,17 @@ const FileCard: React.FC<{
             >
               {file.name}
             </Typography>
+            {file.attachments && file.attachments.length > 0 && (
+              <Tooltip
+                title={file.attachments[0]}
+                arrow
+                placement="bottom-start"
+              >
+                <Box sx={{ display: 'inline-flex', alignItems: 'center', cursor: 'pointer', ml: 0.5, flexShrink: 0 }}>
+                  <FluentIcon name="paperclip" size={28} />
+                </Box>
+              </Tooltip>
+            )}
           </Box>
         </Box>
 
@@ -800,6 +812,12 @@ const statusIconMap: Record<string, React.ReactNode> = {
 const ParsingCardPage: React.FC = () => {
   const navigate = useNavigate();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const additionalFileInputRef = React.useRef<HTMLInputElement>(null);
+
+  // 업로드 팝업
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [mainFile, setMainFile] = useState<File | null>(null);
+  const [additionalFiles, setAdditionalFiles] = useState<File[]>([]);
   const {
     filter, setFilter,
     searchQuery, setSearchQuery,
@@ -963,14 +981,10 @@ ${currentFile?.status === 'extracting' ? `
             견적서 파싱
           </Typography>
 
-          <input
-            ref={fileInputRef} type="file" hidden multiple accept=".xlsx,.xls,.jpg,.jpeg,.png"
-            onChange={e => { if (e.target.files?.length) handleFiles(e.target.files); e.target.value = ''; }}
-          />
           <Button
             variant="contained"
             startIcon={<FluentIcon name="uploadfile" size={17} />}
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => { setMainFile(null); setAdditionalFiles([]); setUploadDialogOpen(true); }}
             sx={{
               whiteSpace: 'nowrap', fontSize: 13, fontWeight: 600,
               borderRadius: '10px', py: 0.875, px: 3,
@@ -1154,6 +1168,155 @@ ${currentFile?.status === 'extracting' ? `
           />
         )}
       </Box>
+
+      {/* 파일 업로드 팝업 */}
+      <Dialog
+        open={uploadDialogOpen}
+        onClose={() => setUploadDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: '16px' } }}
+      >
+        <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pb: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <FluentIcon name="upload" size={20} />
+            <Typography sx={{ fontSize: 18, fontWeight: 700 }}>견적서 업로드</Typography>
+          </Box>
+          <IconButton size="small" onClick={() => setUploadDialogOpen(false)}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+
+        <DialogContent sx={{ px: 3, py: 2 }}>
+          {/* 견적서 파일 선택 */}
+          <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#333', mb: 1 }}>
+            1. 견적서 파일 선택 <Typography component="span" sx={{ fontSize: 11, color: '#EF4444' }}>*필수</Typography>
+          </Typography>
+          <input
+            ref={fileInputRef}
+            type="file"
+            hidden
+            accept=".xlsx,.xls"
+            onChange={e => {
+              if (e.target.files?.[0]) setMainFile(e.target.files[0]);
+              e.target.value = '';
+            }}
+          />
+          <Box
+            onClick={() => fileInputRef.current?.click()}
+            sx={{
+              border: mainFile ? '2px solid #10B981' : '2px dashed #D1D5DB',
+              borderRadius: '12px',
+              p: 2.5,
+              textAlign: 'center',
+              cursor: 'pointer',
+              bgcolor: mainFile ? '#F0FDF4' : '#FAFAFA',
+              transition: 'all 0.2s',
+              '&:hover': { borderColor: mainFile ? '#059669' : '#3B82F6', bgcolor: mainFile ? '#ECFDF5' : '#F0F7FF' },
+              mb: 3,
+            }}
+          >
+            {mainFile ? (
+              <Box>
+                <FluentIcon name="document" size={28} />
+                <Typography sx={{ fontSize: 14, fontWeight: 700, color: '#10B981', mt: 1 }}>{mainFile.name}</Typography>
+                <Typography sx={{ fontSize: 11, color: '#6B7280', mt: 0.5 }}>
+                  {(mainFile.size / 1024).toFixed(1)} KB · 클릭하여 변경
+                </Typography>
+              </Box>
+            ) : (
+              <Box>
+                <FluentIcon name="upload" size={32} />
+                <Typography sx={{ fontSize: 14, fontWeight: 600, color: '#6B7280', mt: 1 }}>
+                  클릭하여 견적서 파일을 선택하세요
+                </Typography>
+                <Typography sx={{ fontSize: 11, color: '#9CA3AF', mt: 0.5 }}>
+                  .xlsx, .xls 파일 지원
+                </Typography>
+              </Box>
+            )}
+          </Box>
+
+          {/* 추가 파일 선택 */}
+          <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#333', mb: 1 }}>
+            2. 추가 파일 선택 <Typography component="span" sx={{ fontSize: 11, color: '#9CA3AF' }}>선택사항</Typography>
+          </Typography>
+          <input
+            ref={additionalFileInputRef}
+            type="file"
+            hidden
+            accept=".xlsx,.xls,.jpg,.jpeg,.png,.pdf"
+            onChange={e => {
+              if (e.target.files?.[0]) {
+                setAdditionalFiles([e.target.files[0]]);
+              }
+              e.target.value = '';
+            }}
+          />
+          {additionalFiles.length > 0 ? (
+            <Box sx={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              px: 1.5, py: 1, bgcolor: '#F0F7FF', borderRadius: '10px', border: '1px solid #93C5FD',
+            }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <FluentIcon name="document" size={14} />
+                <Typography sx={{ fontSize: 13, fontWeight: 600, color: '#1D4ED8' }}>{additionalFiles[0].name}</Typography>
+                <Typography sx={{ fontSize: 10, color: '#6B7280' }}>{(additionalFiles[0].size / 1024).toFixed(1)} KB</Typography>
+              </Box>
+              <IconButton size="small" onClick={() => setAdditionalFiles([])} sx={{ width: 22, height: 22 }}>
+                <CloseIcon sx={{ fontSize: 12 }} />
+              </IconButton>
+            </Box>
+          ) : (
+            <Button
+              variant="outlined"
+              fullWidth
+              onClick={() => additionalFileInputRef.current?.click()}
+              sx={{
+                borderRadius: '10px', py: 1.5, textTransform: 'none',
+                fontSize: 13, fontWeight: 600,
+                borderColor: '#D1D5DB', color: '#6B7280', borderStyle: 'dashed',
+                '&:hover': { borderColor: '#3B82F6', color: '#3B82F6', bgcolor: '#F0F7FF' },
+              }}
+            >
+              <FluentIcon name="paperclip" size={16} style={{ marginRight: 6 }} />
+              추가 파일 선택 (집계표)
+            </Button>
+          )}
+        </DialogContent>
+
+        <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>
+          <Button
+            onClick={() => setUploadDialogOpen(false)}
+            sx={{ borderRadius: '10px', textTransform: 'none', fontSize: 13, fontWeight: 600, color: '#6B7280', px: 3 }}
+          >
+            취소
+          </Button>
+          <Button
+            variant="contained"
+            disabled={!mainFile}
+            onClick={() => {
+              if (mainFile) {
+                const allFiles = [mainFile, ...additionalFiles];
+                const dt = new DataTransfer();
+                allFiles.forEach(f => dt.items.add(f));
+                handleFiles(dt.files);
+                setUploadDialogOpen(false);
+              }
+            }}
+            sx={{
+              borderRadius: '10px', textTransform: 'none', fontSize: 14, fontWeight: 700,
+              bgcolor: '#0064ff', px: 4, py: 1,
+              boxShadow: 'none',
+              '&:hover': { bgcolor: '#0056d3', boxShadow: 'none' },
+              '&.Mui-disabled': { bgcolor: '#E5E7EB', color: '#9CA3AF' },
+            }}
+          >
+            <FluentIcon name="rocket" size={16} style={{ marginRight: 6 }} />
+            추출 시작
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* 상세 정보 드로어 */}
       <FileDetailDrawer
