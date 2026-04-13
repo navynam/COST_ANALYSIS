@@ -79,7 +79,7 @@ import {
   TrackChanges,
 } from '@mui/icons-material';
 
-// 간단한 테이블 컴포넌트로 대체 (Handsontable 설치 문제 해결용)
+import HotExcelViewer from '../../../components/ExcelViewer/HotExcelViewer';
 
 interface ExcelViewerDialogProps {
   open: boolean;
@@ -726,64 +726,22 @@ const ExcelViewerDialog: React.FC<ExcelViewerDialogProps> = ({
           </Box>
         ) : (
           <>
-            {/* 📁 시트 탭 */}
-            {workbook && workbook.sheets.length > 1 && (
-              <Box sx={{ borderBottom: 1, borderColor: 'divider', px: 2 }}>
-                <Tabs 
-                  value={currentSheetIndex} 
-                  onChange={(e, newValue) => setCurrentSheetIndex(newValue)}
-                  variant="scrollable"
-                  scrollButtons="auto"
-                  sx={{
-                    minHeight: 36,
-                    '& .MuiTab-root': {
-                      minHeight: 36,
-                      textTransform: 'none',
-                      fontSize: 12,
-                      py: 1
-                    }
-                  }}
-                >
-                  {workbook.sheets.map((sheet, index) => (
-                    <Tab 
-                      key={index}
-                      label={sheet.name}
-                      icon={<TableChart sx={{ fontSize: 14 }} />}
-                      iconPosition="start"
-                    />
-                  ))}
-                </Tabs>
-              </Box>
-            )}
-            
-            {/* 📋 현재 시트 정보 */}
-            <Box sx={{ 
-              bgcolor: '#f8f9fa', 
-              p: 1, 
-              borderBottom: '1px solid #e0e0e0',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <Typography variant="body2" color="text.secondary">
-                <BarChart sx={{ fontSize: 'inherit', mr: 0.5 }} /><strong>시트:</strong> {currentSheetName} | {currentSheetData.length}행 × {currentSheetData[0]?.length || 0}열
-                {highlightedPosition && ` • 매핑: R${highlightedPosition.row + 1}C${highlightedPosition.col + 1}`}
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                확대/축소: {zoom}%
-              </Typography>
-            </Box>
+            {/* Handsontable Excel 뷰어 */}
 
-            {/* 🗂️ 풀사이즈 Excel 스타일 테이블 */}
-            <TableContainer 
-              component={Paper} 
-              sx={{ 
-                flex: 1, // 남은 공간 모두 차지
-                overflow: 'auto',
-                border: 'none',
-                boxShadow: 'none',
-                height: '100%'
-              }}
+            <Box sx={{ flex: 1, overflow: 'hidden', minHeight: 0 }}>
+              <HotExcelViewer
+                highlightedCell={typeof highlightedCell === 'string' ? highlightedCell : null}
+                onCellClick={(cellRef, value) => {
+                  if (isRemappingMode) {
+                    setSelectedCell({ row: 0, col: 0, cell: cellRef, value });
+                  }
+                }}
+              />
+            </Box>
+            {/* 기존 테이블 (숨김) */}
+            <TableContainer
+              component={Paper}
+              sx={{ display: 'none' }}
             >
               <Table 
                 size="small" 

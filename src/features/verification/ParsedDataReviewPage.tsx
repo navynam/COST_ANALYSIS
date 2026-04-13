@@ -65,6 +65,7 @@ import FluentIcon from '../../shared/components/FluentIcon';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMessageDialog } from '../../shared/components/MessageDialog';
 import ExcelViewerDialog from '../analysis/components/ExcelViewerDialog';
+import HotExcelViewer from '../../components/ExcelViewer/HotExcelViewer';
 import styles from './ParsedDataReviewPage.module.css';
 
 // ✅ 셀 데이터 타입 (수정 기능 포함)
@@ -1663,47 +1664,14 @@ const ParsedDataReviewPage: React.FC = () => {
             )}
           </Box>
 
-          {/* Excel 임베디드 뷰어 */}
-          <Box sx={{ flex: 1, p: 2 }}>
-            <Paper sx={{
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              bgcolor: 'white',
-              border: selectedItem
-                ? '2px solid #0094FF'
-                : '2px dashed rgba(0, 0, 0, 0.1)'
-            }}>
-              <Box sx={{ textAlign: 'center' }}>
-                <ExcelIcon sx={{ fontSize: 64, color: 'grey.400', mb: 2 }} />
-                <Typography variant="h6" color="text.secondary" gutterBottom>
-                  Excel 미리보기
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                  {highlightedCell ? (
-                    <>
-                      <strong>{highlightedCell}</strong> 셀이 하이라이트될 예정
-                      <br />
-                      실제 Excel 파일에서 위치를 확인하세요
-                    </>
-                  ) : (
-                    <>
-                      왼쪽에서 컬럼을 클릭하면
-                      <br />
-                      해당 Excel 셀이 하이라이트됩니다
-                    </>
-                  )}
-                </Typography>
-                <Button
-                  variant="contained"
-                  startIcon={<ViewIcon />}
-                  onClick={() => setExcelViewerOpen(true)}
-                >
-                  Excel 뷰어 열기
-                </Button>
-              </Box>
-            </Paper>
+          {/* Excel 임베디드 뷰어 — Handsontable */}
+          <Box sx={{ flex: 1, overflow: 'hidden', minHeight: 0 }}>
+            <HotExcelViewer
+              highlightedCell={highlightedCell}
+              onCellClick={(cellRef, value, formula) => {
+                console.log('Excel 셀 클릭:', cellRef, value, formula);
+              }}
+            />
           </Box>
         </Box>
       </Box>
