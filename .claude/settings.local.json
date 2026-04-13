@@ -3,7 +3,10 @@
     "allow": [
       "Bash(python -c ':*)",
       "Bash(python generate_process_customer_pptx.py)",
-      "Bash(ls -la \"c:/WORK/cost-analysis-src/docs/업무프로세스_고객설명자료\"*)"
+      "Bash(ls -la \"c:/WORK/cost-analysis-src/docs/업무프로세스_고객설명자료\"*)",
+      "Bash(python scripts/add_comments.py)",
+      "Bash(rm -f scripts/add_comments.py public/sample_excel/sample_data_feedback.xlsx docs/test_comment.xlsx)",
+      "Bash(rmdir scripts:*)"
     ]
   }
 }

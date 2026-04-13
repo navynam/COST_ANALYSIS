@@ -156,13 +156,23 @@ const AnalysisPage: React.FC = () => {
             <Button
               variant="outlined"
               size="small"
-              onClick={() => {
-                // 골든셋 탭으로 이동 후 다운로드
-                setActiveTab(3);
-                setTimeout(() => {
-                  const dlBtn = document.querySelector('[data-excel-download]') as HTMLButtonElement;
-                  if (dlBtn) dlBtn.click();
-                }, 300);
+              onClick={async () => {
+                const ok = await showConfirm(
+                  '피드백 Excel을 다운로드하시겠습니까?',
+                  '원본 Excel에 이상치 셀 하이라이트와 검증 노트가 추가됩니다.\n원본 데이터는 변경되지 않습니다.'
+                );
+                if (ok) {
+                  try {
+                    const { downloadFeedbackExcel } = await import('../../utils/excelFeedback');
+                    const result = await downloadFeedbackExcel();
+                    await showAlert(
+                      `피드백 Excel이 다운로드되었습니다.\n\n이상치 ${result.anomalyCount}건이 하이라이트 처리되었습니다.\n"이상치 피드백" 시트에서 요약을 확인하세요.`,
+                      'success'
+                    );
+                  } catch (err) {
+                    await showAlert('Excel 다운로드 중 오류가 발생했습니다.', 'error');
+                  }
+                }
               }}
               sx={{
                 textTransform: 'none',
