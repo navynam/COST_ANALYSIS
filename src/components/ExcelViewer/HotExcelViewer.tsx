@@ -9,12 +9,28 @@
  */
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { HotTable } from '@handsontable/react';
-import Handsontable from 'handsontable';
+import { registerAllModules } from 'handsontable/registry';
 import 'handsontable/styles/handsontable.min.css';
+import 'handsontable/styles/ht-theme-main.min.css';
 import * as XLSX from 'xlsx';
 import { Box, Tabs, Tab, Typography, CircularProgress } from '@mui/material';
 
+// Handsontable v14+ 필수: 모든 모듈 등록
+registerAllModules();
+
 // ── 타입 ──
+
+interface CellStyleInfo {
+  bg?: string;       // 배경색 hex
+  fc?: string;       // 글자색 hex
+  bold?: boolean;
+  italic?: boolean;
+  align?: string;    // left/center/right
+  borderT?: string;  // CSS border string
+  borderB?: string;
+  borderL?: string;
+  borderR?: string;
+}
 
 interface SheetInfo {
   name: string;
@@ -22,6 +38,7 @@ interface SheetInfo {
   merges: { row: number; col: number; rowspan: number; colspan: number }[];
   colWidths: number[];
   rowHeights: number[];
+  styles: Record<string, CellStyleInfo>; // "row-col" → style
 }
 
 interface HotExcelViewerProps {
@@ -36,6 +53,8 @@ interface HotExcelViewerProps {
   height?: string | number;
   /** 읽기 전용 */
   readOnly?: boolean;
+  /** 확대/축소 (기본: 100) */
+  zoom?: number;
 }
 
 // ── 유틸 ──
@@ -67,20 +86,64 @@ const parseWorkbook = (buffer: ArrayBuffer): { sheets: SheetInfo[]; formulas: Re
     const rowCount = range.e.r + 1;
     const colCount = range.e.c + 1;
 
-    // 데이터 + 수식 추출
+    // 데이터 + 수식 + 스타일 추출
     const data: (string | number | null)[][] = [];
     const sheetFormulas: Record<string, string> = {};
+    const styles: Record<string, CellStyleInfo> = {};
 
     for (let r = 0; r < rowCount; r++) {
       const row: (string | number | null)[] = [];
       for (let c = 0; c < colCount; c++) {
         const addr = XLSX.utils.encode_cell({ r, c });
-        const cell = ws[addr] as XLSX.CellObject | undefined;
+        const cell = ws[addr] as any;
         if (cell) {
-          // formatted value 우선, 없으면 raw value
-          row.push(cell.w !== undefined ? cell.w : (cell.v !== undefined ? cell.v as string | number : null));
-          // 수식 저장
+          row.push(cell.w !== undefined ? cell.w : (cell.v !== undefined ? cell.v : null));
           if (cell.f) sheetFormulas[addr] = `=${cell.f}`;
+
+          // 셀 스타일 추출
+          if (cell.s) {
+            const s = cell.s;
+            const style: CellStyleInfo = {};
+
+            // 배경색
+            if (s.fill && s.fill.fgColor) {
+              const fg = s.fill.fgColor;
+              if (fg.rgb && fg.rgb !== '000000' && fg.rgb !== 'FFFFFF') {
+                const rgb = String(fg.rgb);
+                style.bg = '#' + (rgb.length === 8 ? rgb.substring(2) : rgb);
+              } else if (fg.theme !== undefined) {
+                const themes = ['#000000','#FFFFFF','#1F497D','#EEECE1','#4F81BD','#C0504D','#9BBB59','#8064A2','#4BACC6','#F79646'];
+                if (themes[fg.theme] && themes[fg.theme] !== '#FFFFFF') style.bg = themes[fg.theme];
+              }
+            }
+
+            // 글자색
+            if (s.font && s.font.color) {
+              const fc = s.font.color;
+              if (fc.rgb && fc.rgb !== '000000') {
+                const rgb = String(fc.rgb);
+                style.fc = '#' + (rgb.length === 8 ? rgb.substring(2) : rgb);
+              }
+            }
+
+            // 볼드/이탤릭
+            if (s.font?.bold) style.bold = true;
+            if (s.font?.italic) style.italic = true;
+
+            // 정렬
+            if (s.alignment?.horizontal) style.align = s.alignment.horizontal;
+
+            // 테두리
+            const borderMap: Record<string, string> = { thin: '1px solid #999', medium: '2px solid #666', thick: '3px solid #333', double: '3px double #333', hair: '1px dotted #ccc', dashed: '1px dashed #999' };
+            if (s.border) {
+              if (s.border.top?.style) style.borderT = borderMap[s.border.top.style] || '1px solid #999';
+              if (s.border.bottom?.style) style.borderB = borderMap[s.border.bottom.style] || '1px solid #999';
+              if (s.border.left?.style) style.borderL = borderMap[s.border.left.style] || '1px solid #999';
+              if (s.border.right?.style) style.borderR = borderMap[s.border.right.style] || '1px solid #999';
+            }
+
+            if (Object.keys(style).length > 0) styles[`${r}-${c}`] = style;
+          }
         } else {
           row.push(null);
         }
@@ -116,14 +179,42 @@ const parseWorkbook = (buffer: ArrayBuffer): { sheets: SheetInfo[]; formulas: Re
       else rowHeights.push(23);
     }
 
-    return { name, data, merges, colWidths, rowHeights };
+    return { name, data, merges, colWidths, rowHeights, styles };
   });
 
   return { sheets, formulas };
 };
 
-// ── 하이라이트 CSS ──
-const HIGHLIGHT_CSS = `
+// ── CSS 보정 + 하이라이트 ──
+const VIEWER_CSS = `
+  .ht-theme-main {
+    --ht-cell-background-color: #ffffff;
+    --ht-cell-border-color: #d0d0d0;
+    --ht-row-header-background-color: #f0f0f0;
+    --ht-col-header-background-color: #f0f0f0;
+    --ht-header-text-color: #333;
+    --ht-cell-text-color: #000;
+    --ht-active-color: #1565C0;
+    --ht-selection-background-color: rgba(21,101,192,0.1);
+  }
+  .ht-theme-main .handsontable td {
+    background-color: #fff;
+    border: 1px solid #d0d0d0;
+    color: #000;
+    font-size: 12px;
+    padding: 2px 5px;
+  }
+  .ht-theme-main .handsontable th {
+    background-color: #f0f0f0;
+    border: 1px solid #c0c0c0;
+    color: #333;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 4px;
+  }
+  .ht-theme-main .handsontable .htCore {
+    border-collapse: collapse;
+  }
   .cell-highlight {
     background-color: #FFF3CD !important;
     outline: 2px solid #F59E0B !important;
@@ -139,9 +230,12 @@ const HIGHLIGHT_CSS = `
 // ── 컴포넌트 ──
 
 const HotExcelViewer: React.FC<HotExcelViewerProps> = ({
-  file, fileUrl, highlightedCell, onCellClick, height = '100%', readOnly = true,
+  file, fileUrl, highlightedCell, onCellClick, height = '100%', readOnly = true, zoom = 100,
 }) => {
   const hotRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerHeight, setContainerHeight] = useState(0);
+  const [containerWidth, setContainerWidth] = useState(0);
   const [sheets, setSheets] = useState<SheetInfo[]>([]);
   const [formulas, setFormulas] = useState<Record<string, Record<string, string>>>({});
   const [activeSheet, setActiveSheet] = useState(0);
@@ -149,6 +243,88 @@ const HotExcelViewer: React.FC<HotExcelViewerProps> = ({
   const [selectedCell, setSelectedCell] = useState<string>('');
   const [formulaBarText, setFormulaBarText] = useState('');
   const [prevHighlightCell, setPrevHighlightCell] = useState<{ row: number; col: number } | null>(null);
+  const [externalStyles, setExternalStyles] = useState<Record<string, CellStyleInfo>>({});
+  const [externalMerges, setExternalMerges] = useState<{ row: number; col: number; rowspan: number; colspan: number }[]>([]);
+
+  // ── 스타일 JSON 로드 (백엔드 API → fallback: 정적 JSON) ──
+  useEffect(() => {
+    const loadStyles = async () => {
+      try {
+        let json: any = null;
+
+        // 1. 백엔드 API 시도
+        try {
+          const apiRes = await fetch('/api/v1/excel/styles');
+          if (apiRes.ok) {
+            const apiData = await apiRes.json();
+            // ApiResponse 래퍼 처리
+            const payload = apiData.data?.sheets?.[0] || apiData.data || apiData;
+            if (payload.styles) {
+              json = { s: payload.styles, m: payload.merges };
+              console.log('스타일: 백엔드 API에서 로드');
+            }
+          }
+        } catch { /* API 실패 시 fallback */ }
+
+        // 2. fallback: 정적 JSON 파일
+        if (!json) {
+          const res = await fetch(`${process.env.PUBLIC_URL}/sample_excel/sheet1_styles.json`);
+          if (res.ok) {
+            json = await res.json();
+            console.log('스타일: 정적 JSON에서 로드');
+          }
+        }
+
+        if (!json) return;
+
+        // 스타일 변환
+        if (json.s || json.styles) {
+          const rawStyles = json.s || json.styles;
+          const converted: Record<string, CellStyleInfo> = {};
+          Object.entries(rawStyles).forEach(([key, val]: [string, any]) => {
+            const style: CellStyleInfo = {};
+            if (val.bg) style.bg = val.bg;
+            if (val.fc) style.fc = val.fc;
+            if (val.b) style.bold = true;
+            if (val.i) style.italic = true;
+            if (val.a) style.align = val.a === 'c' ? 'center' : val.a === 'r' ? 'right' : val.a === 'l' ? 'left' : val.a;
+            if (val.bd) {
+              if (val.bd.t) style.borderT = val.bd.t;
+              if (val.bd.b) style.borderB = val.bd.b;
+              if (val.bd.l) style.borderL = val.bd.l;
+              if (val.bd.r) style.borderR = val.bd.r;
+            }
+            converted[key] = style;
+          });
+          setExternalStyles(converted);
+          console.log('스타일 적용:', Object.keys(converted).length, '셀');
+        }
+
+        // 병합 셀
+        if (json.m || json.merges) {
+          const rawMerges = json.m || json.merges;
+          setExternalMerges(rawMerges.map((m: number[]) => ({ row: m[0], col: m[1], rowspan: m[2], colspan: m[3] })));
+        }
+      } catch { /* ignore */ }
+    };
+    loadStyles();
+  }, []);
+
+  // ── 컨테이너 크기 추적 ──
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      const { width, height: h } = entries[0].contentRect;
+      if (h > 0) setContainerHeight(h);
+      if (width > 0) setContainerWidth(width);
+    });
+    ro.observe(el);
+    // 초기값
+    setContainerHeight(el.clientHeight);
+    setContainerWidth(el.clientWidth);
+    return () => ro.disconnect();
+  }, [loading]); // loading 끝나면 재측정
 
   // ── Excel 파일 로드 ──
   useEffect(() => {
@@ -161,9 +337,11 @@ const HotExcelViewer: React.FC<HotExcelViewerProps> = ({
         } else {
           const url = fileUrl || `${process.env.PUBLIC_URL}/sample_excel/sample_data.xlsx`;
           const res = await fetch(url);
+          if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
           buffer = await res.arrayBuffer();
         }
         const result = parseWorkbook(buffer);
+        console.log('Excel 파싱 완료:', result.sheets.map(s => `${s.name}: ${s.data.length}행 x ${s.data[0]?.length || 0}열`));
         setSheets(result.sheets);
         setFormulas(result.formulas);
         setActiveSheet(0);
@@ -196,6 +374,33 @@ const HotExcelViewer: React.FC<HotExcelViewerProps> = ({
     setPrevHighlightCell(pos);
   }, [highlightedCell]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // ── 셀 스타일 렌더러 ──
+  const cellRenderer = useCallback((instance: any, td: HTMLTableCellElement, row: number, col: number, prop: any, value: any, cellProperties: any) => {
+    td.textContent = value !== null && value !== undefined ? String(value) : '';
+    td.style.fontSize = '12px';
+    td.style.padding = '2px 5px';
+    td.style.borderRight = '1px solid #d0d0d0';
+    td.style.borderBottom = '1px solid #d0d0d0';
+    td.style.backgroundColor = '#fff';
+    td.style.color = '#000';
+    td.style.fontWeight = 'normal';
+    td.style.fontStyle = 'normal';
+
+    // 외부 JSON 스타일 적용
+    const s = externalStyles[`${row}-${col}`];
+    if (s) {
+      if (s.bg) td.style.backgroundColor = s.bg;
+      if (s.fc) td.style.color = s.fc;
+      if (s.bold) td.style.fontWeight = '700';
+      if (s.italic) td.style.fontStyle = 'italic';
+      if (s.align) td.style.textAlign = s.align;
+      if (s.borderT) td.style.borderTop = s.borderT;
+      if (s.borderB) td.style.borderBottom = s.borderB;
+      if (s.borderL) td.style.borderLeft = s.borderL;
+      if (s.borderR) td.style.borderRight = s.borderR;
+    }
+  }, [externalStyles]);
+
   // ── 셀 클릭 핸들러 ──
   const handleAfterSelection = useCallback((row: number, col: number) => {
     const ref = `${colLetter(col)}${row + 1}`;
@@ -225,12 +430,18 @@ const HotExcelViewer: React.FC<HotExcelViewerProps> = ({
     );
   }
 
-  if (!currentSheet) return null;
+  if (!currentSheet) {
+    return (
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+        <Typography sx={{ fontSize: 13, color: '#888' }}>시트 데이터가 없습니다.</Typography>
+      </Box>
+    );
+  }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height, width: '100%' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height, width: '100%', overflow: 'hidden' }}>
       {/* CSS 삽입 */}
-      <style>{HIGHLIGHT_CSS}</style>
+      <style>{VIEWER_CSS}</style>
 
       {/* ── 수식 바 ── */}
       <Box sx={{
@@ -262,31 +473,41 @@ const HotExcelViewer: React.FC<HotExcelViewerProps> = ({
       </Box>
 
       {/* ── Handsontable 그리드 ── */}
-      <Box sx={{ flex: 1, overflow: 'hidden', minHeight: 0 }}>
-        <HotTable
-          ref={hotRef}
-          data={currentSheet.data}
-          colHeaders={true}
-          rowHeaders={true}
-          readOnly={readOnly}
-          mergeCells={currentSheet.merges}
-          colWidths={currentSheet.colWidths}
-          rowHeights={currentSheet.rowHeights}
-          width="100%"
-          height="100%"
-          stretchH="none"
-          autoWrapRow={false}
-          autoWrapCol={false}
-          manualColumnResize={true}
-          manualRowResize={true}
-          contextMenu={false}
-          disableVisualSelection={false}
-          selectionMode="single"
-          afterSelection={handleAfterSelection}
-          className="htExcelViewer"
-          licenseKey="non-commercial-and-evaluation"
-        />
-      </Box>
+      <div ref={containerRef} className="ht-theme-main" style={{
+        flex: 1, overflow: 'hidden', minHeight: 0, position: 'relative',
+        transform: zoom !== 100 ? `scale(${zoom / 100})` : undefined,
+        transformOrigin: 'top left',
+        width: zoom !== 100 ? `${100 / (zoom / 100)}%` : '100%',
+        height: zoom !== 100 ? `${100 / (zoom / 100)}%` : undefined,
+      }}>
+        {containerHeight > 0 && (
+          <HotTable
+            ref={hotRef}
+            data={currentSheet.data}
+            colHeaders={true}
+            rowHeaders={true}
+            readOnly={readOnly}
+            mergeCells={externalMerges.length > 0 ? externalMerges : (currentSheet.merges.length > 0 ? currentSheet.merges : false)}
+            colWidths={currentSheet.colWidths}
+            rowHeights={currentSheet.rowHeights}
+            width={containerWidth}
+            height={containerHeight}
+            stretchH="none"
+            autoWrapRow={false}
+            autoWrapCol={false}
+            autoRowSize={false}
+            autoColumnSize={false}
+            manualColumnResize={true}
+            manualRowResize={true}
+            contextMenu={false}
+            disableVisualSelection={false}
+            selectionMode="single"
+            afterSelection={handleAfterSelection}
+            cells={() => ({ renderer: cellRenderer })}
+            licenseKey="non-commercial-and-evaluation"
+          />
+        )}
+      </div>
 
       {/* ── 시트 탭 ── */}
       {sheets.length > 1 && (

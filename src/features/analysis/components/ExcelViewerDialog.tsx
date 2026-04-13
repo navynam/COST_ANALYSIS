@@ -561,126 +561,34 @@ const ExcelViewerDialog: React.FC<ExcelViewerDialogProps> = ({
           </Box>
         </Box>
         
-        {/* 🔧 Excel 도구 모음 */}
-        {!isLoading && (
-          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mt: 2 }}>
-            <ToggleButtonGroup
-                value={viewMode}
-                exclusive
-                onChange={(_, newMode) => newMode && setViewMode(newMode)}
-                size="small"
-              >
-                <ToggleButton value="view">
-                  <Visibility fontSize="small" />
-                  <Typography sx={{ fontSize: 11, ml: 0.5 }}>보기</Typography>
-                </ToggleButton>
-                <ToggleButton value="edit">
-                  <EditIcon fontSize="small" />
-                  <Typography sx={{ fontSize: 11, ml: 0.5 }}>편집</Typography>
-                </ToggleButton>
-              </ToggleButtonGroup>
-              
-              <Divider orientation="vertical" flexItem />
-              
-              <ButtonGroup size="small" variant="outlined">
-                <Tooltip title="축소">
-                  <Button 
-                    onClick={() => setZoom(Math.max(zoom - 25, 50))}
-                    disabled={zoom <= 50}
-                  >
-                    <ZoomOut fontSize="small" />
-                  </Button>
-                </Tooltip>
-                
-                <Button sx={{ minWidth: 60, fontSize: 11 }}>
-                  {zoom}%
-                </Button>
-                
-                <Tooltip title="확대">
-                  <Button 
-                    onClick={() => setZoom(Math.min(zoom + 25, 200))}
-                    disabled={zoom >= 200}
-                  >
-                    <ZoomIn fontSize="small" />
-                  </Button>
-                </Tooltip>
-              </ButtonGroup>
-              
-              <Divider orientation="vertical" flexItem />
-              
-              <Tooltip title="하이라이트된 셀로 이동">
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={scrollToHighlighted}
-                  disabled={!highlightedCell}
-                  sx={{ minWidth: 40 }}
-                >
-                  <TrackChanges sx={{ fontSize: 'inherit', color: '#EF4444' }} />
+        {/* 오른쪽: 줌 + 재매핑 + 닫기 */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {!isLoading && (
+            <ButtonGroup size="small" variant="outlined">
+              <Tooltip title="축소">
+                <Button onClick={() => setZoom(Math.max(zoom - 25, 50))} disabled={zoom <= 50}>
+                  <ZoomOut fontSize="small" />
                 </Button>
               </Tooltip>
-              
-              <Tooltip title="검색">
-                <Button variant="outlined" size="small" sx={{ minWidth: 40 }}>
-                  <Search fontSize="small" />
+              <Button sx={{ minWidth: 50, fontSize: 11 }}>{zoom}%</Button>
+              <Tooltip title="확대">
+                <Button onClick={() => setZoom(Math.min(zoom + 25, 200))} disabled={zoom >= 200}>
+                  <ZoomIn fontSize="small" />
                 </Button>
               </Tooltip>
-              
-              <Tooltip title="Excel 다운로드">
-                <Button 
-                  variant="outlined" 
-                  size="small" 
-                  onClick={handleExport}
-                  sx={{ minWidth: 40 }}
-                >
-                  <FileDownload fontSize="small" />
-                </Button>
-              </Tooltip>
-              
-              <Tooltip title="인쇄">
-                <Button 
-                  variant="outlined" 
-                  size="small" 
-                  onClick={() => window.print()}
-                  sx={{ minWidth: 40 }}
-                  disabled={isRemappingMode}
-                >
-                  <Print fontSize="small" />
-                </Button>
-              </Tooltip>
-
-              {/* ✅ 재매핑 모드 전용 적용 버튼 */}
-              {isRemappingMode && (
-                <Tooltip title="선택한 셀로 재매핑 적용">
-                  <Button 
-                    variant="contained" 
-                    size="small"
-                    color="success"
-                    onClick={handleSaveSelectedCell}
-                    disabled={!selectedCell}
-                    startIcon={<Save fontSize="small" />}
-                    sx={{ ml: 1 }}
-                  >
-                    적용
-                  </Button>
-                </Tooltip>
-              )}
-            </Box>
+            </ButtonGroup>
           )}
-        
-
-        
-        {/* 🔴 닫기 버튼 */}
-        <IconButton 
-          onClick={onClose} 
-          size="small" 
-          sx={{ 
-            bgcolor: '#fff',
-            '&:hover': { bgcolor: '#f5f5f5' }
-          }}
-        >
-          <Close />
-        </IconButton>
+          {isRemappingMode && (
+            <Button variant="contained" size="small" color="success"
+              onClick={handleSaveSelectedCell} disabled={!selectedCell}
+              startIcon={<Save fontSize="small" />}>
+              적용
+            </Button>
+          )}
+          <IconButton onClick={onClose} size="small" sx={{ bgcolor: '#fff', '&:hover': { bgcolor: '#f5f5f5' } }}>
+            <Close />
+          </IconButton>
+        </Box>
       </DialogTitle>
 
       {/* 📊 Excel 스프레드시트 영역 - 풀사이즈 */}
@@ -731,6 +639,7 @@ const ExcelViewerDialog: React.FC<ExcelViewerDialogProps> = ({
             <Box sx={{ flex: 1, overflow: 'hidden', minHeight: 0 }}>
               <HotExcelViewer
                 highlightedCell={typeof highlightedCell === 'string' ? highlightedCell : null}
+                zoom={zoom}
                 onCellClick={(cellRef, value) => {
                   if (isRemappingMode) {
                     setSelectedCell({ row: 0, col: 0, cell: cellRef, value });
