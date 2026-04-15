@@ -6,7 +6,23 @@
       "Bash(ls -la \"c:/WORK/cost-analysis-src/docs/업무프로세스_고객설명자료\"*)",
       "Bash(python scripts/add_comments.py)",
       "Bash(rm -f scripts/add_comments.py public/sample_excel/sample_data_feedback.xlsx docs/test_comment.xlsx)",
-      "Bash(rmdir scripts:*)"
+      "Bash(rmdir scripts:*)",
+      "Bash(pip show:*)",
+      "Bash(scrcpy --version)",
+      "Bash(adb version:*)",
+      "Bash(export PATH=\"$PATH:/c/Users/navyn/AppData/Local/Microsoft/WinGet/Links\")",
+      "Bash(ls \"/c/Users/navyn/AppData/Local/scrcpy\"*)",
+      "Bash(ls \"/c/Users/navyn/AppData/Local/Microsoft/WinGet/Packages/\"*scrcpy*)",
+      "Bash(export PATH=\"$PATH:$SCRCPY_DIR\")",
+      "Bash(python main.py)",
+      "Bash(tesseract --version)",
+      "Bash(curl -L -o \"/c/Program Files/Tesseract-OCR/tessdata/kor.traineddata\" \"https://github.com/tesseract-ocr/tessdata_best/raw/main/kor.traineddata\")",
+      "Bash(curl -L -o \"C:/WORK/android-camera-control/templates/vis-network.min.js\" \"https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js\")",
+      "Bash(curl -L -o \"C:/WORK/android-camera-control/templates/vis-network.min.css\" \"https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css\")",
+      "Bash(sqlite3 \"C:\\\\WORK\\\\android-camera-control\\\\storage\\\\docscanner.db\" \".tables\")"
+    ],
+    "additionalDirectories": [
+      "C:\\WORK"
     ]
   }
 }
