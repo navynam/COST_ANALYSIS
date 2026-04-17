@@ -510,28 +510,28 @@ const FileCard: React.FC<{
                 }
               }}
             >
-              검증하기
+              검토하기
             </Button>
           </Box>
         )}
 
         {file.status === 'verified' && (
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button 
+            <Button
               variant="outlined"
               onClick={(e) => { e.stopPropagation(); onNoteClick(file.id.toString()); }}
-              sx={{ 
-                fontSize: 12, 
+              sx={{
+                fontSize: 12,
                 fontWeight: 600,
-                textTransform: 'none', 
-                borderRadius: '8px', 
+                textTransform: 'none',
+                borderRadius: '8px',
                 py: 1,
                 px: 3,
                 minWidth: 120,
                 whiteSpace: 'nowrap',
                 borderColor: '#0064ff',
                 color: '#0064ff',
-                '&:hover': { 
+                '&:hover': {
                   borderColor: '#0056d3',
                   bgcolor: 'rgba(0, 100, 255, 0.04)'
                 }
@@ -539,8 +539,8 @@ const FileCard: React.FC<{
             >
               <FluentIcon name="editnote" size={14} style={{ marginRight: 4 }} />노트({getNoteCount(file.id.toString())})
             </Button>
-            <Button 
-              variant="contained" 
+            <Button
+              variant="contained"
               fullWidth
               onClick={(e) => { e.stopPropagation(); onAnalysis(); }}
               sx={{
@@ -558,7 +558,7 @@ const FileCard: React.FC<{
                 }
               }}
             >
-              검증하기
+              검토하기
             </Button>
           </Box>
         )}

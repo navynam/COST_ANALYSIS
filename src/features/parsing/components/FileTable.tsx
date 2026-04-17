@@ -139,7 +139,7 @@ const FileTable: React.FC<FileTableProps> = ({
                           case 'extracting':
                             return <Button size="small" variant="outlined" disabled sx={{ ...btnBase, borderColor: `${sc2.color}40`, color: sc2.color }}>처리중</Button>;
                           case 'verifying':
-                            return <Button size="small" variant="outlined" sx={{ ...btnBase, color: sc2.color, borderColor: `${sc2.color}50`, '&:hover': { bgcolor: `${sc2.color}08`, borderColor: sc2.color } }} onClick={() => onVerify(f.id.toString(), f.name)}>검증하기</Button>;
+                            return <Button size="small" variant="outlined" sx={{ ...btnBase, color: sc2.color, borderColor: `${sc2.color}50`, '&:hover': { bgcolor: `${sc2.color}08`, borderColor: sc2.color } }} onClick={() => onVerify(f.id.toString(), f.name)}>검토하기</Button>;
                           case 'verified':
                             return <Button size="small" variant="outlined" sx={{ ...btnBase, color: sc2.color, borderColor: `${sc2.color}50`, '&:hover': { bgcolor: `${sc2.color}08`, borderColor: sc2.color } }} onClick={onAnalysis}>검증하기</Button>;
                           case 'analyzing':

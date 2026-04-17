@@ -1488,10 +1488,10 @@ const ParsedDataReviewPage: React.FC = () => {
               variant="contained"
               size="small"
               onClick={async () => {
-                const ok = await showConfirm('검증을 완료하시겠습니까?', '검증 완료 후 분석 단계로 진행할 수 있습니다.');
+                const ok = await showConfirm('검토를 완료하시겠습니까?', '검토 완료 후 검증 단계로 진행할 수 있습니다.');
                 if (ok) {
                   setIsVerified(true);
-                  await showAlert('검증이 완료되었습니다.\n분석 버튼이 활성화됩니다.', 'success');
+                  await showAlert('검토가 완료되었습니다.\n검증 버튼이 활성화됩니다.', 'success');
                 }
               }}
               disabled={isVerified}
@@ -1508,7 +1508,7 @@ const ParsedDataReviewPage: React.FC = () => {
                 '&.Mui-disabled': { bgcolor: '#E5E7EB', color: '#9CA3AF' }
               }}
             >
-              {isVerified ? '검증 완료됨' : '검증 완료'}
+              {isVerified ? '검토 완료됨' : '검토 완료'}
             </Button>
 
             {/* 분석 → */}
