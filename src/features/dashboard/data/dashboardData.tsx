@@ -103,8 +103,8 @@ export const actionAlerts = [
 ];
 
 export const statusColorMap: Record<string, 'success' | 'warning' | 'error' | 'info'> = {
-  '추출중': 'info', '검증중': 'info', '검증완료': 'success',
-  '분석중': 'warning', '분석완료': 'success', '실패': 'error',
+  '추출중': 'info', '추출완료': 'info', '검증대기': 'success',
+  '검증중': 'warning', '검증완료': 'success', '실패': 'error',
 };
 
 const getCounts = () => {
@@ -119,10 +119,10 @@ const getCounts = () => {
 export const workItems = (() => {
   const c = getCounts();
   return [
-    { status: 'verifying',   label: '검증중',   count: c.verifying,   icon: <FluentIcon name="search" size={28} />, color: '#3B82F6', filter: 'verifying'   },
-    { status: 'verified',    label: '검증완료', count: c.verified,    icon: <FluentIcon name="check" size={28} />, color: '#0D9488', filter: 'verified'    },
-    { status: 'inAnalysis',  label: '분석중',   count: c.inAnalysis,  icon: <FluentIcon name="microscope" size={28} />, color: '#6366F1', filter: 'inAnalysis'  },
-    { status: 'analyzed',    label: '분석완료', count: c.analyzed,    icon: <FluentIcon name="barchart" size={28} />, color: '#10B981', filter: 'analyzed'    },
+    { status: 'verifying',   label: '추출완료',   count: c.verifying,   icon: <FluentIcon name="search" size={28} />, color: '#3B82F6', filter: 'verifying'   },
+    { status: 'verified',    label: '검증대기', count: c.verified,    icon: <FluentIcon name="check" size={28} />, color: '#0D9488', filter: 'verified'    },
+    { status: 'inAnalysis',  label: '검증중',   count: c.inAnalysis,  icon: <FluentIcon name="microscope" size={28} />, color: '#6366F1', filter: 'inAnalysis'  },
+    { status: 'analyzed',    label: '검증완료', count: c.analyzed,    icon: <FluentIcon name="barchart" size={28} />, color: '#10B981', filter: 'analyzed'    },
     { status: 'failed',      label: '실패',     count: c.failed,      icon: <FluentIcon name="cross" size={28} />, color: '#EF4444', filter: 'failed'      },
   ];
 })();

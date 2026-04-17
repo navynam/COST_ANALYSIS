@@ -20,15 +20,15 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
       case 'extracting':
         return { color: '#F59E0B', icon: <FluentIcon name="schedule" size={16} />, label: '추출중(자동)', bgColor: '#FEF3C7' };
       case 'verifying':
-        return { color: '#3B82F6', icon: <FluentIcon name="schedule" size={16} />, label: '검증중', bgColor: '#DBEAFE' };
+        return { color: '#3B82F6', icon: <FluentIcon name="schedule" size={16} />, label: '추출완료', bgColor: '#DBEAFE' };
       case 'verified':
-        return { color: '#0D9488', icon: <FluentIcon name="check" size={16} />, label: '검증완료', bgColor: '#CCFBF1' };
+        return { color: '#0D9488', icon: <FluentIcon name="check" size={16} />, label: '검증대기', bgColor: '#CCFBF1' };
       case 'analyzing':
-        return { color: '#8B5CF6', icon: <FluentIcon name="schedule" size={16} />, label: '분석중(자동)', bgColor: '#EDE9FE' };
+        return { color: '#8B5CF6', icon: <FluentIcon name="schedule" size={16} />, label: '검증중(자동)', bgColor: '#EDE9FE' };
       case 'inAnalysis':
-        return { color: '#6366F1', icon: <FluentIcon name="check" size={16} />, label: '분석중', bgColor: '#E0E7FF' };
+        return { color: '#6366F1', icon: <FluentIcon name="check" size={16} />, label: '검증중', bgColor: '#E0E7FF' };
       case 'analyzed':
-        return { color: '#10B981', icon: <FluentIcon name="check" size={16} />, label: '분석완료', bgColor: '#D1FAE5' };
+        return { color: '#10B981', icon: <FluentIcon name="check" size={16} />, label: '검증완료', bgColor: '#D1FAE5' };
       case 'failed':
         return { color: '#EF4444', icon: <FluentIcon name="error" size={16} />, label: '실패', bgColor: '#FEE2E2' };
       default:
@@ -256,7 +256,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                     textAlign: 'center',
                     letterSpacing: '-0.2px'
                   }}>
-                    {(file.status === 'inAnalysis' || file.status === 'analyzed') ? <><FluentIcon name="barchart" size={14} style={{ marginRight: 4 }} />분석 완료</> : <><FluentIcon name="star" size={14} style={{ marginRight: 4 }} />추출 완료</>}
+                    {(file.status === 'inAnalysis' || file.status === 'analyzed') ? <><FluentIcon name="barchart" size={14} style={{ marginRight: 4 }} />검증 완료</> : <><FluentIcon name="star" size={14} style={{ marginRight: 4 }} />추출 완료</>}
                   </Typography>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
                     <Box sx={{ textAlign: 'center', flex: 1 }}>
@@ -264,7 +264,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
                         {file.parsedItems || 156}
                       </Typography>
                       <Typography sx={{ fontSize: 11, color: '#6b7280', fontWeight: 500, mt: 0.5 }}>
-                        {(file.status === 'inAnalysis' || file.status === 'analyzed') ? '분석 항목' : '파싱 항목'}
+                        {(file.status === 'inAnalysis' || file.status === 'analyzed') ? '검증 항목' : '파싱 항목'}
                       </Typography>
                     </Box>
                     <Box sx={{ width: '1px', bgcolor: `${statusConf.color}25` }} />
@@ -510,35 +510,35 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
               </Button>
             )}
 
-            {/* 검증완료 — 분석하기 */}
+            {/* 검증대기 — 검증하기 */}
             {file.status === 'verified' && (
               <Button fullWidth variant="contained" onClick={() => { onClose(); onAnalysis ? onAnalysis() : onVerify(); }}
                 sx={{ fontSize: 16, fontWeight: 700, textTransform: 'none', borderRadius: '12px', py: 1.5, boxShadow: 'none', bgcolor: '#0D9488', '&:hover': { bgcolor: '#0F766E', boxShadow: 'none' } }}>
-                분석하기
+                검증하기
               </Button>
             )}
 
-            {/* 분석중(자동) — 비활성 */}
+            {/* 검증중(자동) — 비활성 */}
             {file.status === 'analyzing' && (
               <Button fullWidth variant="outlined" disabled
                 sx={{ fontSize: 16, fontWeight: 700, textTransform: 'none', borderRadius: '12px', py: 1.5, borderColor: '#C4B5FD', color: '#8B5CF6' }}>
-                분석 진행중...
+                검증 진행중...
               </Button>
             )}
 
-            {/* 분석중 — 분석 상세보기 */}
+            {/* 검증중 — 검증 상세보기 */}
             {file.status === 'inAnalysis' && (
               <Button fullWidth variant="contained" onClick={() => { onClose(); onAnalysis ? onAnalysis() : onVerify(); }}
                 sx={{ fontSize: 16, fontWeight: 700, textTransform: 'none', borderRadius: '12px', py: 1.5, boxShadow: 'none', bgcolor: '#6366F1', '&:hover': { bgcolor: '#4F46E5', boxShadow: 'none' } }}>
-                분석 상세보기
+                검증 상세보기
               </Button>
             )}
 
-            {/* 분석완료 — 분석 결과 보기 */}
+            {/* 검증완료 — 검증 결과 보기 */}
             {file.status === 'analyzed' && (
               <Button fullWidth variant="contained" onClick={() => { onClose(); onAnalysis ? onAnalysis() : onVerify(); }}
                 sx={{ fontSize: 16, fontWeight: 700, textTransform: 'none', borderRadius: '12px', py: 1.5, boxShadow: 'none', bgcolor: '#10B981', '&:hover': { bgcolor: '#059669', boxShadow: 'none' } }}>
-                분석 결과 보기
+                검증 결과 보기
               </Button>
             )}
 

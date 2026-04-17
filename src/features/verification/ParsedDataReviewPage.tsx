@@ -1517,9 +1517,9 @@ const ParsedDataReviewPage: React.FC = () => {
               size="small"
               disabled={!isVerified}
               onClick={async () => {
-                const ok = await showConfirm('분석을 진행하시겠습니까?', '자동 분석이 시작되며, 완료까지 시간이 소요됩니다.');
+                const ok = await showConfirm('검증을 진행하시겠습니까?', '자동 검증이 시작되며, 완료까지 시간이 소요됩니다.');
                 if (ok) {
-                  await showAlert('분석이 시작되었습니다.\n목록으로 이동합니다.', 'info');
+                  await showAlert('검증이 시작되었습니다.\n목록으로 이동합니다.', 'info');
                   navigate('/parsing_card');
                 }
               }}
@@ -1536,7 +1536,7 @@ const ParsedDataReviewPage: React.FC = () => {
                 '&.Mui-disabled': { bgcolor: '#E5E7EB', color: '#9CA3AF' }
               }}
             >
-              분석 →
+              검증 →
             </Button>
           </Box>
 

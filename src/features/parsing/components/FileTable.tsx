@@ -141,13 +141,13 @@ const FileTable: React.FC<FileTableProps> = ({
                           case 'verifying':
                             return <Button size="small" variant="outlined" sx={{ ...btnBase, color: sc2.color, borderColor: `${sc2.color}50`, '&:hover': { bgcolor: `${sc2.color}08`, borderColor: sc2.color } }} onClick={() => onVerify(f.id.toString(), f.name)}>검증하기</Button>;
                           case 'verified':
-                            return <Button size="small" variant="outlined" sx={{ ...btnBase, color: sc2.color, borderColor: `${sc2.color}50`, '&:hover': { bgcolor: `${sc2.color}08`, borderColor: sc2.color } }} onClick={onAnalysis}>분석하기</Button>;
+                            return <Button size="small" variant="outlined" sx={{ ...btnBase, color: sc2.color, borderColor: `${sc2.color}50`, '&:hover': { bgcolor: `${sc2.color}08`, borderColor: sc2.color } }} onClick={onAnalysis}>검증하기</Button>;
                           case 'analyzing':
-                            return <Button size="small" variant="outlined" disabled sx={{ ...btnBase, borderColor: `${sc2.color}40`, color: sc2.color }}>분석중...</Button>;
+                            return <Button size="small" variant="outlined" disabled sx={{ ...btnBase, borderColor: `${sc2.color}40`, color: sc2.color }}>검증중...</Button>;
                           case 'inAnalysis':
-                            return <Button size="small" variant="outlined" sx={{ ...btnBase, color: sc2.color, borderColor: `${sc2.color}50`, '&:hover': { bgcolor: `${sc2.color}08`, borderColor: sc2.color } }} onClick={onAnalysis}>분석 상세보기</Button>;
+                            return <Button size="small" variant="outlined" sx={{ ...btnBase, color: sc2.color, borderColor: `${sc2.color}50`, '&:hover': { bgcolor: `${sc2.color}08`, borderColor: sc2.color } }} onClick={onAnalysis}>검증 상세보기</Button>;
                           case 'analyzed':
-                            return <Button size="small" variant="outlined" sx={{ ...btnBase, color: sc2.color, borderColor: `${sc2.color}50`, '&:hover': { bgcolor: `${sc2.color}08`, borderColor: sc2.color } }} onClick={onAnalysis}>분석 결과 보기</Button>;
+                            return <Button size="small" variant="outlined" sx={{ ...btnBase, color: sc2.color, borderColor: `${sc2.color}50`, '&:hover': { bgcolor: `${sc2.color}08`, borderColor: sc2.color } }} onClick={onAnalysis}>검증 결과 보기</Button>;
                           case 'failed':
                             return <Button size="small" variant="outlined" sx={{ ...btnBase, color: sc2.color, borderColor: `${sc2.color}50`, '&:hover': { bgcolor: `${sc2.color}08`, borderColor: sc2.color } }} onClick={e => { e.stopPropagation(); onFailedDetail(f); }}>오류 확인</Button>;
                           default:

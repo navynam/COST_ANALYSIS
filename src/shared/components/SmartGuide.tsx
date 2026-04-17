@@ -86,7 +86,7 @@ const SmartGuide: React.FC<SmartGuideProps> = ({
       case '/parsing_card':
         return {
           title: '견적서 분석',
-          subtitle: '업로드 → 추출 → 검증 → 분석 → 저장까지의 전체 프로세스를 관리합니다',
+          subtitle: '업로드 → 추출 → 검증 → 저장까지의 전체 프로세스를 관리합니다',
           steps: [
             {
               id: 'upload',
@@ -106,32 +106,25 @@ const SmartGuide: React.FC<SmartGuideProps> = ({
             {
               id: 'verify',
               title: '③ 추출 데이터 검증',
-              description: '추출된 데이터의 정확성을 검토하고 필요 시 수정합니다 (검증중 → 검증완료)',
+              description: '추출된 데이터의 정확성을 검토하고 필요 시 수정합니다 (검증대기 → 검증중 → 검증완료)',
               completed: false,
               tip: '💡 카드의 "검증" 버튼을 클릭하면 검증 화면으로 이동합니다'
             },
             {
-              id: 'analyze',
-              title: '④ 원가 분석',
-              description: '검증 완료된 데이터를 기반으로 원가 분석을 수행합니다 (분석중 → 분석완료)',
-              completed: false,
-              tip: '💡 분석 결과에서 이상치가 발견되면 AI 판단근거를 확인할 수 있습니다'
-            },
-            {
               id: 'save',
-              title: '⑤ 분석 결과 저장',
-              description: '분석완료된 데이터를 골든셋으로 확정하고 ERP 등록용 자료를 생성합니다',
+              title: '④ 검증 결과 저장',
+              description: '검증완료된 데이터를 골든셋으로 확정하고 ERP 등록용 자료를 생성합니다',
               completed: false
             }
           ],
           tips: [
-            '📊 상단 상태 카드: 전체 · 추출중 · 검증중 · 검증완료 · 분석중 · 분석완료 · 실패',
+            '📊 상단 상태 카드: 전체 · 추출중 · 추출완료 · 검증대기 · 검증중 · 검증완료 · 실패',
             '🎯 상태 카드를 클릭하면 해당 상태의 파일만 필터링됩니다',
             '⚠️ "실패" 상태의 파일은 원본을 확인 후 재업로드하세요'
           ],
           nextAction: {
-            label: '분석 페이지로 →',
-            path: '/analysis'
+            label: '검증 페이지로 →',
+            path: '/verification'
           }
         };
 
@@ -167,7 +160,7 @@ const SmartGuide: React.FC<SmartGuideProps> = ({
             '✨ 자주 사용하는 패턴은 자동으로 학습됩니다'
           ],
           nextAction: {
-            label: '분석 단계로 →',
+            label: '검증 단계로 →',
             path: '/analysis'
           }
         };

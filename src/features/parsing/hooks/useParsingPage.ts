@@ -62,11 +62,11 @@ export const useParsingPage = () => {
   const statusCards: { key: 'all' | FileStatus; label: string; colorKey: string }[] = [
     { key: 'all', label: '전체', colorKey: C.dark },
     { key: 'extracting', label: '추출중(자동)', colorKey: '#F59E0B' },
-    { key: 'verifying', label: '검증중', colorKey: '#3B82F6' },
-    { key: 'verified', label: '검증완료', colorKey: '#0D9488' },
-    { key: 'analyzing', label: '분석중(자동)', colorKey: '#8B5CF6' },
-    { key: 'inAnalysis', label: '분석중', colorKey: '#6366F1' },
-    { key: 'analyzed', label: '분석완료', colorKey: '#10B981' },
+    { key: 'verifying', label: '추출완료', colorKey: '#3B82F6' },
+    { key: 'verified', label: '검증대기', colorKey: '#0D9488' },
+    { key: 'analyzing', label: '검증중(자동)', colorKey: '#8B5CF6' },
+    { key: 'inAnalysis', label: '검증중', colorKey: '#6366F1' },
+    { key: 'analyzed', label: '검증완료', colorKey: '#10B981' },
     { key: 'failed', label: '실패', colorKey: '#EF4444' },
   ];
 

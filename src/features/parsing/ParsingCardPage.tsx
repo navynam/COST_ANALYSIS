@@ -93,35 +93,35 @@ const FileCard: React.FC<{
         return {
           color: '#3B82F6',
           icon: <FluentIcon name="schedule" size={16} />,
-          label: '검증중',
+          label: '추출완료',
           bgColor: '#DBEAFE'
         };
       case 'verified':
         return {
           color: '#0D9488',
           icon: <FluentIcon name="check" size={16} />,
-          label: '검증완료',
+          label: '검증대기',
           bgColor: '#CCFBF1'
         };
       case 'analyzing':
         return {
           color: '#8B5CF6',
           icon: <FluentIcon name="microscope" size={16} />,
-          label: '분석중(자동)',
+          label: '검증중(자동)',
           bgColor: '#EDE9FE'
         };
       case 'inAnalysis':
         return {
           color: '#6366F1',
           icon: <FluentIcon name="microscope" size={16} />,
-          label: '분석중',
+          label: '검증중',
           bgColor: '#E0E7FF'
         };
       case 'analyzed':
         return {
           color: '#10B981',
           icon: <FluentIcon name="check" size={16} />,
-          label: '분석완료',
+          label: '검증완료',
           bgColor: '#D1FAE5'
         };
       case 'failed':
@@ -262,7 +262,7 @@ const FileCard: React.FC<{
             <Box sx={{ p: 2.5, bgcolor: '#EDE9FE', borderRadius: '12px', border: '1px solid #C4B5FD' }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
                 <Typography sx={{ fontSize: 14, color: '#7C3AED', fontWeight: 600 }}>
-                  자동 분석 진행 중
+                  자동 검증 진행 중
                 </Typography>
                 <Typography sx={{ fontSize: 14, color: '#8B5CF6', fontWeight: 700 }}>
                   {file.progress || 0}%
@@ -287,7 +287,7 @@ const FileCard: React.FC<{
                 mt: 1,
                 textAlign: 'center'
               }}>
-                검증된 데이터를 기반으로 원가 분석을 진행하고 있어요
+                추출된 데이터를 기반으로 자동 검증을 진행하고 있어요
               </Typography>
             </Box>
           )}
@@ -302,7 +302,7 @@ const FileCard: React.FC<{
                 mb: 1.5,
                 textAlign: 'center'
               }}>
-                {(file.status === 'inAnalysis' || file.status === 'analyzed') ? <><FluentIcon name="barchart" size={14} style={{ marginRight: 4 }} />분석 완료</> : <><FluentIcon name="star" size={14} style={{ marginRight: 4 }} />추출 완료</>}
+                {(file.status === 'inAnalysis' || file.status === 'analyzed') ? <><FluentIcon name="barchart" size={14} style={{ marginRight: 4 }} />검증 완료</> : <><FluentIcon name="star" size={14} style={{ marginRight: 4 }} />추출 완료</>}
               </Typography>
 
               {/* 📊 결과 요약 - 축소 */}
@@ -321,7 +321,7 @@ const FileCard: React.FC<{
                     color: statusConfig.color,
                     fontWeight: 500
                   }}>
-                    {(file.status === 'inAnalysis' || file.status === 'analyzed') ? '분석 항목' : '파싱 항목'}
+                    {(file.status === 'inAnalysis' || file.status === 'analyzed') ? '검증 항목' : '파싱 항목'}
                   </Typography>
                 </Box>
                 
@@ -558,11 +558,11 @@ const FileCard: React.FC<{
                 }
               }}
             >
-              분석하기
+              검증하기
             </Button>
           </Box>
         )}
-        
+
         {file.status === 'extracting' && (
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Button 
@@ -694,7 +694,7 @@ const FileCard: React.FC<{
                 letterSpacing: '-0.3px'
               }}
             >
-              분석중...
+              검증중...
             </Button>
           </Box>
         )}
@@ -742,7 +742,7 @@ const FileCard: React.FC<{
                 }
               }}
             >
-              분석 상세보기
+              검증 상세보기
             </Button>
           </Box>
         )}
@@ -790,7 +790,7 @@ const FileCard: React.FC<{
                 }
               }}
             >
-              분석 결과 보기
+              검증 결과 보기
             </Button>
           </Box>
         )}

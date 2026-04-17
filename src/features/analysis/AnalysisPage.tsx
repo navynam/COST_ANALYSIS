@@ -304,10 +304,10 @@ const AnalysisPage: React.FC = () => {
               size="small"
               disabled={isAnalysisCompleted}
               onClick={async () => {
-                const ok = await showConfirm('분석을 완료하시겠습니까?', '분석 결과가 확정됩니다.');
+                const ok = await showConfirm('검증을 완료하시겠습니까?', '검증 결과가 확정됩니다.');
                 if (ok) {
                   setIsAnalysisCompleted(true);
-                  await showAlert('분석이 완료되었습니다.\n비교 버튼이 활성화됩니다.', 'success');
+                  await showAlert('검증이 완료되었습니다.\n비교 버튼이 활성화됩니다.', 'success');
                 }
               }}
               sx={{
@@ -318,7 +318,7 @@ const AnalysisPage: React.FC = () => {
                 '&.Mui-disabled': { bgcolor: '#E5E7EB', color: '#9CA3AF' }
               }}
             >
-              {isAnalysisCompleted ? '분석 완료됨' : '분석 완료'}
+              {isAnalysisCompleted ? '검증 완료됨' : '검증 완료'}
             </Button>
 
             {/* 비교 → */}
