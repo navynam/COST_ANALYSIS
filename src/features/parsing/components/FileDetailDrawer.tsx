@@ -510,7 +510,7 @@ const FileDetailDrawer: React.FC<FileDetailDrawerProps> = ({ file, onClose, onVe
               </Button>
             )}
 
-            {/* 검증대기 — 검증하기 */}
+            {/* 검증대기 — 검증하기 (verified) */}
             {file.status === 'verified' && (
               <Button fullWidth variant="contained" onClick={() => { onClose(); onAnalysis ? onAnalysis() : onVerify(); }}
                 sx={{ fontSize: 16, fontWeight: 700, textTransform: 'none', borderRadius: '12px', py: 1.5, boxShadow: 'none', bgcolor: '#0D9488', '&:hover': { bgcolor: '#0F766E', boxShadow: 'none' } }}>

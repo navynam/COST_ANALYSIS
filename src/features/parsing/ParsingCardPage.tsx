@@ -558,7 +558,7 @@ const FileCard: React.FC<{
                 }
               }}
             >
-              검토하기
+              검증하기
             </Button>
           </Box>
         )}
