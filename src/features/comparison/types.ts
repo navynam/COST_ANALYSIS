@@ -10,6 +10,7 @@ export interface Quotation {
   vendor: string;
   date: string;
   label: string;
+  fileName?: string;
 }
 
 export interface CompRow {

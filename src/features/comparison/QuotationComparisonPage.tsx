@@ -3,6 +3,7 @@
  * @description Analysis 표준 그리드 기반 견적서별 상세 비교
  */
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box, Typography, Paper, Button, Chip,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
@@ -17,6 +18,7 @@ import { useQuotationComparison } from './hooks/useQuotationComparison';
 import styles from './QuotationComparisonPage.module.css';
 
 const QuotationComparisonPage: React.FC = () => {
+  const navigate = useNavigate();
   const {
     selectedProduct, setSelectedProduct,
     selectedQuotations,
@@ -178,12 +180,29 @@ const QuotationComparisonPage: React.FC = () => {
                 const total = 76800 + (idx * 3200); // mock data
                 const isLowest = idx === 0;
                 return (
-                  <Paper key={qid} sx={{ p: 2, textAlign: 'center', border: isLowest ? '2px solid #1976d2' : '1px solid #e0e0e0' }}>
-                    <Typography variant="caption" color="text.secondary">{q.vendor}</Typography>
-                    <Typography variant="h5" fontWeight={700} color={isLowest ? '#1976d2' : 'text.primary'}>
-                      ₩{total.toLocaleString()}
-                    </Typography>
-                    {isLowest && <Chip label="최저가" size="small" color="primary" sx={{ mt: 0.5 }} />}
+                  <Paper key={qid} sx={{ p: 2, textAlign: 'center', border: isLowest ? '2px solid #1976d2' : '1px solid #e0e0e0', borderRadius: 2 }}>
+                    <Typography variant="caption" color="text.secondary">{q.vendor} ({q.date})</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mt: 0.5 }}>
+                      {isLowest && <Chip label="최저가" size="small" color="primary" />}
+                      <Typography variant="h5" fontWeight={700} color={isLowest ? '#1976d2' : 'text.primary'}>
+                        ₩{total.toLocaleString()}
+                      </Typography>
+                    </Box>
+                    {q.fileName && (
+                      <Box sx={{ mt: 1, pt: 1, borderTop: '1px solid #e0e0e0' }}>
+                        <Typography sx={{ fontSize: 11, color: '#6B7280', mb: 0.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {q.fileName}
+                        </Typography>
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={() => navigate(`/analysis?quotationId=${qid}&fileName=${encodeURIComponent(q.fileName || '')}`)}
+                          sx={{ fontSize: 11, textTransform: 'none', borderRadius: '6px', py: 0.25, px: 1.5, color: '#6366F1', borderColor: '#C7D2FE', '&:hover': { bgcolor: '#EEF2FF', borderColor: '#6366F1' } }}
+                        >
+                          분석 상세보기
+                        </Button>
+                      </Box>
+                    )}
                   </Paper>
                 );
               })}

@@ -23,19 +23,19 @@ export const mockProducts: Product[] = [
 
 export const mockQuotations: Record<string, Quotation[]> = {
   '99919-AAA00': [
-    { id: 'q1', vendor: '한국ITW', date: '2021.07', label: '한국ITW 2021.07' },
-    { id: 'q2', vendor: '한국ITW', date: '2020.12', label: '한국ITW 2020.12' },
-    { id: 'q3', vendor: 'B업체', date: '2021.03', label: 'B업체 2021.03' },
+    { id: 'q1', vendor: '한국ITW', date: '2021.07', label: '한국ITW 2021.07', fileName: 'HEAD_LINING_원가계산서.xlsx' },
+    { id: 'q2', vendor: '한국ITW', date: '2020.12', label: '한국ITW 2020.12', fileName: 'HEAD_LINING_원가계산서_v2.xlsx' },
+    { id: 'q3', vendor: 'B업체', date: '2021.03', label: 'B업체 2021.03', fileName: 'DOOR_TRIM_견적서.xlsx' },
   ],
   '86541-BBB00': [
-    { id: 'q4', vendor: 'C업체', date: '2021.05', label: 'C업체 2021.05' },
-    { id: 'q5', vendor: 'D업체', date: '2021.01', label: 'D업체 2021.01' },
+    { id: 'q4', vendor: 'C업체', date: '2021.05', label: 'C업체 2021.05', fileName: 'BUMPER_ASSY_Q4견적.xlsx' },
+    { id: 'q5', vendor: 'D업체', date: '2021.01', label: 'D업체 2021.01', fileName: 'CONSOLE_BOX_원가명세.xlsx' },
   ],
   '91911-CCC00': [
-    { id: 'q6', vendor: 'E업체', date: '2021.06', label: 'E업체 2021.06' },
-    { id: 'q7', vendor: 'F업체', date: '2021.04', label: 'F업체 2021.04' },
-    { id: 'q8', vendor: 'G업체', date: '2020.11', label: 'G업체 2020.11' },
-    { id: 'q9', vendor: 'H업체', date: '2021.02', label: 'H업체 2021.02' },
+    { id: 'q6', vendor: 'E업체', date: '2021.06', label: 'E업체 2021.06', fileName: 'FENDER_PANEL_원가산출.xlsx' },
+    { id: 'q7', vendor: 'F업체', date: '2021.04', label: 'F업체 2021.04', fileName: 'WHEEL_COVER_견적서.xlsx' },
+    { id: 'q8', vendor: 'G업체', date: '2020.11', label: 'G업체 2020.11', fileName: 'TRUNK_LID_원가분석.xlsx' },
+    { id: 'q9', vendor: 'H업체', date: '2021.02', label: 'H업체 2021.02', fileName: 'CLUSTER_원가계산서.xlsx' },
   ],
 };
 
