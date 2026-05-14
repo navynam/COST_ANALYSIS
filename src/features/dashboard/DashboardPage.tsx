@@ -34,7 +34,7 @@
  */
 import React from 'react';
 import {
-  Box, Card, CardContent, Typography, Grid, Paper, Chip, ToggleButtonGroup, ToggleButton, Button,
+  Box, Card, CardContent, Typography, Grid, Paper, Chip, Button,
 } from '@mui/material';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import {
@@ -45,32 +45,11 @@ import styles from './DashboardPage.module.css';
 
 const DashboardPage: React.FC = () => {
   // 🎛️ 대시보드 상태 관리 (페이지 네비게이션, 기간 필터)
-  const { navigate, period, setPeriod } = useDashboardPage();
+  const { navigate } = useDashboardPage();
 
   return (
     <Box sx={{ p: 3 }}>
       
-      {/* 📋 상단 헤더 + 기간 필터 영역 */}
-      <Box className={styles.header} sx={{ mb: 3 }}>
-        {/* 📊 페이지 제목 */}
-        <Typography variant="h5" fontWeight={700}>
-          견적서 분석 현황
-        </Typography>
-        
-        {/* 📅 기간 선택 토글 버튼 그룹 */}
-        <ToggleButtonGroup 
-          value={period}                                    // 현재 선택된 기간
-          exclusive                                         // 하나만 선택 가능
-          onChange={(_, v) => v && setPeriod(v)}           // 기간 변경 핸들러
-          size="small"
-        >
-          <ToggleButton value="1w">1주</ToggleButton>       {/* 1주일 */}
-          <ToggleButton value="1m">1개월</ToggleButton>     {/* 1개월 */}
-          <ToggleButton value="3m">3개월</ToggleButton>     {/* 3개월 */}
-          <ToggleButton value="all">전체</ToggleButton>      {/* 전체 기간 */}
-        </ToggleButtonGroup>
-      </Box>
-
       {/* 📊 상단 요약 카드 영역 (총 견적서, 검증완료율, 이상치, 평균원가) */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {summaryCards.map((card) => (
