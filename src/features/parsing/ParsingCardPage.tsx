@@ -55,6 +55,7 @@ import {
   Close as CloseIcon,
   ViewModule,
   ViewList,
+  AccountTree,
 } from '@mui/icons-material';
 import FluentIcon from '../../shared/components/FluentIcon';
 import { useNavigate } from 'react-router-dom';
@@ -62,6 +63,7 @@ import { useNavigate } from 'react-router-dom';
 import { C } from '../../shared/constants/colors';
 import FileDetailDrawer from './components/FileDetailDrawer';
 import FileTable from './components/FileTable';
+import PartDiagramView from './components/PartDiagramView';
 import SearchFilterDialog from './components/SearchFilterDialog';
 import { useParsingPage } from './hooks/useParsingPage';
 import type { SortField } from './types';
@@ -830,8 +832,8 @@ const ParsingCardPage: React.FC = () => {
     handleFiles,
   } = useParsingPage();
 
-  // 뷰 모드 (카드 / 리스트)
-  const [viewMode, setViewMode] = useState<'card' | 'list'>('card');
+  // 뷰 모드 (카드 / 리스트 / 다이어그램)
+  const [viewMode, setViewMode] = useState<'card' | 'list' | 'diagram'>('card');
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [sortField, setSortField] = useState<SortField | null>('uploadDate');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
@@ -1053,6 +1055,20 @@ ${currentFile?.status === 'extracting' ? `
             >
               <ViewList sx={{ fontSize: 18 }} />
             </IconButton>
+            <Tooltip title="품번/품명 다이어그램 보기">
+              <IconButton
+                size="small"
+                onClick={() => setViewMode('diagram')}
+                sx={{
+                  borderRadius: 0, px: 1.2,
+                  bgcolor: viewMode === 'diagram' ? '#0064ff' : 'white',
+                  color: viewMode === 'diagram' ? 'white' : '#8b95a1',
+                  '&:hover': { bgcolor: viewMode === 'diagram' ? '#0056d3' : '#f5f5f5' },
+                }}
+              >
+                <AccountTree sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Tooltip>
           </Box>
         </Box>
 
@@ -1150,6 +1166,11 @@ ${currentFile?.status === 'extracting' ? `
               </Grid>
             ))}
           </Grid>
+        ) : viewMode === 'diagram' ? (
+          <PartDiagramView
+            files={filteredAndSorted}
+            onRowClick={f => setDrawerFile(f)}
+          />
         ) : (
           <FileTable
             files={filteredAndSorted}
