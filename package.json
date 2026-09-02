@@ -51,7 +51,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "npm run build && gh-pages -d build"
+    "deploy": "npm run build && gh-pages -d build",
+    "callgraph": "python docs/architecture/generate_call_graph.py",
+    "callgraph:verify": "python docs/architecture/verify_call_graph.py"
   },
   "eslintConfig": {
     "extends": [

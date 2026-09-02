@@ -1,0 +1,416 @@
+# =============================================================================
+#  call-graph.yaml  —  서비스 호출 관계 단일 원본 (SINGLE SOURCE OF TRUTH)
+# -----------------------------------------------------------------------------
+#  이 파일은 프론트엔드(cost-analysis-src)와 백엔드(cost-analysis-was)의
+#  풀스택 호출 사슬을 사람이 편집하는 원본입니다.
+#
+#  편집 후 반드시:
+#     python docs/architecture/generate_call_graph.py   # → call-graph.md 재생성(Mermaid)
+#     python docs/architecture/verify_call_graph.py      # → 실제 소스와 드리프트 검사
+#
+#  * frontend.services[].calls  : 프론트 Service 가 apiClient 로 호출하는 엔드포인트
+#  * backend.controllers[].endpoints : 백엔드 Controller 가 서빙하는 엔드포인트
+#  * 프론트↔백엔드 조인/불일치는 생성기가 (method + 정규화 경로)로 자동 계산합니다.
+#    → 손으로 링크를 적지 않습니다. 양쪽만 정확히 적으면 됩니다.
+# =============================================================================
+
+version: 1
+
+repos:
+  frontend:
+    root: cost-analysis-src          # 이 문서가 속한 레포
+    api_base: /api/v1                # shared/api/apiClient.ts 의 baseURL
+    api_client: src/shared/api/apiClient.ts
+  backend:
+    root: cost-analysis-was          # ../cost-analysis-was (동일 부모 디렉토리)
+    base_package: com.costanalysis
+
+# 프론트 integration 상태값:
+#   integrated : apiClient 로 백엔드 호출 (실사용)
+#   partial    : 일부만 연동, 나머지는 mock
+#   mock-only  : 아직 백엔드 미연동 (data/mockData 사용). 백엔드는 존재할 수 있음.
+
+domains:
+  # ---------------------------------------------------------------------------
+  - key: auth
+    title: 인증 / 로그인
+    frontend:
+      feature: auth
+      route: /login
+      page: src/features/auth/LoginPage.tsx
+      hook: src/features/auth/hooks/useLoginPage.ts
+      context: src/features/auth/AuthContext.tsx
+      integration: integrated
+      services:
+        - file: src/features/auth/services/authService.ts
+          calls:
+            - { fn: login, method: POST, endpoint: /auth/login }
+            - { fn: getSsoConfigApi, method: GET, endpoint: /auth/sso/config }
+            - { fn: ssoLoginApi, method: POST, endpoint: /auth/sso/login }
+    backend:
+      package: com.costanalysis.domain.auth
+      controllers:
+        - name: AuthController
+          base: /api/v1/auth
+          endpoints:
+            - { method: POST, path: "/login",   handler: login }
+            - { method: POST, path: "/logout",  handler: logout }
+            - { method: POST, path: "/refresh", handler: refresh }
+      services: [AuthService]
+      repositories: []                       # user 도메인의 UserRepository 사용
+      cross_repos: ["UserRepository -> User"]
+
+  # ---------------------------------------------------------------------------
+  - key: quotation
+    title: 견적서 (업로드 / 파싱 / 목록)
+    frontend:
+      feature: parsing
+      route: /parsing_card
+      page: src/features/parsing/ParsingCardPage.tsx
+      hook: src/features/parsing/hooks/useParsingPage.ts
+      integration: integrated
+      services:
+        - file: src/features/parsing/services/parsingService.ts
+          calls:
+            - { fn: fetchQuotationsApi, method: GET,  endpoint: /quotations }
+            - { fn: uploadFilesApi,     method: POST, endpoint: /quotations/upload }
+    backend:
+      package: com.costanalysis.domain.quotation
+      controllers:
+        - name: QuotationController
+          base: /api/v1/quotations
+          endpoints:
+            - { method: GET,    path: "/mine",          handler: listMine }
+            - { method: GET,    path: "",             handler: list }
+            - { method: GET,    path: "/{id}",          handler: detail }
+            - { method: DELETE, path: "/{id}",          handler: delete }
+            - { method: PATCH,  path: "/items/{itemId}", handler: updateItem }
+        - name: QuotationParsingController
+          base: /api/v1/quotations
+          endpoints:
+            - { method: POST, path: "/upload",          handler: upload }
+            - { method: GET,  path: "/{quotationId}/parse", handler: parseStream }   # SSE
+        - name: ParsingNoteController
+          base: /api/v1/quotations/notes
+          endpoints:
+            - { method: GET,    path: "/file/{fileId}",       handler: listByFile }
+            - { method: POST,   path: "",                   handler: create }
+            - { method: DELETE, path: "/{noteId}",            handler: delete }
+            - { method: GET,    path: "/file/{fileId}/count", handler: countByFile }
+        - name: ExcelStyleController
+          base: /api/v1/excel
+          endpoints:
+            - { method: GET, path: "/styles", handler: styles }
+      services: [QuotationService, QuotationParsingService, ParsingNoteService, ExcelParserService, PdfParserService]
+      repositories:
+        - { name: QuotationRepository,  entity: Quotation }
+        - { name: ParsedItemRepository, entity: ParsedItem }
+        - { name: ParsingNoteRepository, entity: ParsingNote }
+
+  # ---------------------------------------------------------------------------
+  - key: dashboard
+    title: 대시보드
+    frontend:
+      feature: dashboard
+      route: /dashboard
+      page: src/features/dashboard/DashboardPage.tsx
+      hook: src/features/dashboard/hooks/useDashboardPage.ts
+      integration: integrated
+      services:
+        - file: src/features/dashboard/services/dashboardService.ts
+          calls:
+            - { fn: fetchStats, method: GET, endpoint: /dashboard/stats }
+    backend:
+      package: com.costanalysis.domain.dashboard
+      controllers:
+        - name: DashboardController
+          base: /api/v1/dashboard
+          endpoints:
+            - { method: GET, path: "/stats", handler: stats }
+      services: [DashboardService]
+      repositories: []                       # 여러 도메인 Repository 집계 (dto: DashboardStats)
+
+  # ---------------------------------------------------------------------------
+  - key: insight
+    title: AI 인사이트 (Claude 채팅)
+    frontend:
+      feature: insight
+      route: /insight
+      page: src/features/insight/InsightPage.tsx
+      hook: src/features/insight/hooks/useInsightPage.ts
+      integration: integrated
+      services:
+        - file: src/features/insight/services/insightService.ts
+          calls:
+            - { fn: fetchSessions, method: GET,  endpoint: /insights/sessions }
+            - { fn: createSession, method: POST, endpoint: /insights/sessions }
+            - { fn: sendMessage,   method: POST, endpoint: "/insights/sessions/${sessionId}/messages" }
+    backend:
+      package: com.costanalysis.domain.insight
+      controllers:
+        - name: InsightController
+          base: /api/v1/insight            # ⚠️ 프론트는 '/insights' (복수형) 호출 — 불일치 후보
+          endpoints:
+            - { method: POST,   path: "/sessions",                     handler: createSession }
+            - { method: GET,    path: "/sessions",                     handler: listSessions }
+            - { method: GET,    path: "/sessions/{sessionId}/messages", handler: messages }
+            - { method: DELETE, path: "/sessions/{sessionId}",         handler: deleteSession }
+            - { method: POST,   path: "/sessions/{sessionId}/chat",    handler: chatStream }   # SSE
+            - { method: POST,   path: "/sessions/{sessionId}/messages", handler: sendMessage }
+      services: [InsightService, ClaudeApiService]
+      repositories:
+        - { name: InsightSessionRepository, entity: InsightSession }
+        - { name: InsightMessageRepository, entity: InsightMessage }
+
+  # ---------------------------------------------------------------------------
+  - key: notification
+    title: 알림 / 이력
+    frontend:
+      feature: history
+      route: /history
+      page: src/features/history/HistoryPage.tsx
+      hook: src/features/history/hooks/useHistoryPage.tsx
+      integration: integrated
+      services:
+        - file: src/features/history/services/historyService.ts
+          calls:
+            - { fn: fetchNotifications, method: GET, endpoint: /notifications }
+            - { fn: fetchActivities,    method: GET, endpoint: /notifications/activities }
+            - { fn: markAllRead,        method: PUT, endpoint: /notifications/read-all }
+    backend:
+      package: com.costanalysis.domain.notification
+      controllers:
+        - name: NotificationController
+          base: /api/v1/notifications
+          endpoints:
+            - { method: GET, path: "",             handler: list }
+            - { method: GET, path: "/unread-count",  handler: unreadCount }
+            - { method: PUT, path: "/read-all",      handler: markAllRead }
+            - { method: PUT, path: "/{id}/read",     handler: markRead }
+      services: [NotificationService]
+      repositories:
+        - { name: NotificationRepository, entity: Notification }
+        - { name: ActivityLogRepository,  entity: ActivityLog }
+
+  # ---------------------------------------------------------------------------
+  - key: model
+    title: 원가 모델 (수식 / 변경요청 워크플로)
+    frontend:
+      feature: model-management
+      route: /models
+      page: src/features/model-management/ModelManagementPage.tsx
+      hooks:
+        - src/features/model-management/hooks/useModelManagement.ts
+        - src/features/model-management/hooks/useModelWorkflow.ts
+      integration: integrated
+      services:
+        - file: src/features/model-management/services/modelService.ts
+          calls:
+            - { fn: fetchFormulas, method: GET,    endpoint: /models/formulas }
+            - { fn: createFormula, method: POST,   endpoint: /models/formulas }
+            - { fn: updateFormula, method: PUT,    endpoint: "/models/formulas/${id}" }
+            - { fn: deleteFormula, method: DELETE, endpoint: "/models/formulas/${id}" }
+        - file: src/features/model-management/services/workflowService.ts
+          calls:
+            - { fn: fetchChangeRequests,   method: GET,    endpoint: /models/change-requests }
+            - { fn: createChangeRequest,   method: POST,   endpoint: /models/change-requests }
+            - { fn: approveChangeRequest,  method: PUT,    endpoint: "/models/change-requests/${id}/approve" }
+            - { fn: rejectChangeRequest,   method: PUT,    endpoint: "/models/change-requests/${id}/reject" }
+            - { fn: deleteChangeRequest,   method: DELETE, endpoint: "/models/change-requests/${id}" }
+    backend:
+      package: com.costanalysis.domain.model
+      controllers:
+        - name: CostModelController
+          base: /api/v1/formulas           # ⚠️ 프론트는 '/models/formulas' 호출 — 불일치 후보
+          endpoints:
+            - { method: GET,    path: "",     handler: list }
+            - { method: GET,    path: "/{id}",  handler: detail }
+            - { method: POST,   path: "",     handler: create }
+            - { method: PUT,    path: "/{id}",  handler: update }
+            - { method: DELETE, path: "/{id}",  handler: delete }
+        - name: ChangeRequestController
+          base: /api/v1/models/change-requests
+          endpoints:
+            - { method: GET,    path: "",                  handler: list }
+            - { method: GET,    path: "/formula/{formulaId}", handler: byFormula }
+            - { method: POST,   path: "",                  handler: create }
+            - { method: PUT,    path: "/{id}/approve",       handler: approve }
+            - { method: PUT,    path: "/{id}/reject",        handler: reject }
+            - { method: DELETE, path: "/{id}",               handler: delete }
+      services: [CostModelService, ChangeRequestService]
+      repositories:
+        - { name: CostFormulaRepository,   entity: CostFormula }
+        - { name: ChangeRequestRepository, entity: ChangeRequest }
+
+  # ---------------------------------------------------------------------------
+  - key: analysis
+    title: 원가 분석
+    frontend:
+      feature: analysis
+      route: /analysis
+      page: src/features/analysis/AnalysisPage.tsx
+      hooks:
+        - src/features/analysis/hooks/useAnalysisPage.ts
+        - src/features/analysis/hooks/useRelationView.ts
+        - src/features/analysis/hooks/useListViewRow.ts
+      integration: partial               # analysisService 는 mock, 엑셀 피드백만 API
+      services:
+        - file: src/features/analysis/services/analysisService.ts
+          calls: []                      # mock 전용 (data 기반)
+        - file: src/utils/excelFeedback.ts
+          calls:
+            - { fn: downloadFeedbackExcel, method: GET, endpoint: "/analysis/${quotationId}/feedback-excel" }
+    backend:
+      package: com.costanalysis.domain.analysis
+      controllers:
+        - name: AnalysisController
+          base: /api/v1/quotations/{quotationId}/analysis   # ⚠️ 프론트 '/analysis/{id}/...' 와 구조 불일치 후보
+          endpoints:
+            - { method: GET, path: "",               handler: getAnalysis }
+            - { method: GET, path: "/feedback-excel",  handler: feedbackExcel }
+      services: [AnalysisService]
+      repositories: []                   # quotation 도메인 Repository 사용 (dto: AnalysisResult)
+
+  # ---------------------------------------------------------------------------
+  - key: verification
+    title: 데이터 검증
+    frontend:
+      feature: verification
+      route: /verification
+      page: src/features/verification/ParsedDataReviewPage.tsx
+      hook: src/features/verification/hooks/useParsedDataReview.ts
+      integration: mock-only             # data/mockData 사용, 백엔드 미연동
+      services:
+        - file: src/features/verification/services/verificationService.ts
+          calls: []
+    backend:
+      package: com.costanalysis.domain.verification
+      controllers:
+        - name: VerificationController
+          base: /api/v1
+          endpoints:
+            - { method: POST, path: "/quotations/{quotationId}/verification", handler: create }
+            - { method: GET,  path: "/quotations/{quotationId}/verification", handler: get }
+            - { method: PUT,  path: "/verifications/{verificationId}/decision", handler: decide }
+      services: [VerificationService]
+      repositories:
+        - { name: VerificationRepository, entity: VerificationResult }
+
+  # ---------------------------------------------------------------------------
+  - key: comparison
+    title: 견적서 비교
+    frontend:
+      feature: comparison
+      route: /comparison
+      page: src/features/comparison/QuotationComparisonPage.tsx
+      hook: src/features/comparison/hooks/useQuotationComparison.ts
+      integration: mock-only
+      services:
+        - file: src/features/comparison/services/comparisonService.ts
+          calls: []
+    backend:
+      package: com.costanalysis.domain.comparison
+      controllers:
+        - name: ComparisonController
+          base: /api/v1/comparisons
+          endpoints:
+            - { method: POST,   path: "",     handler: create }
+            - { method: GET,    path: "",     handler: list }
+            - { method: GET,    path: "/{id}",  handler: detail }
+            - { method: DELETE, path: "/{id}",  handler: delete }
+      services: [ComparisonService]
+      repositories:
+        - { name: ComparisonRepository, entity: ComparisonSession }
+
+  # ---------------------------------------------------------------------------
+  - key: user
+    title: 사용자 / 설정
+    frontend:
+      feature: settings
+      route: /settings
+      page: src/features/settings/SettingsPage.tsx
+      hook: src/features/settings/hooks/useSettingsPage.ts
+      integration: mock-only
+      services:
+        - file: src/features/settings/services/settingsService.ts
+          calls: []
+    backend:
+      package: com.costanalysis.domain.user
+      controllers:
+        - name: UserController
+          base: /api/v1/users
+          endpoints:
+            - { method: GET,  path: "/me",             handler: me }
+            - { method: PUT,  path: "/me",             handler: updateMe }
+            - { method: PUT,  path: "/me/password",    handler: changePassword }
+            - { method: GET,  path: "",              handler: list }
+            - { method: POST, path: "",              handler: create }
+            - { method: PUT,  path: "/{userId}/active", handler: setActive }
+      services: [UserService]
+      repositories:
+        - { name: UserRepository, entity: User }
+
+  # ---------------------------------------------------------------------------
+  - key: system
+    title: 시스템 관리 (메뉴 / 권한 / 사원 / 조직) — RBAC
+    frontend:
+      feature: system
+      route: /system/menus
+      page: src/features/system/MenuManagementPage.tsx
+      pages:
+        - src/features/system/MenuManagementPage.tsx
+        - src/features/system/RoleManagementPage.tsx
+        - src/features/system/EmployeeManagementPage.tsx
+        - src/features/system/OrgManagementPage.tsx
+      hooks:
+        - src/features/system/hooks/useMenuManagement.ts
+        - src/features/system/hooks/useRoleManagement.ts
+        - src/features/system/hooks/useRoleRules.ts
+        - src/features/system/hooks/useEmployeeManagement.ts
+        - src/features/system/hooks/useOrgManagement.ts
+      context: src/features/auth/PermissionContext.tsx
+      integration: mock-only            # 백엔드 미구현(D16). USE_API=true 여도 try/catch 로 mock fallback
+      services:
+        - file: src/features/system/services/menuService.ts
+          calls:
+            - { fn: fetchMyPermissionsApi, method: GET, endpoint: /menus/my }
+            - { fn: fetchMenusApi,         method: GET, endpoint: /menus }
+            - { fn: updateMenuApi,         method: PUT, endpoint: "/menus/${menuId}" }
+        - file: src/features/system/services/roleService.ts
+          calls:
+            - { fn: getRoles,                    method: GET,    endpoint: /roles }
+            - { fn: createRole,                  method: POST,   endpoint: /roles }
+            - { fn: updateRole,                  method: PUT,    endpoint: "/roles/${roleId}" }
+            - { fn: deleteRole,                  method: DELETE, endpoint: "/roles/${roleId}" }
+            - { fn: copyRole,                    method: POST,   endpoint: "/roles/${roleId}/copy" }
+            - { fn: getRolePermissionMatrix,     method: GET,    endpoint: "/roles/${roleId}/permissions" }
+            - { fn: saveRolePermissionMatrix,    method: PUT,    endpoint: "/roles/${roleId}/permissions" }
+            - { fn: getRoleRules,                method: GET,    endpoint: /role-rules }
+            - { fn: createRoleRule,              method: POST,   endpoint: /role-rules }
+            - { fn: updateRoleRule,              method: PUT,    endpoint: "/role-rules/${ruleId}" }
+            - { fn: deleteRoleRule,              method: DELETE, endpoint: "/role-rules/${ruleId}" }
+            - { fn: simulateRoleRule,            method: POST,   endpoint: /role-rules/simulate }
+            - { fn: reapplyRoleRules,            method: POST,   endpoint: /role-rules/reapply }
+        - file: src/features/system/services/employeeService.ts
+          calls:
+            - { fn: getEmployees,        method: GET,    endpoint: /employees }
+            - { fn: getEmployee,         method: GET,    endpoint: "/employees/${userId}" }
+            - { fn: createEmployee,      method: POST,   endpoint: /employees }
+            - { fn: updateEmployee,      method: PUT,    endpoint: "/employees/${userId}" }
+            - { fn: changeEmployeeRole,  method: PUT,    endpoint: "/employees/${userId}/roles" }
+            - { fn: bulkChangeRole,      method: PUT,    endpoint: /employees/roles/bulk }
+            - { fn: setEmployeeStatus,   method: PUT,    endpoint: "/employees/${userId}/status" }
+            - { fn: reapplyRuleForEmployee, method: POST, endpoint: "/employees/${userId}/reapply-rule" }
+            - { fn: getDepartments,      method: GET,    endpoint: /departments }
+            - { fn: createDepartment,    method: POST,   endpoint: /departments }
+            - { fn: updateDepartment,    method: PUT,    endpoint: "/departments/${departmentId}" }
+            - { fn: deleteDepartment,    method: DELETE, endpoint: "/departments/${departmentId}" }
+            - { fn: getPositions,        method: GET,    endpoint: /positions }
+            - { fn: createPosition,      method: POST,   endpoint: /positions }
+            - { fn: updatePosition,      method: PUT,    endpoint: "/positions/${positionId}" }
+            - { fn: deletePosition,      method: DELETE, endpoint: "/positions/${positionId}" }
+    backend:
+      package: com.costanalysis.domain.system
+      controllers: []                   # 다음 단계(백엔드) 구현 대상. D16: 이번엔 프론트+mock 만
+      services: []
+      repositories: []

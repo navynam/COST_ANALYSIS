@@ -11,6 +11,10 @@
 # production
 /build
 
+# python tooling cache (docs generators, call-graph)
+__pycache__/
+*.pyc
+
 # misc
 .DS_Store
 .env.local
