@@ -32,6 +32,7 @@ import OnboardingTour, { defaultOnboardingSteps } from '../components/Onboarding
 import SmartGuide from '../components/SmartGuide';
 import { useMainLayout } from './hooks/useMainLayout';
 import { useAuth } from '../../features/auth/AuthContext';
+import DevRoleSwitcher from '../../features/system/components/DevRoleSwitcher';
 
 const MainLayout: React.FC = () => {
   // 🎛️ 레이아웃 상태 및 사용자 정보 관리 훅
@@ -106,7 +107,10 @@ const MainLayout: React.FC = () => {
           sx={{ bgcolor: '#fff', borderBottom: '1px solid #e0e0e0' }}
         >
           <Toolbar sx={{ justifyContent: 'flex-end', gap: 1 }}>
-            
+
+            {/* 🧪 개발용 권한 전환 (mock 모드 전용) */}
+            <DevRoleSwitcher />
+
             {/* 💡 도움말 버튼 */}
             <Tooltip title="사용 가이드 및 도움말">
               <IconButton onClick={() => setOnboardingOpen(true)}>

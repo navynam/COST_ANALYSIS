@@ -29,15 +29,25 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
+// 📋 사용자 정보 (11.2: 시스템 관리 기능을 위해 optional 필드 확장. 기존 사용처는 영향 없음)
+export interface AuthUser {
+  id: string;
+  name: string;
+  employeeId?: string;
+  departmentName?: string;
+  positionName?: string;
+  roles?: string[];
+}
+
 // 📋 인증 상태 인터페이스
 interface AuthState {
   isAuthenticated: boolean;                               // 로그인 여부
-  user: { id: string; name: string } | null;             // 사용자 정보 (id, 이름)
+  user: AuthUser | null;                                  // 사용자 정보
 }
 
 // 🔧 컨텍스트에서 제공하는 전체 기능 인터페이스
 interface AuthContextType extends AuthState {
-  login: (user: { id: string; name: string }) => void;   // 로그인 함수
+  login: (user: AuthUser) => void;                        // 로그인 함수
   logout: () => void;                                    // 로그아웃 함수
   setOtpVerified: () => void;                           // OTP 인증 완료 함수
   isOtpVerified: boolean;                               // OTP 인증 상태
@@ -71,7 +81,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [state]);
 
   // 🚪 로그인 처리 함수
-  const login = (user: { id: string; name: string }) => {
+  const login = (user: AuthUser) => {
     setState({ isAuthenticated: true, user });               // 인증 상태 업데이트
     setIsOtpVerified(true);                                 // OTP 인증 완료 처리
     localStorage.setItem('otpVerified', 'true');            // OTP 상태 저장

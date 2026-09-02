@@ -18,12 +18,17 @@
  */
 
 import React from 'react';
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { CssBaseline } from '@mui/material';
 import MainLayout from './shared/layouts/MainLayout';
 import { AuthProvider } from './features/auth/AuthContext';
+import { PermissionProvider } from './features/auth/PermissionContext';
 import { ThemeProvider } from './shared/contexts/ThemeContext';
 import { MessageDialogProvider } from './shared/components/MessageDialog';
+import ProtectedRoute from './features/auth/ProtectedRoute';
+import HomeRedirect from './features/auth/HomeRedirect';
+import AccessDeniedPage from './features/auth/AccessDeniedPage';
+import NoAccessPage from './features/auth/NoAccessPage';
 
 // 📊 메인 워크플로우 페이지들 (견적서 처리 4단계)
 import ParsingCardPage from './features/parsing/ParsingCardPage';       // 1단계: 파싱/업로드
@@ -38,6 +43,12 @@ import ModelManagementPage from './features/model-management/ModelManagementPage
 import HistoryPage from './features/history/HistoryPage';               // 📜 작업 이력/알림
 import SettingsPage from './features/settings/SettingsPage';           // 🔧 시스템 설정
 import LoginPage from './features/auth/LoginPage';                     // 🔐 로그인 (별도 레이아웃)
+
+// 🛡️ 시스템 관리 (메뉴/권한/사원/조직)
+import MenuManagementPage from './features/system/MenuManagementPage';
+import RoleManagementPage from './features/system/RoleManagementPage';
+import EmployeeManagementPage from './features/system/EmployeeManagementPage';
+import OrgManagementPage from './features/system/OrgManagementPage';
 
 // 🎨 테마 시스템은 ThemeProvider에서 관리됨
 // 현대모비스 테마와 Toss 테마 간 전환 가능
@@ -59,37 +70,52 @@ export default function App() {
       
       {/* 🔐 인증 상태를 전역에서 관리 (로그인/로그아웃) */}
       <AuthProvider>
+        {/* 🛡️ 권한(메뉴/RBAC) 상태 관리 — AuthProvider 하위 (11.2) */}
+        <PermissionProvider>
         <MessageDialogProvider>
         {/* 🗂️ 해시 라우터: URL 변경 시 페이지 전환 관리 */}
         <HashRouter>
           <Routes>
             {/* 🔐 로그인 페이지 (별도 레이아웃, 사이드바 없음) */}
             <Route path="/login" element={<LoginPage />} />
-            
+
+            {/* 🚫 시스템 예약 화면 (메뉴 아님, 권한 체크 제외) */}
+            <Route path="/no-access" element={<NoAccessPage />} />
+
             {/* 🏠 메인 레이아웃 (헤더 + 사이드바 + 콘텐츠 영역) */}
             <Route element={<MainLayout />}>
-              
+
+              {/* 🔀 기본 경로 처리 — 대시보드 권한 있으면 대시보드, 없으면 첫 가용 메뉴, 없으면 /no-access */}
+              <Route path="/" element={<HomeRedirect />} />
+              <Route path="/403" element={<AccessDeniedPage />} />
+
               {/* 📊 핵심 워크플로우 (견적서 처리 4단계) */}
-              <Route path="/parsing" element={<ParsingCardPage />} />          {/* 1️⃣ 파싱/업로드 (하위호환) */}
-              <Route path="/parsing_card" element={<ParsingCardPage />} />  {/* 1️⃣ 파싱/업로드 */}
-              <Route path="/verification" element={<ParsedDataReviewPage />} /> {/* 2️⃣ 검증/리뷰 */}
-              <Route path="/analysis" element={<AnalysisPage />} />         {/* 3️⃣ 분석 */}
-              <Route path="/comparison" element={<QuotationComparisonPage />} /> {/* 4️⃣ 비교 */}
+              <Route path="/parsing" element={<ProtectedRoute menuCode="QUOTATION_PARSING"><ParsingCardPage /></ProtectedRoute>} />          {/* 1️⃣ 파싱/업로드 (하위호환) */}
+              <Route path="/parsing_card" element={<ProtectedRoute menuCode="QUOTATION_PARSING"><ParsingCardPage /></ProtectedRoute>} />  {/* 1️⃣ 파싱/업로드 */}
+              <Route path="/verification" element={<ProtectedRoute menuCode="QUOTATION_VERIFY"><ParsedDataReviewPage /></ProtectedRoute>} /> {/* 2️⃣ 검증/리뷰 */}
+              <Route path="/analysis" element={<ProtectedRoute menuCode="QUOTATION_ANALYSIS"><AnalysisPage /></ProtectedRoute>} />         {/* 3️⃣ 분석 */}
+              <Route path="/comparison" element={<ProtectedRoute menuCode="QUOTATION_COMPARE"><QuotationComparisonPage /></ProtectedRoute>} /> {/* 4️⃣ 비교 */}
 
               {/* 🎮 보조 기능들 */}
-              <Route path="/dashboard" element={<DashboardPage />} />       {/* 📈 대시보드 홈 */}
-              <Route path="/insight" element={<InsightPage />} />           {/* 💡 AI 채팅 */}
-              <Route path="/models" element={<ModelManagementPage />} />    {/* ⚙️ 모델 관리 */}
-              <Route path="/history" element={<HistoryPage />} />           {/* 📜 이력/알림 */}
-              <Route path="/settings" element={<SettingsPage />} />         {/* 🔧 설정 */}
+              <Route path="/dashboard" element={<ProtectedRoute menuCode="DASHBOARD"><DashboardPage /></ProtectedRoute>} />       {/* 📈 대시보드 홈 */}
+              <Route path="/insight" element={<ProtectedRoute menuCode="INSIGHT"><InsightPage /></ProtectedRoute>} />           {/* 💡 AI 채팅 */}
+              <Route path="/models" element={<ProtectedRoute menuCode="MODEL"><ModelManagementPage /></ProtectedRoute>} />    {/* ⚙️ 모델 관리 */}
+              <Route path="/history" element={<ProtectedRoute menuCode="HISTORY"><HistoryPage /></ProtectedRoute>} />           {/* 📜 이력/알림 */}
+              <Route path="/settings" element={<ProtectedRoute menuCode="SETTINGS"><SettingsPage /></ProtectedRoute>} />         {/* 🔧 설정 */}
 
-              {/* 🔀 기본 경로 처리 */}
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />    {/* 루트 → 대시보드 */}
-              <Route path="*" element={<Navigate to="/dashboard" replace />} />    {/* 404 → 대시보드 */}
+              {/* 🛡️ 시스템 관리 (신규) */}
+              <Route path="/system/menus" element={<ProtectedRoute menuCode="SYS_MENU"><MenuManagementPage /></ProtectedRoute>} />
+              <Route path="/system/roles" element={<ProtectedRoute menuCode="SYS_ROLE"><RoleManagementPage /></ProtectedRoute>} />
+              <Route path="/system/employees" element={<ProtectedRoute menuCode="SYS_EMPLOYEE"><EmployeeManagementPage /></ProtectedRoute>} />
+              <Route path="/system/org" element={<ProtectedRoute menuCode="SYS_ORG"><OrgManagementPage /></ProtectedRoute>} />
+
+              {/* 🔀 매핑되지 않은 경로 → 홈 리다이렉트 로직 재사용 (E8: 미매핑 라우트는 원칙적으로 없어야 함) */}
+              <Route path="*" element={<HomeRedirect />} />
             </Route>
           </Routes>
         </HashRouter>
         </MessageDialogProvider>
+        </PermissionProvider>
       </AuthProvider>
     </ThemeProvider>
   );

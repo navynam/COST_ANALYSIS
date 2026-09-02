@@ -79,3 +79,49 @@ export const login = async (
   }
   return authenticate(employeeId, password, currentFailCount);
 };
+
+// ── SSO 설정 조회 (8장) ──
+
+/** SSO 활성화 여부. mock 모드/백엔드 미구현 시에는 mock provider 가 항상 활성인 것으로 간주 */
+export interface SsoConfig {
+  enabled: boolean;
+  providerType: string;
+  loginUrl: string | null;
+}
+
+const MOCK_SSO_CONFIG: SsoConfig = { enabled: true, providerType: 'mock', loginUrl: null };
+
+export const getSsoConfigApi = async (): Promise<SsoConfig> => {
+  const res = await apiClient.get('/auth/sso/config');
+  return res.data.data || res.data;
+};
+
+export const getSsoConfig = async (): Promise<SsoConfig> => {
+  if (USE_API) {
+    try {
+      return await getSsoConfigApi();
+    } catch {
+      return MOCK_SSO_CONFIG;
+    }
+  }
+  return MOCK_SSO_CONFIG;
+};
+
+// ── SSO 로그인 API 호출 (JIT provisioning 은 system/employeeService.ssoLogin 에서 mock 으로 처리) ──
+
+/** SSO 로그인 API 응답 (기존 LoginResponse 확장, 10.7) */
+export interface SsoLoginApiResult {
+  employeeId: string;
+  name: string;
+  departmentName?: string;
+  positionName?: string;
+  roleCode: string;
+  provisioned: boolean;
+}
+
+export const ssoLoginApi = async (ssoToken: string): Promise<SsoLoginApiResult> => {
+  const res = await apiClient.post('/auth/sso/login', { ssoToken });
+  const { token, ...result } = res.data.data || res.data;
+  if (token) localStorage.setItem('access_token', token);
+  return result;
+};

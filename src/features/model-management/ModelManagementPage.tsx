@@ -17,6 +17,7 @@ import { useModelWorkflow, userPresets, ChangeRequest } from './hooks/useModelWo
 import SimpleKnowledgeGraphTab from './components/SimpleKnowledgeGraphTab';
 import styles from './ModelManagementPage.module.css';
 import { useMessageDialog } from '../../shared/components/MessageDialog';
+import { usePermission } from '../auth/usePermission';
 
 // ── 상태 배지 설정 ──
 const statusBadge: Record<string, { label: string; color: string; bg: string }> = {
@@ -27,6 +28,7 @@ const statusBadge: Record<string, { label: string; color: string; bg: string }> 
 
 const ModelManagementPage: React.FC = () => {
   const { showConfirm } = useMessageDialog();
+  const { canCreate, canUpdate, canDelete, canApprove } = usePermission('MODEL');
   const [currentTab, setCurrentTab] = useState(0);
   const {
     formulas, modalOpen, setModalOpen,
@@ -221,9 +223,9 @@ const ModelManagementPage: React.FC = () => {
             ))}
           </Menu>
 
-          {/* 새 수식 추가 */}
+          {/* 새 수식 추가 — canCreate 가 있으면 직접 추가, 없으면 변경요청 경로로 폴백(D4: 권한 없는 버튼은 숨김이 아니라 대체 동작 제공) */}
           {currentTab === 0 && (
-            isAdmin ? (
+            canCreate ? (
               <Button variant="contained" startIcon={<Add />} onClick={openAdd}
                 sx={{ bgcolor: '#003875', '&:hover': { bgcolor: '#002a5c' }, borderRadius: 2, px: 3 }}>
                 새 수식 추가
@@ -299,12 +301,17 @@ const ModelManagementPage: React.FC = () => {
                     ))}
                   </Box>
                   <Box sx={{ display: 'flex', gap: 1 }}>
-                    {isAdmin ? (
+                    {(canUpdate || canDelete) ? (
                       <>
-                        <Button size="small" startIcon={<Edit sx={{ fontSize: 14 }} />} onClick={() => openEdit(f)}
-                          sx={{ color: '#003875', fontSize: 12, textTransform: 'none' }}>편집</Button>
-                        <Button size="small" startIcon={<Delete sx={{ fontSize: 14 }} />} onClick={() => handleDelete(f, async (doDelete) => { const ok = await showConfirm('삭제하시겠습니까?', '이 수식을 삭제합니다.'); if (ok) doDelete(); })}
-                          sx={{ color: '#999', fontSize: 12, textTransform: 'none', '&:hover': { color: '#d32f2f' } }}>삭제</Button>
+                        {/* 편집/삭제는 각각의 권한이 있을 때만 노출(D4: 숨김, disabled 아님) */}
+                        {canUpdate && (
+                          <Button size="small" startIcon={<Edit sx={{ fontSize: 14 }} />} onClick={() => openEdit(f)}
+                            sx={{ color: '#003875', fontSize: 12, textTransform: 'none' }}>편집</Button>
+                        )}
+                        {canDelete && (
+                          <Button size="small" startIcon={<Delete sx={{ fontSize: 14 }} />} onClick={() => handleDelete(f, async (doDelete) => { const ok = await showConfirm('삭제하시겠습니까?', '이 수식을 삭제합니다.'); if (ok) doDelete(); })}
+                            sx={{ color: '#999', fontSize: 12, textTransform: 'none', '&:hover': { color: '#d32f2f' } }}>삭제</Button>
+                        )}
                       </>
                     ) : (
                       hasPendingByUser(f.id) ? (
@@ -439,8 +446,8 @@ const ModelManagementPage: React.FC = () => {
                         </Box>
                       )}
 
-                      {/* 관리자 승인/반려 버튼 */}
-                      {isAdmin && cr.status === 'pending' && (
+                      {/* 승인/반려 버튼 — canApprove 권한이 없으면 숨김(D4). isAdmin(데모 사용자 전환)은 권한 판정에 관여하지 않음 */}
+                      {canApprove && cr.status === 'pending' && (
                         <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
                           <Button size="small" variant="contained" startIcon={<FluentIcon name="check" size={14} />}
                             onClick={() => openReviewDialog(cr)}
